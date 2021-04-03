@@ -18,7 +18,7 @@ object Identity {
         }
     }
 
-    private object Incarnation {
+    object Incarnation {
         class FunctorImpl : Functor<TK> {
             override suspend fun <A, B> map(ma: App<TK, A>): suspend (Fun.T<A, B>) -> App<TK, B> = { f ->
                 T(f(ma.fix().v))
