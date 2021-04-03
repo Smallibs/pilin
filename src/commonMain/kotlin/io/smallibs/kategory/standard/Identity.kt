@@ -1,5 +1,8 @@
 package io.smallibs.kategory.standard
 
+import io.smallibs.kategory.control.Applicative
+import io.smallibs.kategory.control.Functor
+import io.smallibs.kategory.control.Monad
 import io.smallibs.kategory.standard.Identity.TK.Companion.fix
 import io.smallibs.kategory.type.App
 import io.smallibs.kategory.type.Fun
@@ -15,30 +18,34 @@ object Identity {
         }
     }
 
-    class Functor : io.smallibs.kategory.control.Functor<TK> {
-        override suspend fun <A, B> map(ma: App<TK, A>): suspend (Fun.T<A, B>) -> App<TK, B> = { f ->
-            T(f(ma.fix().v))
+    private object Incarnation {
+        class FunctorImpl : Functor<TK> {
+            override suspend fun <A, B> map(ma: App<TK, A>): suspend (Fun.T<A, B>) -> App<TK, B> = { f ->
+                T(f(ma.fix().v))
+            }
+        }
+
+        class ApplicativeImpl(override val functor: Functor<TK>) : Applicative<TK>, Functor<TK> by functor {
+            override suspend fun <A> pure(a: A): App<TK, A> =
+                T(a)
+
+            override suspend fun <A, B> apply(mf: App<TK, Fun.T<A, B>>): suspend (App<TK, A>) -> App<TK, B> =
+                { ma -> T(mf.fix().v(ma.fix().v)) }
+
+            override suspend fun <A, B> map(ma: App<TK, A>): suspend (Fun.T<A, B>) -> App<TK, B> =
+                functor.map(ma)
+        }
+
+        class MonadImpl(override val applicative: Applicative<TK>) : Monad<TK>, Applicative<TK> by applicative {
+            override suspend fun <A> join(mma: App<TK, App<TK, A>>): App<TK, A> =
+                mma.fix().v
         }
     }
 
-    class Applicative(override val functor: io.smallibs.kategory.control.Functor<TK>) :
-        io.smallibs.kategory.control.Applicative<TK>,
-        io.smallibs.kategory.control.Functor<TK> by functor {
-        override suspend fun <A> pure(a: A): App<TK, A> =
-            T(a)
+    val Functor: Functor<TK> = Incarnation.FunctorImpl()
 
-        override suspend fun <A, B> apply(mf: App<TK, Fun.T<A, B>>): suspend (App<TK, A>) -> App<TK, B> =
-            { ma -> T(mf.fix().v(ma.fix().v)) }
+    val Applicative: Applicative<TK> = Incarnation.ApplicativeImpl(Functor)
 
-        override suspend fun <A, B> map(ma: App<TK, A>): suspend (Fun.T<A, B>) -> App<TK, B> =
-            functor.map(ma)
-    }
-
-    class Monad(override val applicative: io.smallibs.kategory.control.Applicative<TK>) :
-        io.smallibs.kategory.control.Monad<TK>,
-        io.smallibs.kategory.control.Applicative<TK> by applicative {
-        override suspend fun <A> join(mma: App<TK, App<TK, A>>): App<TK, A> =
-            mma.fix().v
-    }
+    val Monad: Monad<TK> = Incarnation.MonadImpl(Applicative)
 
 }
