@@ -31,7 +31,7 @@ object Either {
                 }
         }
 
-        class ApplicativeImpl<L>(val functor: Functor.API<TK<L>>) : Applicative.API<TK<L>>,
+        class ApplicativeImpl<L>(private val functor: Functor.API<TK<L>>) : Applicative.API<TK<L>>,
             Functor.API<TK<L>> by functor {
             override suspend fun <R> pure(a: R): App<TK<L>, R> = T.Right(a)
 
@@ -52,7 +52,7 @@ object Either {
             }
         }
 
-        class MonadImpl<L>(val applicative: Applicative.API<TK<L>>) : Monad.API<TK<L>>,
+        class MonadImpl<L>(override val applicative: Applicative.API<TK<L>>) : Monad.API<TK<L>>,
             Applicative.API<TK<L>> by applicative {
             override suspend fun <A> join(mma: App<TK<L>, App<TK<L>, A>>): App<TK<L>, A> =
                 when (val ma = mma.fix) {

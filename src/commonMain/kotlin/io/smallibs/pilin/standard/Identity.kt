@@ -25,7 +25,7 @@ object Identity {
                 }
         }
 
-        class ApplicativeImpl(val functor: Functor.API<TK>) : Applicative.API<TK>, Functor.API<TK> by functor {
+        class ApplicativeImpl(private val functor: Functor.API<TK>) : Applicative.API<TK>, Functor.API<TK> by functor {
             override suspend fun <A> pure(a: A): App<TK, A> =
                 T(a)
 
@@ -36,7 +36,7 @@ object Identity {
                 functor.map(ma)
         }
 
-        class MonadImpl(val applicative: Applicative.API<TK>) : Monad.API<TK>,
+        class MonadImpl(override val applicative: Applicative.API<TK>) : Monad.API<TK>,
             Applicative.API<TK> by applicative {
             override suspend fun <A> join(mma: App<TK, App<TK, A>>): App<TK, A> =
                 mma.fix.v
