@@ -1,8 +1,8 @@
-package io.smallibs.kategory.control.fluent
+package io.smallibs.pilin.control.fluent
 
-import io.smallibs.kategory.control.Selective
-import io.smallibs.kategory.standard.Either
-import io.smallibs.kategory.type.App
+import io.smallibs.pilin.control.Selective
+import io.smallibs.pilin.standard.Either
+import io.smallibs.pilin.type.App
 
 open class FluentSelective<F>(private val selective: Selective.API<F>) : FluentFunctor<F>(selective) {
     suspend fun <A> pure(a: A): App<F, A> = selective.pure(a)

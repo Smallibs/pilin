@@ -1,10 +1,10 @@
-package io.smallibs.kategory.standard
+package io.smallibs.pilin.standard
 
-import io.smallibs.kategory.control.Applicative
-import io.smallibs.kategory.control.Functor
-import io.smallibs.kategory.control.Monad
-import io.smallibs.kategory.standard.Either.TK.Companion.fix
-import io.smallibs.kategory.type.App
+import io.smallibs.pilin.control.Applicative
+import io.smallibs.pilin.control.Functor
+import io.smallibs.pilin.control.Monad
+import io.smallibs.pilin.standard.Either.TK.Companion.fix
+import io.smallibs.pilin.type.App
 
 object Either {
 

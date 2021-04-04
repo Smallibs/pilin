@@ -1,7 +1,7 @@
-package io.smallibs.kategory.control
+package io.smallibs.pilin.control
 
-import io.smallibs.kategory.standard.Either
-import io.smallibs.kategory.type.App
+import io.smallibs.pilin.standard.Either
+import io.smallibs.pilin.type.App
 
 object Selective {
     interface WithSelect<F> {

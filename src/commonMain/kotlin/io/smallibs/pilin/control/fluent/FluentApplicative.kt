@@ -1,7 +1,7 @@
-package io.smallibs.kategory.control.fluent
+package io.smallibs.pilin.control.fluent
 
-import io.smallibs.kategory.control.Applicative
-import io.smallibs.kategory.type.App
+import io.smallibs.pilin.control.Applicative
+import io.smallibs.pilin.type.App
 
 open class FluentApplicative<F>(private val applicative: Applicative.API<F>) : FluentFunctor<F>(applicative) {
     suspend fun <A> pure(a: A): App<F, A> = applicative.pure(a)

@@ -1,6 +1,6 @@
-package io.smallibs.kategory.control
+package io.smallibs.pilin.control
 
-import io.smallibs.kategory.type.App
+import io.smallibs.pilin.type.App
 
 object Functor {
 
