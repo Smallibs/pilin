@@ -19,34 +19,32 @@ object Identity {
 
     object Incarnation {
         class FunctorImpl : Functor.API<TK> {
-            override suspend fun <A, B> map(ma: App<TK, A>): suspend (suspend (A) -> B) -> App<TK, B> =
-                { f ->
+            override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<TK, A>) -> App<TK, B> =
+                { ma ->
                     T(f(ma.fix.v))
                 }
         }
 
-        class ApplicativeImpl(private val functor: Functor.API<TK>) : Applicative.API<TK>, Functor.API<TK> by functor {
+        class ApplicativeImpl :
+            Applicative.WithPureAndApply<TK>,
+            Applicative.API<TK> {
             override suspend fun <A> pure(a: A): App<TK, A> =
                 T(a)
 
             override suspend fun <A, B> apply(mf: App<TK, suspend (A) -> B>): suspend (App<TK, A>) -> App<TK, B> =
                 { ma -> T(mf.fix.v(ma.fix.v)) }
-
-            override suspend fun <A, B> map(ma: App<TK, A>): suspend (suspend (A) -> B) -> App<TK, B> =
-                functor.map(ma)
         }
 
-        class MonadImpl(override val applicative: Applicative.API<TK>) : Monad.API<TK>,
-            Applicative.API<TK> by applicative {
+        class MonadImpl(override val applicative: Applicative.API<TK>) : Monad.API<TK> {
             override suspend fun <A> join(mma: App<TK, App<TK, A>>): App<TK, A> =
                 mma.fix.v
         }
     }
 
-    val Functor: Functor.API<TK> = Incarnation.FunctorImpl()
+    val functor: Functor.API<TK> = Incarnation.FunctorImpl()
 
-    val Applicative: Applicative.API<TK> = Incarnation.ApplicativeImpl(Functor)
+    val applicative: Applicative.API<TK> = Incarnation.ApplicativeImpl()
 
-    val Monad: Monad.API<TK> = Incarnation.MonadImpl(Applicative)
+    val monad: Monad.API<TK> = Incarnation.MonadImpl(applicative)
 
 }

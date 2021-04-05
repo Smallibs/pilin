@@ -12,7 +12,6 @@ object Selective {
     interface WithBranch<F> {
         suspend fun <A, B, C> branch(e: Either.T<A, B>):
                 suspend (App<F, suspend (A) -> C>) -> suspend (App<F, suspend (B) -> C>) -> App<F, C>
-
     }
 
     interface PureWithSelect<F> : WithSelect<F> {

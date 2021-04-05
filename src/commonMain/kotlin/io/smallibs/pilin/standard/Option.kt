@@ -22,8 +22,8 @@ object Option {
 
     object Incarnation {
         class FunctorImpl : Functor.API<TK> {
-            override suspend fun <A, B> map(ma: App<TK, A>): suspend (suspend (A) -> B) -> App<TK, B> =
-                { f ->
+            override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<TK, A>) -> App<TK, B> =
+                { ma ->
                     when (val a = ma.fix) {
                         is T.Some -> T.Some(f(a.value))
                         is T.None -> T.None()
@@ -31,7 +31,9 @@ object Option {
                 }
         }
 
-        class ApplicativeImpl(private val functor: Functor.API<TK>) : Applicative.API<TK>, Functor.API<TK> by functor {
+        class ApplicativeImpl :
+            Applicative.WithPureAndApply<TK>,
+            Applicative.API<TK> {
             override suspend fun <A> pure(a: A): App<TK, A> =
                 T.Some(a)
 
@@ -46,13 +48,9 @@ object Option {
                         is T.None -> T.None()
                     }
                 }
-
-            override suspend fun <A, B> map(ma: App<TK, A>): suspend (suspend (A) -> B) -> App<TK, B> =
-                functor.map(ma)
         }
 
-        class MonadImpl(override val applicative: Applicative.API<TK>) : Monad.API<TK>,
-            Applicative.API<TK> by applicative {
+        class MonadImpl(override val applicative: Applicative.API<TK>) : Monad.API<TK> {
             override suspend fun <A> join(mma: App<TK, App<TK, A>>): App<TK, A> =
                 when (val ma = mma.fix) {
                     is T.Some -> ma.value
@@ -61,10 +59,10 @@ object Option {
         }
     }
 
-    val Functor: Functor.API<TK> = Incarnation.FunctorImpl()
+    val functor: Functor.API<TK> = Incarnation.FunctorImpl()
 
-    val Applicative: Applicative.API<TK> = Incarnation.ApplicativeImpl(Functor)
+    val applicative: Applicative.API<TK> = Incarnation.ApplicativeImpl()
 
-    val Monad: Monad.API<TK> = Incarnation.MonadImpl(Applicative)
+    val monad: Monad.API<TK> = Incarnation.MonadImpl(applicative)
 
 }

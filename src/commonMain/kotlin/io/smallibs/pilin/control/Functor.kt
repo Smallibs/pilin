@@ -4,8 +4,25 @@ import io.smallibs.pilin.type.App
 
 object Functor {
 
-    interface API<F> {
-        suspend fun <A, B> map(ma: App<F, A>): suspend (suspend (A) -> B) -> App<F, B>
+    interface Core<F> {
+        suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<F, A>) -> App<F, B>
+    }
+
+    class Operation<F>(private val c: Core<F>) {
+        suspend fun <A, B> replace(a: A): suspend (App<F, B>) -> App<F, A> =
+            c.map { a }
+
+        suspend fun <A> void(ma: App<F, A>): App<F, Unit> =
+            replace<Unit, A>(Unit)(ma)
+    }
+
+    class Infix<F>(private val c: Core<F>) {
+        suspend fun <A, B> (suspend (A) -> B).map(ma: App<F, A>): App<F, B> = c.map(this)(ma)
+    }
+
+    interface API<F> : Core<F> {
+        val operation: Operation<F> get() = Operation(this)
+        val infix: Infix<F> get() = Infix(this)
     }
 
 }

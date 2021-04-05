@@ -22,8 +22,8 @@ object Either {
 
     object Incarnation {
         class FunctorImpl<L> : Functor.API<TK<L>> {
-            override suspend fun <A, B> map(ma: App<TK<L>, A>): suspend (suspend (A) -> B) -> App<TK<L>, B> =
-                { f ->
+            override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<TK<L>, A>) -> App<TK<L>, B> =
+                { ma ->
                     when (val a = ma.fix) {
                         is T.Left -> T.Left(a.value)
                         is T.Right -> T.Right(f(a.value))
@@ -31,8 +31,9 @@ object Either {
                 }
         }
 
-        class ApplicativeImpl<L>(private val functor: Functor.API<TK<L>>) : Applicative.API<TK<L>>,
-            Functor.API<TK<L>> by functor {
+        class ApplicativeImpl<L> :
+            Applicative.WithPureAndApply<TK<L>>,
+            Applicative.API<TK<L>> {
             override suspend fun <R> pure(a: R): App<TK<L>, R> = T.Right(a)
 
             override suspend fun <A, B> apply(mf: App<TK<L>, suspend (A) -> B>): suspend (App<TK<L>, A>) -> App<TK<L>, B> =
@@ -46,14 +47,9 @@ object Either {
                         is T.Left -> T.Left(f.value)
                     }
                 }
-
-            override suspend fun <A, B> map(ma: App<TK<L>, A>): suspend (suspend (A) -> B) -> App<TK<L>, B> {
-                return functor.map(ma)
-            }
         }
 
-        class MonadImpl<L>(override val applicative: Applicative.API<TK<L>>) : Monad.API<TK<L>>,
-            Applicative.API<TK<L>> by applicative {
+        class MonadImpl<L>(override val applicative: Applicative.API<TK<L>>) : Monad.API<TK<L>> {
             override suspend fun <A> join(mma: App<TK<L>, App<TK<L>, A>>): App<TK<L>, A> =
                 when (val ma = mma.fix) {
                     is T.Right -> ma.value
@@ -62,10 +58,10 @@ object Either {
         }
     }
 
-    fun <L> Functor(): Functor.API<TK<L>> = Incarnation.FunctorImpl()
+    fun <L> functor(): Functor.API<TK<L>> = Incarnation.FunctorImpl()
 
-    fun <L> Applicative(): Applicative.API<TK<L>> = Incarnation.ApplicativeImpl(Functor())
+    fun <L> applicative(): Applicative.API<TK<L>> = Incarnation.ApplicativeImpl()
 
-    fun <L> Monad(): Monad.API<TK<L>> = Incarnation.MonadImpl(Applicative())
+    fun <L> monad(): Monad.API<TK<L>> = Incarnation.MonadImpl(applicative())
 
 }
