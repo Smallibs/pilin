@@ -29,14 +29,22 @@ object Applicative {
             apply(apply(pure(curry { a: A, b: B -> a to b }))(ma))
     }
 
-    class Operation<F>(private val c: Core<F>) {
-        suspend fun <A, B> lift1(f: suspend (A) -> B): suspend (App<F, A>) -> App<F, B> = c.map(f)
+    interface ViaFunctor<F> : Core<F> {
+        val functor: Functor.Core<F>
+
+        override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<F, A>) -> App<F, B> = functor.map(f)
+    }
+
+    class Operation<F>(private val c: Core<F>) : Core<F> by c {
+        suspend fun <A, B> lift1(f: suspend (A) -> B): suspend (App<F, A>) -> App<F, B> =
+            map(f)
 
         suspend fun <A, B, C> lift2(f: suspend (A) -> suspend (B) -> C): suspend (App<F, A>) -> suspend (App<F, B>) -> App<F, C> =
-            { ma -> { mb -> c.apply(c.apply(c.pure(f))(ma))(mb) } }
+            { ma -> { mb -> apply(apply(pure(f))(ma))(mb) } }
 
         suspend fun <A, B, C, D> lift3(f: suspend (A) -> suspend (B) -> suspend (C) -> D): suspend (App<F, A>) -> suspend (App<F, B>) -> suspend (App<F, C>) -> App<F, D> =
-            { ma -> { mb -> { mc -> c.apply(lift2(f)(ma)(mb))(mc) } } }
+            { ma -> { mb -> { mc -> apply(lift2(f)(ma)(mb))(mc) } } }
+
     }
 
     class Infix<F>(private val c: Core<F>) {

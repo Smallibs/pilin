@@ -20,48 +20,50 @@ object Either {
         }
     }
 
-    object Incarnation {
-        class FunctorImpl<L> : Functor.API<TK<L>> {
-            override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<TK<L>, A>) -> App<TK<L>, B> =
-                { ma ->
-                    when (val a = ma.fix) {
-                        is T.Left -> T.Left(a.value)
-                        is T.Right -> T.Right(f(a.value))
-                    }
+    private class FunctorImpl<L> : Functor.API<TK<L>> {
+        override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<TK<L>, A>) -> App<TK<L>, B> =
+            { ma ->
+                when (val a = ma.fix) {
+                    is T.Left -> T.Left(a.value)
+                    is T.Right -> T.Right(f(a.value))
                 }
-        }
-
-        class ApplicativeImpl<L> :
-            Applicative.WithPureAndApply<TK<L>>,
-            Applicative.API<TK<L>> {
-            override suspend fun <R> pure(a: R): App<TK<L>, R> = T.Right(a)
-
-            override suspend fun <A, B> apply(mf: App<TK<L>, suspend (A) -> B>): suspend (App<TK<L>, A>) -> App<TK<L>, B> =
-                { ma ->
-                    when (val f = mf.fix) {
-                        is T.Right ->
-                            when (val a = ma.fix) {
-                                is T.Right -> T.Right(f.value(a.value))
-                                is T.Left -> T.Left(a.value)
-                            }
-                        is T.Left -> T.Left(f.value)
-                    }
-                }
-        }
-
-        class MonadImpl<L>(override val applicative: Applicative.API<TK<L>>) : Monad.API<TK<L>> {
-            override suspend fun <A> join(mma: App<TK<L>, App<TK<L>, A>>): App<TK<L>, A> =
-                when (val ma = mma.fix) {
-                    is T.Right -> ma.value
-                    is T.Left -> T.Left(ma.value)
-                }
-        }
+            }
     }
 
-    fun <L> functor(): Functor.API<TK<L>> = Incarnation.FunctorImpl()
+    private class ApplicativeImpl<L>(override val functor: Functor.Core<TK<L>>) :
+        Applicative.API<TK<L>>,
+        Applicative.WithPureMapAndProduct<TK<L>>,
+        Applicative.ViaFunctor<TK<L>> {
+        override suspend fun <R> pure(a: R): App<TK<L>, R> = T.Right(a)
 
-    fun <L> applicative(): Applicative.API<TK<L>> = Incarnation.ApplicativeImpl()
+        override suspend fun <A, B> product(ma: App<TK<L>, A>): suspend (mb: App<TK<L>, B>) -> App<TK<L>, Pair<A, B>> =
+            { mb ->
+                when (val a = ma.fix) {
+                    is T.Right ->
+                        when (val b = mb.fix) {
+                            is T.Right -> T.Right(a.value to b.value)
+                            is T.Left -> T.Left(b.value)
+                        }
+                    is T.Left -> T.Left(a.value)
+                }
+            }
+    }
 
-    fun <L> monad(): Monad.API<TK<L>> = Incarnation.MonadImpl(applicative())
+    private class MonadImpl<L>(override val applicative: Applicative.API<TK<L>>) :
+        Monad.API<TK<L>>,
+        Monad.WithReturnsMapAndJoin<TK<L>>,
+        Monad.ViaApplicative<TK<L>> {
+        override suspend fun <A> join(mma: App<TK<L>, App<TK<L>, A>>): App<TK<L>, A> =
+            when (val ma = mma.fix) {
+                is T.Right -> ma.value
+                is T.Left -> T.Left(ma.value)
+            }
+    }
+
+    fun <L> functor(): Functor.API<TK<L>> = FunctorImpl()
+
+    fun <L> applicative(): Applicative.API<TK<L>> = ApplicativeImpl(functor())
+
+    fun <L> monad(): Monad.API<TK<L>> = MonadImpl(applicative())
 
 }

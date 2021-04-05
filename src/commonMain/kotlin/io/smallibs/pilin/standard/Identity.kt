@@ -8,7 +8,7 @@ import io.smallibs.pilin.type.App
 
 object Identity {
 
-    data class T<A>(val v: A) : App<TK, A>
+    data class T<A>(val value: A) : App<TK, A>
 
     class TK private constructor() {
         companion object {
@@ -17,34 +17,34 @@ object Identity {
         }
     }
 
-    object Incarnation {
-        class FunctorImpl : Functor.API<TK> {
-            override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<TK, A>) -> App<TK, B> =
-                { ma ->
-                    T(f(ma.fix.v))
-                }
-        }
-
-        class ApplicativeImpl :
-            Applicative.WithPureAndApply<TK>,
-            Applicative.API<TK> {
-            override suspend fun <A> pure(a: A): App<TK, A> =
-                T(a)
-
-            override suspend fun <A, B> apply(mf: App<TK, suspend (A) -> B>): suspend (App<TK, A>) -> App<TK, B> =
-                { ma -> T(mf.fix.v(ma.fix.v)) }
-        }
-
-        class MonadImpl(override val applicative: Applicative.API<TK>) : Monad.API<TK> {
-            override suspend fun <A> join(mma: App<TK, App<TK, A>>): App<TK, A> =
-                mma.fix.v
-        }
+    private class FunctorImpl : Functor.API<TK> {
+        override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<TK, A>) -> App<TK, B> =
+            { ma -> T(f(ma.fix.value)) }
     }
 
-    val functor: Functor.API<TK> = Incarnation.FunctorImpl()
+    private class ApplicativeImpl(override val functor: Functor.Core<TK>) :
+        Applicative.API<TK>,
+        Applicative.WithPureMapAndProduct<TK>,
+        Applicative.ViaFunctor<TK> {
+        override suspend fun <A> pure(a: A): App<TK, A> = T(a)
 
-    val applicative: Applicative.API<TK> = Incarnation.ApplicativeImpl()
+        override suspend fun <A, B> product(ma: App<TK, A>): suspend (mb: App<TK, B>) -> App<TK, Pair<A, B>> =
+            { mb -> T(ma.fix.value to mb.fix.value) }
+    }
 
-    val monad: Monad.API<TK> = Incarnation.MonadImpl(applicative)
+    private class MonadImpl(override val applicative: Applicative.API<TK>) :
+        Monad.API<TK>,
+        Monad.WithReturnsMapAndJoin<TK>,
+        Monad.ViaApplicative<TK> {
+        override suspend fun <A> join(mma: App<TK, App<TK, A>>): App<TK, A> =
+            mma.fix.value
+
+    }
+
+    val functor: Functor.API<TK> = FunctorImpl()
+
+    val applicative: Applicative.API<TK> = ApplicativeImpl(functor)
+
+    val monad: Monad.API<TK> = MonadImpl(applicative)
 
 }

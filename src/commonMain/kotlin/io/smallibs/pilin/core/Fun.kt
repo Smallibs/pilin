@@ -2,6 +2,8 @@ package io.smallibs.pilin.core
 
 object Fun {
 
+    fun <A> id(a: A): A = a
+
     suspend infix fun <A, B, C> (suspend (B) -> C).compose(g: suspend (A) -> B): suspend (A) -> C =
         { x -> this(g(x)) }
 

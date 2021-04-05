@@ -8,9 +8,9 @@ object Functor {
         suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<F, A>) -> App<F, B>
     }
 
-    class Operation<F>(private val c: Core<F>) {
+    class Operation<F>(private val c: Core<F>) : Core<F> by c {
         suspend fun <A, B> replace(a: A): suspend (App<F, B>) -> App<F, A> =
-            c.map { a }
+            map { a }
 
         suspend fun <A> void(ma: App<F, A>): App<F, Unit> =
             replace<Unit, A>(Unit)(ma)
