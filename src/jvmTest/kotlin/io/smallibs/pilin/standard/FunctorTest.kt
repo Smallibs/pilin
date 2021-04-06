@@ -7,6 +7,8 @@ import io.smallibs.pilin.standard.Either.T.Right
 import io.smallibs.pilin.standard.Identity.Id
 import io.smallibs.pilin.standard.Option.T.None
 import io.smallibs.pilin.standard.Option.T.Some
+import io.smallibs.pilin.standard.Validated.T.Invalid
+import io.smallibs.pilin.standard.Validated.T.Valid
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.quicktheories.WithQuickTheories
@@ -42,6 +44,15 @@ internal class FunctorTest : WithQuickTheories {
     }
 
     @Test
+    fun `(Validated) map id = id `() {
+        runBlocking { Validated.functor<Unit>().`map id = id`(Invalid<Unit, Int>(Unit)) }
+
+        qt().forAll(integers().all()).check  { a ->
+            runBlocking { Validated.functor<Unit>().`map id = id`(Valid(a)) }
+        }
+    }
+
+    @Test
     fun `(Identity) map (incr compose toString) = (map incr) compose (map toString) `() {
         qt().forAll(integers().all()).check { a ->
             runBlocking { Identity.functor.`map (f compose g) = map f compose map g`(int, str, Id(a)) }
@@ -59,6 +70,13 @@ internal class FunctorTest : WithQuickTheories {
     fun `(Either) map (incr compose toString) = (map incr) compose (map toString) `() {
         qt().forAll(integers().all()).check { a ->
             runBlocking { Either.functor<Unit>().`map (f compose g) = map f compose map g`(int, str, Right(a)) }
+        }
+    }
+
+    @Test
+    fun `(Validated) map (incr compose toString) = (map incr) compose (map toString) `() {
+        qt().forAll(integers().all()).check { a ->
+            runBlocking { Validated.functor<Unit>().`map (f compose g) = map f compose map g`( int, str, Valid(a)) }
         }
     }
 }

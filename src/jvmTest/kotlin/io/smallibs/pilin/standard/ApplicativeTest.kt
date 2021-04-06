@@ -9,6 +9,8 @@ import io.smallibs.pilin.standard.Either.T.Right
 import io.smallibs.pilin.standard.Identity.Id
 import io.smallibs.pilin.standard.Option.T.None
 import io.smallibs.pilin.standard.Option.T.Some
+import io.smallibs.pilin.standard.Validated.T.Invalid
+import io.smallibs.pilin.standard.Validated.T.Valid
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.quicktheories.WithQuickTheories
@@ -73,6 +75,15 @@ internal class ApplicativeTest : WithQuickTheories {
     }
 
     @Test
+    fun `(Validated) (pure id) apply v = v`() {
+        runBlocking { Validated.applicative<Unit>().`(pure id) apply v = v`(Invalid<Unit, Int>(Unit)) }
+
+        qt().forAll(integers().all()).check { a ->
+            runBlocking { Validated.applicative<Unit>().`(pure id) apply v = v`(Valid(a)) }
+        }
+    }
+
+    @Test
     fun `(Identity) apply (pure f) (pure x) = pure (f x)`() {
         qt().forAll(integers().all()).check { a ->
             runBlocking { Identity.applicative.`apply (pure f) (pure x) = pure (f x)`(str, a) }
@@ -111,6 +122,13 @@ internal class ApplicativeTest : WithQuickTheories {
     fun `(Either) apply f (pure x) = apply (pure ($ y)) f`() {
         qt().forAll(integers().all()).check { a ->
             runBlocking { Either.applicative<Unit>().`apply f (pure x) = apply (pure ($ y)) f`(Right(str), a) }
+        }
+    }
+
+    @Test
+    fun `(Validated) apply f (pure x) = apply (pure ($ y)) f`() {
+        qt().forAll(integers().all()).check { a ->
+            runBlocking { Validated.applicative<Unit>().`apply f (pure x) = apply (pure ($ y)) f`(Valid(str), a) }
         }
     }
 }
