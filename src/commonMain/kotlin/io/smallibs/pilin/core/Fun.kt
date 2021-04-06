@@ -1,12 +1,13 @@
 package io.smallibs.pilin.core
 
-typealias Compose<A,B,C> = suspend (suspend (B) -> C) -> suspend (suspend (A) -> B) -> suspend (A) -> C
+typealias Lambda<A, B> = suspend (A) -> B
+typealias Compose<A, B, C> = Lambda<Lambda<B, C>, Lambda<Lambda<A, B>, Lambda<A, C>>>
 
 object Fun {
 
-    fun <A> id(a: A): A = a
+    suspend fun <A> id(a: A): A = a
 
-    suspend infix fun <A, B, C> compose(f:suspend (B) -> C) : suspend (suspend (A) -> B) -> suspend (A) -> C =
+    suspend infix fun <A, B, C> compose(f: suspend (B) -> C): suspend (suspend (A) -> B) -> suspend (A) -> C =
         { g -> { x -> f(g(x)) } }
 
     suspend fun <A, B, C> curry(f: suspend (A, B) -> C): suspend (A) -> suspend (B) -> C =

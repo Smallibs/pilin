@@ -57,6 +57,7 @@ kotlin {
         }
         val jvmTest by getting {
             dependencies {
+                implementation("org.quicktheories:quicktheories:0.26")
                 implementation(kotlin("test-junit"))
             }
         }
