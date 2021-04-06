@@ -5,9 +5,8 @@ import io.smallibs.pilin.type.App
 
 object Applicative {
 
-    interface Core<F> {
+    interface Core<F> : Functor.Core<F> {
         suspend fun <A> pure(a: A): App<F, A>
-        suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<F, A>) -> App<F, B>
         suspend fun <A, B> product(ma: App<F, A>): suspend (mb: App<F, B>) -> App<F, Pair<A, B>>
         suspend fun <A, B> apply(mf: App<F, suspend (A) -> B>): suspend (App<F, A>) -> App<F, B>
     }
@@ -47,7 +46,8 @@ object Applicative {
 
     }
 
-    class Infix<F>(private val c: Core<F>) {
+    @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
+    open class Infix<F>(private val c: Core<F>) : Functor.Infix<F>(c), Core<F> by c {
         suspend infix fun <A, B> App<F, suspend (A) -> B>.apply(ma: App<F, A>): App<F, B> = c.apply(this)(ma)
     }
 

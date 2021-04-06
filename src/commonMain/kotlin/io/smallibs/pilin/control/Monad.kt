@@ -5,9 +5,8 @@ import io.smallibs.pilin.type.App
 
 object Monad {
 
-    interface Core<F> {
+    interface Core<F> : Applicative.Core<F> {
         suspend fun <A> returns(a: A): App<F, A>
-        suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<F, A>) -> App<F, B>
         suspend fun <A> join(mma: App<F, App<F, A>>): App<F, A>
         suspend fun <A, B> bind(f: suspend (A) -> App<F, B>): suspend (App<F, A>) -> App<F, B>
         suspend fun <A, B, C> leftToRight(f: suspend (A) -> App<F, B>): suspend (suspend (B) -> App<F, C>) -> suspend (A) -> App<F, C>
@@ -61,7 +60,8 @@ object Monad {
             { ma -> { mb -> { mc -> bind<A, D> { a -> bind<B, D> { b -> bind<C,D> { c -> returns(f(a)(b)(c)) }(mc) }(mb) }(ma) } }}
     }
 
-    class Infix<F>(private val c: Core<F>) {
+    @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
+    class Infix<F>(private val c: Core<F>) : Applicative.Infix<F>(c), Core<F> by c {
         suspend infix fun <A, B> App<F, A>.bind(f: suspend (A) -> App<F, B>): App<F, B> = c.bind(f)(this)
     }
 

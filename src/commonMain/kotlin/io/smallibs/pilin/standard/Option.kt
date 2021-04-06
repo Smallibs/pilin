@@ -9,7 +9,7 @@ import io.smallibs.pilin.type.App
 object Option {
 
     sealed class T<A> : App<TK, A> {
-        class None<A> : T<A>()
+        data class None<A>(private val u: Unit = Unit) : T<A>()
         data class Some<A>(val value: A) : T<A>()
     }
 
@@ -53,12 +53,17 @@ object Option {
     private class MonadImpl(override val applicative: Applicative.API<TK>) :
         Monad.API<TK>,
         Monad.WithReturnsMapAndJoin<TK>,
-        Monad.ViaApplicative<TK> {
+        Monad.ViaApplicative<TK>,
+        Applicative.Core<TK> by applicative {
         override suspend fun <A> join(mma: App<TK, App<TK, A>>): App<TK, A> =
             when (val ma = mma.fix) {
                 is T.Some -> ma.value
                 is T.None -> T.None()
             }
+
+        override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<TK, A>) -> App<TK, B> {
+            return applicative.map(f)
+        }
     }
 
     val functor: Functor.API<TK> = FunctorImpl()

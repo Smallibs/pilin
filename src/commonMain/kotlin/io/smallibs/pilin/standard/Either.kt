@@ -3,6 +3,8 @@ package io.smallibs.pilin.standard
 import io.smallibs.pilin.control.Applicative
 import io.smallibs.pilin.control.Functor
 import io.smallibs.pilin.control.Monad
+import io.smallibs.pilin.core.Fun.curry
+import io.smallibs.pilin.module.open
 import io.smallibs.pilin.standard.Either.TK.Companion.fix
 import io.smallibs.pilin.type.App
 
@@ -52,12 +54,17 @@ object Either {
     private class MonadImpl<L>(override val applicative: Applicative.API<TK<L>>) :
         Monad.API<TK<L>>,
         Monad.WithReturnsMapAndJoin<TK<L>>,
-        Monad.ViaApplicative<TK<L>> {
+        Monad.ViaApplicative<TK<L>>,
+        Applicative.Core<TK<L>> by applicative {
         override suspend fun <A> join(mma: App<TK<L>, App<TK<L>, A>>): App<TK<L>, A> =
             when (val ma = mma.fix) {
                 is T.Right -> ma.value
                 is T.Left -> T.Left(ma.value)
             }
+
+        override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<TK<L>, A>) -> App<TK<L>, B> {
+            return applicative.map(f)
+        }
     }
 
     fun <L> functor(): Functor.API<TK<L>> = FunctorImpl()
