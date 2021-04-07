@@ -3,9 +3,9 @@ package io.smallibs.pilin.standard
 import io.smallibs.pilin.control.Applicative
 import io.smallibs.pilin.control.Functor
 import io.smallibs.pilin.control.Monad
-import io.smallibs.pilin.core.Fun.curry
-import io.smallibs.pilin.module.open
-import io.smallibs.pilin.standard.Either.TK.Companion.fix
+import io.smallibs.pilin.standard.Either.TK.Companion.fold
+import io.smallibs.pilin.standard.Either.TK.Companion.left
+import io.smallibs.pilin.standard.Either.TK.Companion.right
 import io.smallibs.pilin.type.App
 
 object Either {
@@ -15,61 +15,48 @@ object Either {
         data class Right<L, R>(val value: R) : T<L, R>()
     }
 
+    // This code can be automatically generated
     class TK<L> private constructor() {
         companion object {
             val <L, R> App<TK<L>, R>.fix: T<L, R>
                 get() = this as T<L, R>
+
+            suspend fun <L, R, B> App<TK<L>, R>.fold(l: suspend (L) -> B, r: suspend (R) -> B): B =
+                when (val self = this.fix) {
+                    is T.Left -> l(self.value)
+                    is T.Right -> r(self.value)
+                }
+
+            fun <L, R> left(l: L): App<TK<L>, R> = T.Left(l)
+            fun <L, R> right(r: R): App<TK<L>, R> = T.Right(r)
+
         }
     }
 
     private class FunctorImpl<L> : Functor.API<TK<L>> {
         override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<TK<L>, A>) -> App<TK<L>, B> =
-            { ma ->
-                when (val a = ma.fix) {
-                    is T.Left -> T.Left(a.value)
-                    is T.Right -> T.Right(f(a.value))
-                }
-            }
+            { ma -> ma.fold(::left) { a -> right(f(a)) } }
     }
 
-    private class ApplicativeImpl<L>(override val functor: Functor.Core<TK<L>>) :
+    private class ApplicativeImpl<L> :
         Applicative.API<TK<L>>,
-        Applicative.WithPureMapAndProduct<TK<L>>,
-        Applicative.ViaFunctor<TK<L>> {
-        override suspend fun <R> pure(a: R): App<TK<L>, R> = T.Right(a)
-
-        override suspend fun <A, B> product(ma: App<TK<L>, A>): suspend (mb: App<TK<L>, B>) -> App<TK<L>, Pair<A, B>> =
-            { mb ->
-                when (val a = ma.fix) {
-                    is T.Right ->
-                        when (val b = mb.fix) {
-                            is T.Right -> T.Right(a.value to b.value)
-                            is T.Left -> T.Left(b.value)
-                        }
-                    is T.Left -> T.Left(a.value)
-                }
-            }
+        Applicative.WithPureAndApply<TK<L>> {
+        override suspend fun <R> pure(a: R): App<TK<L>, R> = right(a)
+        override suspend fun <A, B> apply(mf: App<TK<L>, suspend (A) -> B>): suspend (App<TK<L>, A>) -> App<TK<L>, B> =
+            { ma -> mf.fold(::left) { f -> ma.fold(::left) { a -> pure(f(a)) } } }
     }
 
-    private class MonadImpl<L>(override val applicative: Applicative.API<TK<L>>) :
+    @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
+    private class MonadImpl<L>(applicative: Applicative.API<TK<L>>) :
         Monad.API<TK<L>>,
         Monad.WithReturnsMapAndJoin<TK<L>>,
-        Monad.ViaApplicative<TK<L>>,
-        Applicative.Core<TK<L>> by applicative {
-        override suspend fun <A> join(mma: App<TK<L>, App<TK<L>, A>>): App<TK<L>, A> =
-            when (val ma = mma.fix) {
-                is T.Right -> ma.value
-                is T.Left -> T.Left(ma.value)
-            }
-
-        override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<TK<L>, A>) -> App<TK<L>, B> {
-            return applicative.map(f)
-        }
+        Monad.ViaApplicative<TK<L>>(applicative) {
+        override suspend fun <A> join(mma: App<TK<L>, App<TK<L>, A>>): App<TK<L>, A> = mma.fold(::left) { it }
     }
 
     fun <L> functor(): Functor.API<TK<L>> = FunctorImpl()
 
-    fun <L> applicative(): Applicative.API<TK<L>> = ApplicativeImpl(functor())
+    fun <L> applicative(): Applicative.API<TK<L>> = ApplicativeImpl()
 
     fun <L> monad(): Monad.API<TK<L>> = MonadImpl(applicative())
 

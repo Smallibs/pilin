@@ -10,6 +10,7 @@ object Identity {
 
     data class Id<A>(val value: A) : App<TK, A>
 
+    // This code can be automatically generated
     class TK private constructor() {
         companion object {
             val <A> App<TK, A>.fix: Id<A>
@@ -22,21 +23,18 @@ object Identity {
             { ma -> Id(f(ma.fix.value)) }
     }
 
-    private class ApplicativeImpl(override val functor: Functor.Core<TK>) :
+    private class ApplicativeImpl :
         Applicative.API<TK>,
-        Applicative.WithPureMapAndProduct<TK>,
-        Applicative.ViaFunctor<TK> {
+        Applicative.WithPureAndApply<TK> {
         override suspend fun <A> pure(a: A): App<TK, A> = Id(a)
-
-        override suspend fun <A, B> product(ma: App<TK, A>): suspend (mb: App<TK, B>) -> App<TK, Pair<A, B>> =
-            { mb -> Id(ma.fix.value to mb.fix.value) }
+        override suspend fun <A, B> apply(mf: App<TK, suspend (A) -> B>): suspend (App<TK, A>) -> App<TK, B> =
+            { ma -> pure(mf.fix.value(ma.fix.value)) }
     }
 
-    private class MonadImpl(override val applicative: Applicative.API<TK>) :
+    private class MonadImpl(applicative: Applicative.API<TK>) :
         Monad.API<TK>,
         Monad.WithReturnsMapAndJoin<TK>,
-        Monad.ViaApplicative<TK>,
-        Applicative.Core<TK> by applicative {
+        Monad.ViaApplicative<TK>(applicative) {
         override suspend fun <A> join(mma: App<TK, App<TK, A>>): App<TK, A> =
             mma.fix.value
 
@@ -47,7 +45,7 @@ object Identity {
 
     val functor: Functor.API<TK> = FunctorImpl()
 
-    val applicative: Applicative.API<TK> = ApplicativeImpl(functor)
+    val applicative: Applicative.API<TK> = ApplicativeImpl()
 
     val monad: Monad.API<TK> = MonadImpl(applicative)
 

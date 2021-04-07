@@ -42,10 +42,9 @@ object Monad {
             bind<App<F, A>, A>(Fun::id)(mma)
     }
 
-    interface ViaApplicative<F> : Core<F> {
-        val applicative: Applicative.Core<F>
-
-        override suspend fun <A> returns(a: A): App<F, A> = applicative.pure(a)
+    abstract class ViaApplicative<F>(private val applicative: Applicative.Core<F>) : Core<F>,
+        Applicative.Core<F> by applicative {
+        override suspend fun <A> returns(a: A): App<F, A> = pure(a)
         override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<F, A>) -> App<F, B> = applicative.map(f)
     }
 
@@ -57,7 +56,13 @@ object Monad {
             { ma -> { mb -> bind<A, C> { a -> bind<B, C> { b -> returns(f(a)(b)) }(mb) }(ma) } }
 
         suspend fun <A, B, C, D> lift3(f: suspend (A) -> suspend (B) -> suspend (C) -> D): suspend (App<F, A>) -> suspend (App<F, B>) -> suspend (App<F, C>) -> App<F, D> =
-            { ma -> { mb -> { mc -> bind<A, D> { a -> bind<B, D> { b -> bind<C,D> { c -> returns(f(a)(b)(c)) }(mc) }(mb) }(ma) } }}
+            { ma ->
+                { mb ->
+                    { mc ->
+                        bind<A, D> { a -> bind<B, D> { b -> bind<C, D> { c -> returns(f(a)(b)(c)) }(mc) }(mb) }(ma)
+                    }
+                }
+            }
     }
 
     @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")

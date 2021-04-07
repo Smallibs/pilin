@@ -14,9 +14,7 @@ object Applicative {
     interface WithPureMapAndProduct<F> : Core<F> {
         override suspend fun <A, B> apply(mf: App<F, suspend (A) -> B>): suspend (App<F, A>) -> App<F, B> =
             { ma ->
-                map<Pair<suspend (A) -> B, A>, B> { p ->
-                    p.first(p.second)
-                }(product<suspend (A) -> B, A>(mf)(ma))
+                map<Pair<suspend (A) -> B, A>, B> { p -> p.first(p.second) }(product<suspend (A) -> B, A>(mf)(ma))
             }
     }
 
@@ -28,11 +26,7 @@ object Applicative {
             apply(apply(pure(curry { a: A, b: B -> a to b }))(ma))
     }
 
-    interface ViaFunctor<F> : Core<F> {
-        val functor: Functor.Core<F>
-
-        override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<F, A>) -> App<F, B> = functor.map(f)
-    }
+    abstract class ViaFunctor<F>(functor: Functor.Core<F>) : Core<F>, Functor.Core<F> by functor
 
     class Operation<F>(private val c: Core<F>) : Core<F> by c {
         suspend fun <A, B> lift1(f: suspend (A) -> B): suspend (App<F, A>) -> App<F, B> =
