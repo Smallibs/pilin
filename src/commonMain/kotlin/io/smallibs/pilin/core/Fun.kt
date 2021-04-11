@@ -7,6 +7,9 @@ object Fun {
 
     suspend fun <A> id(a: A): A = a
 
+    suspend fun <A,B,C> flip(f: suspend (A) -> suspend (B) -> C) : suspend (B) -> suspend (A) -> C =
+        { b -> { a -> f(a)(b) }}
+
     suspend infix fun <A, B, C> compose(f: suspend (B) -> C): suspend (suspend (A) -> B) -> suspend (A) -> C =
         { g -> { x -> f(g(x)) } }
 

@@ -3,8 +3,6 @@ package io.smallibs.pilin.laws
 import io.smallibs.pilin.control.Applicative
 import io.smallibs.pilin.core.Compose
 import io.smallibs.pilin.core.Fun
-import io.smallibs.pilin.core.Fun.id
-import io.smallibs.pilin.module.open
 import io.smallibs.pilin.type.App
 
 object Applicative {
@@ -13,14 +11,14 @@ object Applicative {
         f: suspend (A) -> B,
         x: App<F, A>,
     ): Boolean =
-        open(this.infix) {
+        with(this.infix) {
             f map x == pure(f) apply x
         }
 
     suspend fun <F, A> Applicative.API<F>.`(pure id) apply v = v`(
         x: App<F, A>,
     ): Boolean =
-        open(this.infix) {
+        with(this.infix) {
             val id: suspend (A) -> A = Fun::id
             pure(id) apply (x) == x
         }
@@ -29,7 +27,7 @@ object Applicative {
         f: suspend (A) -> B,
         x: A,
     ): Boolean =
-        open(this.infix) {
+        with(this.infix) {
             pure(f) apply pure(x) == pure(f(x))
         }
 
@@ -37,7 +35,7 @@ object Applicative {
         f: App<F, suspend (A) -> B>,
         x: A,
     ): Boolean =
-        open(this.infix) {
+        with(this.infix) {
             val g: suspend (suspend (A) -> B) -> B = { g -> g(x) }
             f apply pure(x) == pure(g) apply (f)
         }
@@ -47,7 +45,7 @@ object Applicative {
         g: App<F, suspend (A) -> B>,
         x: App<F, A>,
     ): Boolean =
-        open(this.infix) {
+        with(this.infix) {
             val c: Compose<A, B, C> = Fun::compose
             f apply (g apply x) == pure(c) apply f apply g apply x
         }
