@@ -18,17 +18,17 @@ object Option {
     // This code can be automatically generated
     class TK private constructor() {
         companion object {
-            val <A> App<TK, A>.fix: T<A>
+            private val <A> App<TK, A>.fix: T<A>
                 get() = this as T<A>
+
+            fun <A> none(): App<TK, A> = T.None()
+            fun <A> some(a: A): App<TK, A> = T.Some(a)
 
             suspend fun <A, B> App<TK, A>.fold(n: suspend () -> B, s: suspend (A) -> B): B =
                 when (val self = this.fix) {
                     is T.None -> n()
                     is T.Some -> s(self.value)
                 }
-
-            fun <A> none(): App<TK, A> = T.None()
-            fun <A> some(a: A): App<TK, A> = T.Some(a)
         }
     }
 
@@ -45,7 +45,6 @@ object Option {
             { ma -> mf.fold(::none) { f -> ma.fold(::none) { a -> pure(f(a)) } } }
     }
 
-    @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
     private class MonadImpl(applicative: Applicative.API<TK>) :
         Monad.API<TK>,
         Monad.WithReturnsMapAndJoin<TK>,

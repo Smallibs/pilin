@@ -3,7 +3,8 @@ package io.smallibs.pilin.standard
 import io.smallibs.pilin.control.Applicative
 import io.smallibs.pilin.control.Functor
 import io.smallibs.pilin.control.Monad
-import io.smallibs.pilin.standard.Identity.TK.Companion.fix
+import io.smallibs.pilin.standard.Identity.TK.Companion.fold
+import io.smallibs.pilin.standard.Identity.TK.Companion.id
 import io.smallibs.pilin.type.App
 
 object Identity {
@@ -13,14 +14,18 @@ object Identity {
     // This code can be automatically generated
     class TK private constructor() {
         companion object {
-            val <A> App<TK, A>.fix: Id<A>
-                get() = this as Id<A>
+            private val <A> App<TK, A>.fix: Id<A> get() = this as Id<A>
+
+            fun <A> id(a: A): App<TK, A> = Id(a)
+
+            suspend fun <A, B> App<TK, A>.fold(f: suspend (A) -> B): B = f(this.fix.value)
         }
     }
 
     private class FunctorImpl : Functor.API<TK> {
         override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<TK, A>) -> App<TK, B> =
-            { ma -> Id(f(ma.fix.value)) }
+            { ma -> id(ma.fold(f)) }
+
     }
 
     private class ApplicativeImpl :
@@ -28,7 +33,7 @@ object Identity {
         Applicative.WithPureAndApply<TK> {
         override suspend fun <A> pure(a: A): App<TK, A> = Id(a)
         override suspend fun <A, B> apply(mf: App<TK, suspend (A) -> B>): suspend (App<TK, A>) -> App<TK, B> =
-            { ma -> pure(mf.fix.value(ma.fix.value)) }
+            { ma -> mf.fold { f -> ma.fold { a -> pure(f(a)) } } }
     }
 
     private class MonadImpl(applicative: Applicative.API<TK>) :
@@ -36,7 +41,7 @@ object Identity {
         Monad.WithReturnsMapAndJoin<TK>,
         Monad.ViaApplicative<TK>(applicative) {
         override suspend fun <A> join(mma: App<TK, App<TK, A>>): App<TK, A> =
-            mma.fix.value
+            mma.fold { it }
 
         override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<TK, A>) -> App<TK, B> {
             return applicative.map(f)

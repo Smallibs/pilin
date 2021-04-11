@@ -18,18 +18,16 @@ object Either {
     // This code can be automatically generated
     class TK<L> private constructor() {
         companion object {
-            val <L, R> App<TK<L>, R>.fix: T<L, R>
-                get() = this as T<L, R>
+            private val <L, R> App<TK<L>, R>.fix: T<L, R> get() = this as T<L, R>
+
+            fun <L, R> left(l: L): App<TK<L>, R> = T.Left(l)
+            fun <L, R> right(r: R): App<TK<L>, R> = T.Right(r)
 
             suspend fun <L, R, B> App<TK<L>, R>.fold(l: suspend (L) -> B, r: suspend (R) -> B): B =
                 when (val self = this.fix) {
                     is T.Left -> l(self.value)
                     is T.Right -> r(self.value)
                 }
-
-            fun <L, R> left(l: L): App<TK<L>, R> = T.Left(l)
-            fun <L, R> right(r: R): App<TK<L>, R> = T.Right(r)
-
         }
     }
 
@@ -46,7 +44,6 @@ object Either {
             { ma -> mf.fold(::left) { f -> ma.fold(::left) { a -> pure(f(a)) } } }
     }
 
-    @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
     private class MonadImpl<L>(applicative: Applicative.API<TK<L>>) :
         Monad.API<TK<L>>,
         Monad.WithReturnsMapAndJoin<TK<L>>,
