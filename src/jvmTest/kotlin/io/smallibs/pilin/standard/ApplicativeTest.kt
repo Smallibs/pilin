@@ -9,15 +9,16 @@ import io.smallibs.pilin.standard.Either.T.Right
 import io.smallibs.pilin.standard.Identity.Id
 import io.smallibs.pilin.standard.Option.T.None
 import io.smallibs.pilin.standard.Option.T.Some
+import io.smallibs.pilin.type.Fun
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.quicktheories.WithQuickTheories
 
 internal class ApplicativeTest : WithQuickTheories {
 
-    private val str: suspend (Int) -> String = { i -> i.toString() }
-    private val ten: suspend (String) -> String = { s -> s + "0" }
-    private val int: suspend (String) -> Int = { s -> s.toInt() }
+    private val str: Fun<Int,String> = { i -> i.toString() }
+    private val ten: Fun<String,String> = { s -> s + "0" }
+    private val int: Fun<String,Int> = { s -> s.toInt() }
 
     // TODO(didier)
     // A dedicate generator per ADT should be provided

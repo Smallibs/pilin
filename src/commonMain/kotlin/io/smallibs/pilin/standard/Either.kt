@@ -7,6 +7,7 @@ import io.smallibs.pilin.standard.Either.TK.Companion.fold
 import io.smallibs.pilin.standard.Either.TK.Companion.left
 import io.smallibs.pilin.standard.Either.TK.Companion.right
 import io.smallibs.pilin.type.App
+import io.smallibs.pilin.type.Fun
 
 object Either {
 
@@ -23,7 +24,7 @@ object Either {
             fun <L, R> left(l: L): App<TK<L>, R> = T.Left(l)
             fun <L, R> right(r: R): App<TK<L>, R> = T.Right(r)
 
-            suspend fun <L, R, B> App<TK<L>, R>.fold(l: suspend (L) -> B, r: suspend (R) -> B): B =
+            suspend fun <L, R, B> App<TK<L>, R>.fold(l: Fun<L, B>, r: Fun<R, B>): B =
                 when (val self = this.fix) {
                     is T.Left -> l(self.value)
                     is T.Right -> r(self.value)
@@ -32,7 +33,7 @@ object Either {
     }
 
     private class FunctorImpl<L> : Functor.API<TK<L>> {
-        override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<TK<L>, A>) -> App<TK<L>, B> =
+        override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<TK<L>, A>, App<TK<L>, B>> =
             { ma -> ma.fold(::left) { a -> right(f(a)) } }
     }
 
@@ -40,7 +41,7 @@ object Either {
         Applicative.API<TK<L>>,
         Applicative.WithPureAndApply<TK<L>> {
         override suspend fun <R> pure(a: R): App<TK<L>, R> = right(a)
-        override suspend fun <A, B> apply(mf: App<TK<L>, suspend (A) -> B>): suspend (App<TK<L>, A>) -> App<TK<L>, B> =
+        override suspend fun <A, B> apply(mf: App<TK<L>, Fun<A, B>>): Fun<App<TK<L>, A>, App<TK<L>, B>> =
             { ma -> mf.fold(::left) { f -> ma.fold(::left) { a -> pure(f(a)) } } }
     }
 

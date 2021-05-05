@@ -7,14 +7,15 @@ import io.smallibs.pilin.standard.Either.T.Right
 import io.smallibs.pilin.standard.Identity.Id
 import io.smallibs.pilin.standard.Option.T.None
 import io.smallibs.pilin.standard.Option.T.Some
+import io.smallibs.pilin.type.Fun
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.quicktheories.WithQuickTheories
 
 internal class FunctorTest : WithQuickTheories {
 
-    private val str: suspend (Int) -> String = { i -> i.toString() }
-    private val int: suspend (String) -> Int = { i -> i.toInt() }
+    private val str: Fun<Int, String> = { i -> i.toString() }
+    private val int: Fun<String, Int> = { i -> i.toInt() }
 
     @Test
     fun `(Identity) map id = id `() {

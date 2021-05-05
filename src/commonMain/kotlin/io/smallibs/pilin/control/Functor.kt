@@ -1,15 +1,16 @@
 package io.smallibs.pilin.control
 
 import io.smallibs.pilin.type.App
+import io.smallibs.pilin.type.Fun
 
 object Functor {
 
     interface Core<F> {
-        suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<F, A>) -> App<F, B>
+        suspend fun <A, B> map(f: Fun<A, B>): Fun<App<F, A>, App<F, B>>
     }
 
     class Operation<F>(private val c: Core<F>) : Core<F> by c {
-        suspend fun <A, B> replace(a: A): suspend (App<F, B>) -> App<F, A> =
+        suspend fun <A, B> replace(a: A): Fun<App<F, B>, App<F, A>> =
             map { a }
 
         suspend fun <A> void(ma: App<F, A>): App<F, Unit> =
@@ -17,7 +18,7 @@ object Functor {
     }
 
     open class Infix<F>(private val c: Core<F>) : Core<F> by c {
-        suspend infix fun <A, B> (suspend (A) -> B).map(ma: App<F, A>): App<F, B> = c.map(this)(ma)
+        suspend infix fun <A, B> (Fun<A, B>).map(ma: App<F, A>): App<F, B> = c.map(this)(ma)
     }
 
     interface API<F> : Core<F> {

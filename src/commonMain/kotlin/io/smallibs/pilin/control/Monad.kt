@@ -1,61 +1,62 @@
 package io.smallibs.pilin.control
 
-import io.smallibs.pilin.core.Fun
+import io.smallibs.pilin.core.Standard
 import io.smallibs.pilin.type.App
+import io.smallibs.pilin.type.Fun
 
 object Monad {
 
     interface Core<F> : Applicative.Core<F> {
         suspend fun <A> returns(a: A): App<F, A>
         suspend fun <A> join(mma: App<F, App<F, A>>): App<F, A>
-        suspend fun <A, B> bind(f: suspend (A) -> App<F, B>): suspend (App<F, A>) -> App<F, B>
-        suspend fun <A, B, C> leftToRight(f: suspend (A) -> App<F, B>): suspend (suspend (B) -> App<F, C>) -> suspend (A) -> App<F, C>
+        suspend fun <A, B> bind(f: Fun<A, App<F, B>>): Fun<App<F, A>, App<F, B>>
+        suspend fun <A, B, C> leftToRight(f: Fun<A, App<F, B>>): Fun<Fun<B, App<F, C>>, Fun<A, App<F, C>>>
     }
 
     interface WithReturnsBindAndReturn<F> : Core<F> {
-        override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<F, A>) -> App<F, B> =
+        override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<F, A>, App<F, B>> =
             bind { a -> returns(f(a)) }
 
         override suspend fun <A> join(mma: App<F, App<F, A>>): App<F, A> =
-            bind<App<F, A>, A>(Fun::id)(mma)
+            bind<App<F, A>, A>(Standard::id)(mma)
 
-        override suspend fun <A, B, C> leftToRight(f: suspend (A) -> App<F, B>): suspend (suspend (B) -> App<F, C>) -> suspend (A) -> App<F, C> =
+        override suspend fun <A, B, C> leftToRight(f: Fun<A, App<F, B>>): Fun<Fun<B, App<F, C>>, Fun<A, App<F, C>>> =
             { g -> { x -> bind(g)(f(x)) } }
     }
 
     interface WithReturnsMapAndJoin<F> : Core<F> {
-        override suspend fun <A, B> bind(f: suspend (A) -> App<F, B>): suspend (App<F, A>) -> App<F, B> =
+        override suspend fun <A, B> bind(f: Fun<A, App<F, B>>): Fun<App<F, A>, App<F, B>> =
             { x -> join(map(f)(x)) }
 
-        override suspend fun <A, B, C> leftToRight(f: suspend (A) -> App<F, B>): suspend (suspend (B) -> App<F, C>) -> suspend (A) -> App<F, C> =
+        override suspend fun <A, B, C> leftToRight(f: Fun<A, App<F, B>>): Fun<Fun<B, App<F, C>>, Fun<A, App<F, C>>> =
             { g -> { x -> bind(g)(f(x)) } }
     }
 
     interface WithReturnsAndKleisli<F> : Core<F> {
-        override suspend fun <A, B> bind(f: suspend (A) -> App<F, B>): suspend (App<F, A>) -> App<F, B> =
+        override suspend fun <A, B> bind(f: Fun<A, App<F, B>>): Fun<App<F, A>, App<F, B>> =
             { m -> leftToRight<Unit, A, B> { m }(f)(Unit) }
 
-        override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<F, A>) -> App<F, B> =
+        override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<F, A>, App<F, B>> =
             bind { a -> returns(f(a)) }
 
         override suspend fun <A> join(mma: App<F, App<F, A>>): App<F, A> =
-            bind<App<F, A>, A>(Fun::id)(mma)
+            bind<App<F, A>, A>(Standard::id)(mma)
     }
 
     abstract class ViaApplicative<F>(private val applicative: Applicative.Core<F>) : Core<F>,
         Applicative.Core<F> by applicative {
         override suspend fun <A> returns(a: A): App<F, A> = pure(a)
-        override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<F, A>) -> App<F, B> = applicative.map(f)
+        override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<F, A>, App<F, B>> = applicative.map(f)
     }
 
     class Operation<F>(private val c: Core<F>) : Core<F> by c {
-        suspend fun <A, B> lift(f: suspend (A) -> B): suspend (App<F, A>) -> App<F, B> =
+        suspend fun <A, B> lift(f: Fun<A, B>): Fun<App<F, A>, App<F, B>> =
             map(f)
 
-        suspend fun <A, B, C> lift2(f: suspend (A) -> suspend (B) -> C): suspend (App<F, A>) -> suspend (App<F, B>) -> App<F, C> =
+        suspend fun <A, B, C> lift2(f: Fun<A, Fun<B, C>>): Fun<App<F, A>, Fun<App<F, B>, App<F, C>>> =
             { ma -> { mb -> bind<A, C> { a -> bind<B, C> { b -> returns(f(a)(b)) }(mb) }(ma) } }
 
-        suspend fun <A, B, C, D> lift3(f: suspend (A) -> suspend (B) -> suspend (C) -> D): suspend (App<F, A>) -> suspend (App<F, B>) -> suspend (App<F, C>) -> App<F, D> =
+        suspend fun <A, B, C, D> lift3(f: Fun<A, Fun<B, Fun<C, D>>>): Fun<App<F, A>, Fun<App<F, B>, Fun<App<F, C>, App<F, D>>>> =
             { ma ->
                 { mb ->
                     { mc ->
@@ -67,7 +68,7 @@ object Monad {
 
     @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
     class Infix<F>(private val c: Core<F>) : Applicative.Infix<F>(c), Core<F> by c {
-        suspend infix fun <A, B> App<F, A>.bind(f: suspend (A) -> App<F, B>): App<F, B> = c.bind(f)(this)
+        suspend infix fun <A, B> App<F, A>.bind(f: Fun<A, App<F, B>>): App<F, B> = c.bind(f)(this)
     }
 
     interface API<F> : Core<F> {

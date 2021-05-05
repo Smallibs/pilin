@@ -1,10 +1,11 @@
 package io.smallibs.pilin.laws
 
 import io.smallibs.pilin.control.Functor
-import io.smallibs.pilin.core.Fun
-import io.smallibs.pilin.core.Fun.Infix.compose
-import io.smallibs.pilin.core.Fun.id
+import io.smallibs.pilin.core.Standard
+import io.smallibs.pilin.core.Standard.Infix.compose
+import io.smallibs.pilin.core.Standard.id
 import io.smallibs.pilin.type.App
+import io.smallibs.pilin.type.Fun
 
 object Functor {
 
@@ -12,13 +13,13 @@ object Functor {
         x: App<F, A>,
     ): Boolean =
         with(this.infix) {
-            val id: suspend (A) -> A = Fun::id
+            val id: Fun<A, A> = Standard::id
             id map (x) == id(x)
         }
 
     suspend fun <F, A, B, C> Functor.API<F>.`map (f compose g) = map f compose map g`(
-        f: suspend (B) -> C,
-        g: suspend (A) -> B,
+        f: Fun<B, C>,
+        g: Fun<A, B>,
         x: App<F, A>,
     ): Boolean =
         with(this.infix) {

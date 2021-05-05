@@ -7,6 +7,8 @@ import io.smallibs.pilin.standard.Option.TK.Companion.fold
 import io.smallibs.pilin.standard.Option.TK.Companion.none
 import io.smallibs.pilin.standard.Option.TK.Companion.some
 import io.smallibs.pilin.type.App
+import io.smallibs.pilin.type.Fun
+import io.smallibs.pilin.type.Supplier
 
 object Option {
 
@@ -24,7 +26,7 @@ object Option {
             fun <A> none(): App<TK, A> = T.None()
             fun <A> some(a: A): App<TK, A> = T.Some(a)
 
-            suspend fun <A, B> App<TK, A>.fold(n: suspend () -> B, s: suspend (A) -> B): B =
+            suspend fun <A, B> App<TK, A>.fold(n: Supplier<B>, s: Fun<A, B>): B =
                 when (val self = this.fix) {
                     is T.None -> n()
                     is T.Some -> s(self.value)
@@ -33,7 +35,7 @@ object Option {
     }
 
     private class FunctorImpl : Functor.API<TK> {
-        override suspend fun <A, B> map(f: suspend (A) -> B): suspend (App<TK, A>) -> App<TK, B> =
+        override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<TK, A>, App<TK, B>> =
             { ma -> ma.fold(::none) { a -> some(f(a)) } }
     }
 
@@ -41,7 +43,7 @@ object Option {
         Applicative.API<TK>,
         Applicative.WithPureAndApply<TK> {
         override suspend fun <A> pure(a: A): App<TK, A> = some(a)
-        override suspend fun <A, B> apply(mf: App<TK, suspend (A) -> B>): suspend (App<TK, A>) -> App<TK, B> =
+        override suspend fun <A, B> apply(mf: App<TK, Fun<A, B>>): Fun<App<TK, A>, App<TK, B>> =
             { ma -> mf.fold(::none) { f -> ma.fold(::none) { a -> pure(f(a)) } } }
     }
 
