@@ -51,7 +51,8 @@ object Option {
         Monad.API<TK>,
         Monad.WithReturnsMapAndJoin<TK>,
         Monad.ViaApplicative<TK>(applicative) {
-        override suspend fun <A> join(mma: App<TK, App<TK, A>>): App<TK, A> = mma.fold(::none) { it }
+        override suspend fun <A> join(mma: App<TK, App<TK, A>>): App<TK, A> =
+            mma.fold(::none) { it }
     }
 
     val functor: Functor.API<TK> = FunctorImpl()

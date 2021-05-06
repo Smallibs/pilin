@@ -43,10 +43,6 @@ object Identity {
         Monad.ViaApplicative<TK>(applicative) {
         override suspend fun <A> join(mma: App<TK, App<TK, A>>): App<TK, A> =
             mma.fold { it }
-
-        override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<TK, A>, App<TK, B>> {
-            return applicative.map(f)
-        }
     }
 
     val functor: Functor.API<TK> = FunctorImpl()

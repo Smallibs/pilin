@@ -49,7 +49,8 @@ object Either {
         Monad.API<TK<L>>,
         Monad.WithReturnsMapAndJoin<TK<L>>,
         Monad.ViaApplicative<TK<L>>(applicative) {
-        override suspend fun <A> join(mma: App<TK<L>, App<TK<L>, A>>): App<TK<L>, A> = mma.fold(::left) { it }
+        override suspend fun <A> join(mma: App<TK<L>, App<TK<L>, A>>): App<TK<L>, A> =
+            mma.fold(::left) { it }
     }
 
     fun <L> functor(): Functor.API<TK<L>> = FunctorImpl()
