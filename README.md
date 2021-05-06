@@ -97,6 +97,18 @@ Comprehension(Option.monad) {
 }
 ```
 
+Of course this code can be generalized sine monad is injected:
+
+```kotlin
+suspend fun <T> doSomething(m: Monad.API<T>): App<T, Int> =
+    Comprehension(m) {
+        val (a) = returns(40)
+        val (b) = returns(2)
+        a + b
+    }
+```        
+
+
 # License
 
 MIT License
