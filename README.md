@@ -97,7 +97,7 @@ Comprehension(Option.monad) {
 }
 ```
 
-Of course this code can be generalized sine monad is injected:
+Of course this code can be generalized since monad is injected:
 
 ```kotlin
 suspend fun <T> doSomething(m: Monad.API<T>): App<T, Int> =
