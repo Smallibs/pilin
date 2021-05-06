@@ -1,25 +1,57 @@
 package io.smallibs.pilin.standard
 
 import io.smallibs.pilin.control.Comprehension
-import io.smallibs.pilin.standard.Identity.TK
+import io.smallibs.pilin.standard.Either.TK.Companion.left
+import io.smallibs.pilin.standard.Either.TK.Companion.right
+import io.smallibs.pilin.standard.Option.TK.Companion.none
+import io.smallibs.pilin.standard.Option.TK.Companion.some
 import kotlinx.coroutines.runBlocking
-import org.junit.Ignore
 import org.junit.Test
-import org.quicktheories.WithQuickTheories
+import kotlin.test.assertEquals
 
-internal class SyntaxTest : WithQuickTheories {
+internal class SyntaxTest {
 
-    @Ignore @Test
-    fun `Should be able to chain Identity effects`() {
-        runBlocking {
-            Comprehension.run<TK, Int>(Identity.monad) {
-                println("First line ")
-                val a = returns(1).exec()
-                println("Second line with $a")
-                val b = returns(2).exec()
-                println("Third line with $b")
+    @Test
+    fun `Should be able to chain Option effects`() {
+        assertEquals(some(42), runBlocking {
+            Comprehension.run<Option.TK, Int>(Option.monad) {
+                val (a) = returns(40)
+                val (b) = returns(2)
                 a + b
             }
-        }
+        })
+    }
+
+    @Test
+    fun `Should be able to stop chained Option effects`() {
+        assertEquals(none(), runBlocking {
+            Comprehension.run<Option.TK, Int>(Option.monad) {
+                val (a) = returns(2)
+                val (b) = none<Int>()
+                a + b
+            }
+        })
+    }
+
+    @Test
+    fun `Should be able to chain Either effects`() {
+        assertEquals(right(42), runBlocking {
+            Comprehension.run<Either.TK<String>, Int>(Either.monad()) {
+                val (a) = returns(2)
+                val (b) = returns(40)
+                a + b
+            }
+        })
+    }
+
+    @Test
+    fun `Should be able to stop chained Either effects`() {
+        assertEquals(left("Cannot compute B"), runBlocking {
+            Comprehension.run<Either.TK<String>, Int>(Either.monad()) {
+                val (a) = returns(42)
+                val (b) = left<String, Int>("Cannot compute B")
+                a + b
+            }
+        })
     }
 }

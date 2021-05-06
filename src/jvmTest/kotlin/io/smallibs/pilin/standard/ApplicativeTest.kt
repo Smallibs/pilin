@@ -32,7 +32,7 @@ internal class ApplicativeTest : WithQuickTheories {
 
     @Test
     fun `(Option) map f x = apply (pure f) x`() {
-        runBlocking { Option.applicative.`map f x = apply (pure f) x`(str, None()) }
+        check(runBlocking { Option.applicative.`map f x = apply (pure f) x`(str, None()) })
 
         qt().forAll(integers().all()).check { a ->
             runBlocking { Option.applicative.`map f x = apply (pure f) x`(str, Some(a)) }
@@ -41,7 +41,7 @@ internal class ApplicativeTest : WithQuickTheories {
 
     @Test
     fun `(Either) map f x = apply (pure f) x`() {
-        runBlocking { Either.applicative<Unit>().`map f x = apply (pure f) x`(str, Left(Unit)) }
+        check(runBlocking { Either.applicative<Unit>().`map f x = apply (pure f) x`(str, Left(Unit)) })
 
         qt().forAll(integers().all()).check { a ->
             runBlocking { Either.applicative<Unit>().`map f x = apply (pure f) x`(str, Right(a)) }
@@ -57,7 +57,7 @@ internal class ApplicativeTest : WithQuickTheories {
 
     @Test
     fun `(Option) (pure id) apply v = v`() {
-        runBlocking { Option.applicative.`(pure id) apply v = v`(None<Int>()) }
+        check(runBlocking { Option.applicative.`(pure id) apply v = v`(None<Int>()) })
 
         qt().forAll(integers().all()).check { a ->
             runBlocking { Option.applicative.`(pure id) apply v = v`(Some(a)) }
@@ -66,7 +66,7 @@ internal class ApplicativeTest : WithQuickTheories {
 
     @Test
     fun `(Either) (pure id) apply v = v`() {
-        runBlocking { Either.applicative<Unit>().`(pure id) apply v = v`(Left<Unit, Int>(Unit)) }
+        check(runBlocking { Either.applicative<Unit>().`(pure id) apply v = v`(Left<Unit, Int>(Unit)) })
 
         qt().forAll(integers().all()).check { a ->
             runBlocking { Either.applicative<Unit>().`(pure id) apply v = v`(Right(a)) }

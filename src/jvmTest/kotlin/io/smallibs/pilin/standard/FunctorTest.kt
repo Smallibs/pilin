@@ -26,7 +26,7 @@ internal class FunctorTest : WithQuickTheories {
 
     @Test
     fun `(Option) map id = id `() {
-        runBlocking { Option.functor.`map id = id`(None<Int>()) }
+        check(runBlocking { Option.functor.`map id = id`(None<Int>()) })
 
         qt().forAll(integers().all()).check { a ->
             runBlocking { Option.functor.`map id = id`(Some(a)) }
@@ -35,7 +35,7 @@ internal class FunctorTest : WithQuickTheories {
 
     @Test
     fun `(Either) map id = id `() {
-        runBlocking { Either.functor<Unit>().`map id = id`(Left<Unit, Int>(Unit)) }
+        check(runBlocking { Either.functor<Unit>().`map id = id`(Left<Unit, Int>(Unit)) })
 
         qt().forAll(integers().all()).check { a ->
             runBlocking { Either.functor<Unit>().`map id = id`(Right(a)) }
