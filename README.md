@@ -19,7 +19,7 @@ The main advantage of this approach is the capability to deliver a comprehension
 approach in order to simplify the code.
 
 The construction is based on a highly modular system inspired by the [Preface](https://ocaml-preface.github.io/preface/index.html)
-library!
+library and of course [Arrow.kt](https://arrow-kt.io) and in particular for the comprehension implementation.
 
 ## A taste of Pilin
 
