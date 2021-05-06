@@ -2,11 +2,11 @@ package io.smallibs.pilin.standard
 
 import io.smallibs.pilin.laws.Functor.`map (f compose g) = map f compose map g`
 import io.smallibs.pilin.laws.Functor.`map id = id`
-import io.smallibs.pilin.standard.Either.T.Left
-import io.smallibs.pilin.standard.Either.T.Right
-import io.smallibs.pilin.standard.Identity.Id
-import io.smallibs.pilin.standard.Option.T.None
-import io.smallibs.pilin.standard.Option.T.Some
+import io.smallibs.pilin.standard.Either.TK.Companion.left
+import io.smallibs.pilin.standard.Either.TK.Companion.right
+import io.smallibs.pilin.standard.Identity.TK.Companion.id
+import io.smallibs.pilin.standard.Option.TK.Companion.none
+import io.smallibs.pilin.standard.Option.TK.Companion.some
 import io.smallibs.pilin.type.Fun
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
@@ -20,46 +20,46 @@ internal class FunctorTest : WithQuickTheories {
     @Test
     fun `(Identity) map id = id `() {
         qt().forAll(integers().all()).check { a ->
-            runBlocking { Identity.functor.`map id = id`(Id(a)) }
+            runBlocking { Identity.functor.`map id = id`(id(a)) }
         }
     }
 
     @Test
     fun `(Option) map id = id `() {
-        check(runBlocking { Option.functor.`map id = id`(None<Int>()) })
+        check(runBlocking { Option.functor.`map id = id`(none<Int>()) })
 
         qt().forAll(integers().all()).check { a ->
-            runBlocking { Option.functor.`map id = id`(Some(a)) }
+            runBlocking { Option.functor.`map id = id`(some(a)) }
         }
     }
 
     @Test
     fun `(Either) map id = id `() {
-        check(runBlocking { Either.functor<Unit>().`map id = id`(Left<Unit, Int>(Unit)) })
+        check(runBlocking { Either.functor<Unit>().`map id = id`(left<Unit, Int>(Unit)) })
 
         qt().forAll(integers().all()).check { a ->
-            runBlocking { Either.functor<Unit>().`map id = id`(Right(a)) }
+            runBlocking { Either.functor<Unit>().`map id = id`(right(a)) }
         }
     }
 
     @Test
     fun `(Identity) map (incr compose toString) = (map incr) compose (map toString) `() {
         qt().forAll(integers().all()).check { a ->
-            runBlocking { Identity.functor.`map (f compose g) = map f compose map g`(int, str, Id(a)) }
+            runBlocking { Identity.functor.`map (f compose g) = map f compose map g`(int, str, id(a)) }
         }
     }
 
     @Test
     fun `(Option) map (incr compose toString) = (map incr) compose (map toString) `() {
         qt().forAll(integers().all()).check { a ->
-            runBlocking { Option.functor.`map (f compose g) = map f compose map g`(int, str, Some(a)) }
+            runBlocking { Option.functor.`map (f compose g) = map f compose map g`(int, str, some(a)) }
         }
     }
 
     @Test
     fun `(Either) map (incr compose toString) = (map incr) compose (map toString) `() {
         qt().forAll(integers().all()).check { a ->
-            runBlocking { Either.functor<Unit>().`map (f compose g) = map f compose map g`(int, str, Right(a)) }
+            runBlocking { Either.functor<Unit>().`map (f compose g) = map f compose map g`(int, str, right(a)) }
         }
     }
 }
