@@ -1,5 +1,7 @@
 # Pilin
 
+[![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
+
 [pilin (pilind-, as in pl. pilindi) noun "arrow" (PÍLIM)](https://www.elfdict.com/w/pilin?include_old=1)
 
 Pilin is a tiny library for Kotlin multiplatform providing some functional programming constructions like:
