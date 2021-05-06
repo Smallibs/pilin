@@ -4,7 +4,7 @@
 
 [pilin (pilind-, as in pl. pilindi) noun "arrow" (PÍLIM)](https://www.elfdict.com/w/pilin?include_old=1)
 
-Pilin is a tiny library for Kotlin multiplatform providing some functional programming constructions like:
+Pilin is a tiny library for [Kotlin multiplatform](https://kotlinlang.org/docs/multiplatform.html)providing some functional programming constructions like:
 - Functor,
 - Applicative,
 - Monad.
