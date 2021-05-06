@@ -13,7 +13,7 @@ object Monad {
         suspend fun <A, B, C> leftToRight(f: Fun<A, App<F, B>>): Fun<Fun<B, App<F, C>>, Fun<A, App<F, C>>>
     }
 
-    interface WithReturnsBindAndReturn<F> : Core<F> {
+    interface WithReturnsAndBind<F> : Core<F> {
         override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<F, A>, App<F, B>> =
             bind { a -> returns(f(a)) }
 
