@@ -11,7 +11,7 @@ Pilin is a library for [Kotlin multiplatform](https://kotlinlang.org/docs/multip
 
 Some incarnations are available like Identity, Option and Either.
 
-Since Kotlin has colored function, the design has been done with only suspended functions.
+Since Kotlin has colored functions, the design has been done with only suspended functions.
 In this approach `suspend` does not mean functions interacting with the subsystem 
 i.e. no Relationship with IO.
 
