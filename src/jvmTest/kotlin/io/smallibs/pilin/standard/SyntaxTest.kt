@@ -12,9 +12,20 @@ import kotlin.test.assertEquals
 internal class SyntaxTest {
 
     @Test
+    fun `Should be able to chain Identity effects`() {
+        assertEquals(some(42), runBlocking {
+            Comprehension(Option.monad) {
+                val (a) = returns(40)
+                val (b) = returns(2)
+                a + b
+            }
+        })
+    }
+
+    @Test
     fun `Should be able to chain Option effects`() {
         assertEquals(some(42), runBlocking {
-            Comprehension.run<Option.TK, Int>(Option.monad) {
+            Comprehension(Option.monad) {
                 val (a) = returns(40)
                 val (b) = returns(2)
                 a + b
@@ -24,8 +35,8 @@ internal class SyntaxTest {
 
     @Test
     fun `Should be able to stop chained Option effects`() {
-        assertEquals(none(), runBlocking {
-            Comprehension.run<Option.TK, Int>(Option.monad) {
+        assertEquals(none<Int>(), runBlocking {
+            Comprehension(Option.monad) {
                 val (a) = returns(2)
                 val (b) = none<Int>()
                 a + b
@@ -35,8 +46,8 @@ internal class SyntaxTest {
 
     @Test
     fun `Should be able to chain Either effects`() {
-        assertEquals(right(42), runBlocking {
-            Comprehension.run<Either.TK<String>, Int>(Either.monad()) {
+        assertEquals(right<String,Int>(42), runBlocking {
+            Comprehension(Either.monad()) {
                 val (a) = returns(2)
                 val (b) = returns(40)
                 a + b
@@ -46,9 +57,9 @@ internal class SyntaxTest {
 
     @Test
     fun `Should be able to stop chained Either effects`() {
-        assertEquals(left("Cannot compute B"), runBlocking {
-            Comprehension.run<Either.TK<String>, Int>(Either.monad()) {
-                val (a) = returns(42)
+        assertEquals(left<String,Int>("Cannot compute A"), runBlocking {
+            Comprehension(Either.monad()) {
+                val (a) = left<String, Int>("Cannot compute A")
                 val (b) = left<String, Int>("Cannot compute B")
                 a + b
             }

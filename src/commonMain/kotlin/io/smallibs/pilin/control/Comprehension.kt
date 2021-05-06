@@ -33,7 +33,7 @@ class Comprehension<F, A>(private val m: Monad.Core<F>) : Monad.Core<F> by m, Co
 
     companion object {
         @Suppress("UNCHECKED_CAST")
-        suspend fun <F, A> run(m: Monad.Core<F>, f: suspend Comprehension<F, A>.() -> A): App<F, A> =
+        suspend operator fun <F, A> invoke(m: Monad.Core<F>, f: suspend Comprehension<F, A>.() -> A): App<F, A> =
             Comprehension<F, A>(m).let { comprehension ->
                 val callback: suspend Comprehension<F, *>.() -> App<F, A> = { returns(comprehension.f()) }
                 callback.startCoroutine(comprehension, comprehension)
