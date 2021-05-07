@@ -41,7 +41,8 @@ object Functor {
     }
 
     open class Infix<F>(private val c: Core<F>) : Core<F> by c {
-        suspend infix fun <A, B> (Fun<A, B>).map(ma: App<F, A>): App<F, B> = c.map(this)(ma)
+        suspend infix fun <A, B> (Fun<A, B>).map(ma: App<F, A>): App<F, B> = 
+            c.map(this)(ma)
     }
 
     interface API<F> : Core<F> {
