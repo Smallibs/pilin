@@ -97,6 +97,17 @@ Comprehension(Option.monad) {
 }
 ```
 
+Or an infix `do` method can be used. 
+
+```kotlin
+Option.monad `do` {
+    val (a) = returns(40)
+    val (b) = returns(2)
+    a + b
+}
+```
+
+
 # License
 
 MIT License

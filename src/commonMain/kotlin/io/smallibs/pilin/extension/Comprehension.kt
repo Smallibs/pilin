@@ -1,5 +1,6 @@
-package io.smallibs.pilin.control
+package io.smallibs.pilin.extension
 
+import io.smallibs.pilin.control.Monad
 import io.smallibs.pilin.core.execute
 import io.smallibs.pilin.type.App
 import kotlinx.coroutines.currentCoroutineContext
@@ -32,6 +33,9 @@ class Comprehension<F, A>(private val m: Monad.Core<F>) : Monad.Core<F> by m, Co
         }
 
     companion object {
+        suspend infix fun <F, A> Monad.Core<F>.`do`(f: suspend Comprehension<F, A>.() -> A): App<F, A> =
+            invoke(this, f)
+
         @Suppress("UNCHECKED_CAST")
         suspend operator fun <F, A> invoke(m: Monad.Core<F>, f: suspend Comprehension<F, A>.() -> A): App<F, A> =
             Comprehension<F, A>(m).let { comprehension ->
