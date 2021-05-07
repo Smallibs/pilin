@@ -51,8 +51,8 @@ class Comprehension<F, A>(private val m: Monad.Core<F>) : Monad.Core<F> by m {
 
         suspend operator fun <F, A> invoke(m: Monad.Core<F>, f: suspend Comprehension<F, A>.() -> A): App<F, A> =
             Comprehension<F, A>(m).let { comprehension ->
-                val callback: suspend Comprehension<F, *>.() -> App<F, A> = { returns(comprehension.f()) }
-                callback.startCoroutine(comprehension, comprehension.completion).let {
+                val block: suspend Comprehension<F, *>.() -> App<F, A> = { returns(comprehension.f()) }
+                block.startCoroutine(comprehension, comprehension.completion).let {
                     comprehension.completion.get()
                 }
             }
