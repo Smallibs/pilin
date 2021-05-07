@@ -1,3 +1,2 @@
-
-rootProject.name = "Kategory"
+rootProject.name = "Pilin"
 
