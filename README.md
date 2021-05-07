@@ -4,14 +4,14 @@
 
 [pilin (pilind-, as in pl. pilindi) noun "arrow" (PÍLIM)](https://www.elfdict.com/w/pilin?include_old=1)
 
-Pilin is a tiny library for [Kotlin multiplatform](https://kotlinlang.org/docs/multiplatform.html) providing some functional programming constructions like:
+Pilin is a library for [Kotlin multiplatform](https://kotlinlang.org/docs/multiplatform.html) providing some functional programming constructions like:
 - Functor,
 - Applicative,
 - Monad.
 
 Some incarnations are available like Identity, Option and Either.
 
-Since Kotlin has colored function, the design has been done with only suspended functions.
+Since Kotlin has colored functions, the design has been done with only suspended functions.
 In this approach `suspend` does not mean functions interacting with the subsystem 
 i.e. no Relationship with IO.
 
@@ -107,6 +107,14 @@ Option.monad `do` {
 }
 ```
 
+```kotlin
+suspend fun <T> doSomething(m: Monad.API<T>): App<T, Int> =
+    m `do` {
+        val (a) = returns(40)
+        val (b) = returns(2)
+        a + b
+    }
+```
 
 # License
 
