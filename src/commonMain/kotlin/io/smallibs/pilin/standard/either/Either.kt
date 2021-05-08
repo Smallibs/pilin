@@ -24,5 +24,9 @@ sealed class Either<L, R> : App<TK<L>, R> {
     companion object {
         fun <L, R> left(l: L): App<TK<L>, R> = Left(l)
         fun <L, R> right(r: R): App<TK<L>, R> = Right(r)
+
+        fun <L> functor() = Functor.functor<L>()
+        fun <L> applicative() = Applicative.applicative<L>()
+        fun <L> monad() = Monad.monad<L>()
     }
 }

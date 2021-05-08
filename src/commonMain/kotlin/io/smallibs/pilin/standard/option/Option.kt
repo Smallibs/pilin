@@ -25,5 +25,10 @@ sealed class Option<A> : App<Option.TK, A> {
     companion object {
         fun <A> none(): App<TK, A> = None()
         fun <A> some(a: A): App<TK, A> = Some(a)
+
+        val functor = Functor.functor
+        val applicative = Applicative.applicative
+        val monad = Monad.monad
+
     }
 }

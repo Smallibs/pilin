@@ -17,5 +17,9 @@ data class Identity<A>(val value: A) : App<TK, A> {
 
     companion object {
         fun <A> id(a: A): App<TK, A> = Identity(a)
+
+        val functor = Functor.functor
+        val applicative = Applicative.applicative
+        val monad = Monad.monad
     }
 }
