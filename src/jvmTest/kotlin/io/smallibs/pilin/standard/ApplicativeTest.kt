@@ -4,16 +4,15 @@ import io.smallibs.pilin.laws.Applicative.`(pure id) apply v = v`
 import io.smallibs.pilin.laws.Applicative.`apply (pure f) (pure x) = pure (f x)`
 import io.smallibs.pilin.laws.Applicative.`apply f (pure x) = apply (pure ($ y)) f`
 import io.smallibs.pilin.laws.Applicative.`map f x = apply (pure f) x`
-import io.smallibs.pilin.standard.Either.T.Left
-import io.smallibs.pilin.standard.Either.T.Right
-import io.smallibs.pilin.standard.Either.TK.Companion.left
-import io.smallibs.pilin.standard.Either.TK.Companion.right
-import io.smallibs.pilin.standard.Identity.Id
-import io.smallibs.pilin.standard.Identity.TK.Companion.id
-import io.smallibs.pilin.standard.Option.T.None
-import io.smallibs.pilin.standard.Option.T.Some
-import io.smallibs.pilin.standard.Option.TK.Companion.none
-import io.smallibs.pilin.standard.Option.TK.Companion.some
+import io.smallibs.pilin.standard.either.Either
+import io.smallibs.pilin.standard.either.Either.Companion.left
+import io.smallibs.pilin.standard.either.Either.Companion.right
+import io.smallibs.pilin.standard.either.Either.Left
+import io.smallibs.pilin.standard.identity.Identity
+import io.smallibs.pilin.standard.identity.Identity.Companion.id
+import io.smallibs.pilin.standard.option.Option
+import io.smallibs.pilin.standard.option.Option.Companion.none
+import io.smallibs.pilin.standard.option.Option.Companion.some
 import io.smallibs.pilin.type.Fun
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
@@ -31,16 +30,16 @@ internal class ApplicativeTest : WithQuickTheories {
     @Test
     fun `(Identity) map f x = apply (pure f) x`() {
         qt().forAll(integers().all()).check { a ->
-            runBlocking { Identity.applicative.`map f x = apply (pure f) x`(str, Id(a)) }
+            runBlocking { Identity.applicative.`map f x = apply (pure f) x`(str, Identity(a)) }
         }
     }
 
     @Test
     fun `(Option) map f x = apply (pure f) x`() {
-        check(runBlocking { Option.applicative.`map f x = apply (pure f) x`(str, None()) })
+        check(runBlocking { Option.applicative.`map f x = apply (pure f) x`(str, Option.None()) })
 
         qt().forAll(integers().all()).check { a ->
-            runBlocking { Option.applicative.`map f x = apply (pure f) x`(str, Some(a)) }
+            runBlocking { Option.applicative.`map f x = apply (pure f) x`(str, Option.Some(a)) }
         }
     }
 
@@ -49,7 +48,7 @@ internal class ApplicativeTest : WithQuickTheories {
         check(runBlocking { Either.applicative<Unit>().`map f x = apply (pure f) x`(str, Left(Unit)) })
 
         qt().forAll(integers().all()).check { a ->
-            runBlocking { Either.applicative<Unit>().`map f x = apply (pure f) x`(str, Right(a)) }
+            runBlocking { Either.applicative<Unit>().`map f x = apply (pure f) x`(str, Either.Right(a)) }
         }
     }
 

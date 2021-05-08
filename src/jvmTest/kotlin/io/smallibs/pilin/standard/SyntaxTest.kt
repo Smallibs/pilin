@@ -1,11 +1,14 @@
 package io.smallibs.pilin.standard
 
 import io.smallibs.pilin.extension.Comprehension.Companion.`do`
-import io.smallibs.pilin.standard.Either.TK.Companion.left
-import io.smallibs.pilin.standard.Either.TK.Companion.right
-import io.smallibs.pilin.standard.Identity.TK.Companion.id
-import io.smallibs.pilin.standard.Option.TK.Companion.none
-import io.smallibs.pilin.standard.Option.TK.Companion.some
+import io.smallibs.pilin.standard.either.Either
+import io.smallibs.pilin.standard.either.Either.Companion.left
+import io.smallibs.pilin.standard.either.Either.Companion.right
+import io.smallibs.pilin.standard.identity.Identity
+import io.smallibs.pilin.standard.identity.Identity.Companion.id
+import io.smallibs.pilin.standard.option.Option
+import io.smallibs.pilin.standard.option.Option.Companion.none
+import io.smallibs.pilin.standard.option.Option.Companion.some
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import kotlin.test.assertEquals
