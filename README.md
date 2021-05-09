@@ -163,7 +163,8 @@ suspend fun <T> doSomething(m: Monad.API<T>): App<T, Int> =
     }
 ```
 
-Note: the `Comprehension` uses Kotlin coroutine suspension. 
+Note: the `Comprehension` uses Kotlin coroutine suspension. Then each operation should be executed thanks to
+the destructured operation or the explicit bind call. Otherwise the effect is not executed.
 
 Of course the applicative can be used in this case:
 
