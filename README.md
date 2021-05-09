@@ -125,7 +125,7 @@ we must write the following code:
 with(Option.monad.infix) {
     returns(40) bind { a ->
         returns(2) bind { b -> 
-            a + b
+            returns(a + b)
         }
     } 
 }
