@@ -24,7 +24,14 @@ library and of course [Arrow.kt](https://arrow-kt.io) for the comprehension impl
 
 ## A taste of Pilin
 
-### Functor internal design
+In this section we show how the `Functor` abstraction is designed. 
+
+### Functor design
+
+First we use `object` in order to have a string namespacing. Then a first interface named `Core` is proposed with the minimal set 
+of function required. In addition two implementations are  proposed for `Operation` and `Infix` expressed thanks to the `Core`. 
+The first one contains contains additional functions when the second proposes an infix version of `Core` functions using OOP 
+capabilities.
 
 ```kotlin
 object Functor {
@@ -53,53 +60,89 @@ object Functor {
 }
 ```
 
-### Option Functor
+### Option
+
+In this section we show how `Option` can be designed.
+
+#### Data type definition
+
+First at all, the data type should be specified. Of course, an optional value is `None` of `Some` value. In addition an internal class `TK` - for type kind - 
+using a type defunctionalised as illustrated in [Lightweight higher-kinded polymorphism](https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf).
+
+In this `TK` class, a `fix` value is proposed when a downcast is required. This operation is of course dangerous, but to reduce this aspect the scope of the constructor is limited to `Option`. In addtion, the catamorphism `fold` function is proposed.
+
+Finally, smart constructors and abstraction implementation references can be proposed.
 
 ```kotlin
-object Option {
+sealed class Option<A> : App<Option.TK, A> {
+    data class None<A>(private val u: Unit = Unit) : Option<A>()
+    data class Some<A>(val value: A) : Option<A>()
 
-    sealed class T<A> : App<TK, A> {
-        data class None<A>(private val u: Unit = Unit) : T<A>()
-        data class Some<A>(val value: A) : T<A>()
-    }
-
-    // This code can be automatically generated
     class TK private constructor() {
         companion object {
-            private val <A> App<TK, A>.fix: T<A>
-                get() = this as T<A>
-
-            fun <A> none(): App<TK, A> = T.None()
-            fun <A> some(a: A): App<TK, A> = T.Some(a)
+            val <A> App<TK, A>.fix: Option<A>
+                get() = this as Option<A>
 
             suspend fun <A, B> App<TK, A>.fold(n: Supplier<B>, s: Fun<A, B>): B =
                 when (val self = this.fix) {
-                    is T.None -> n()
-                    is T.Some -> s(self.value)
+                    is None -> n()
+                    is Some -> s(self.value)
                 }
         }
     }
 
-    private class FunctorImpl : Functor.API<TK> {
-        override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<TK, A>, App<TK, B>> =
-            { ma -> ma.fold(::none) { a -> some(f(a)) } }
+    companion object {
+        fun <A> none(): App<TK, A> = None()
+        fun <A> some(a: A): App<TK, A> = Some(a)
+
+        val functor = Functor.functor
+        // ...
     }
-    
-    // ...
 }
 ```
 
-### Comprehension in action
+#### Functor implementation for Option
+
+The `Functor` abstraction implementation can then be proposed. This is done once again using object namespacing.
+
+```kotlin
+object Functor {
+    private class FunctorImpl : Functor.API<Option.TK> {
+        override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<Option.TK, A>, App<Option.TK, B>> =
+            { ma -> ma.fold(::none) { a -> some(f(a)) } }
+    }
+
+    val functor: Functor.API<Option.TK> = FunctorImpl()
+}
+```
+
+## Comprehension in action
+
+Using functional idioms like `Monad` can be painfull. For instance if we want to add to optional integers
+we must write the following code:
+
+```kotlin
+with(Option.monad.infix) {
+    returns(40) bind { a ->
+        returns(2) bind { b -> 
+            a + b
+        }
+    } 
+}
+```
+
+In order to have a more readable version a comprehension based formulation is provided. 
+Then the previoux expression can be proposed using such comprehension facility:
 
 ```kotlin
 Comprehension(Option.monad) {
-    val (a) = returns(40)
-    val (b) = returns(2)
+    val (a) = returns(40)       // or val a = returns(40).bind()
+    val (b) = returns(2)        // or val b = returns(2).bind()
     a + b
 }
 ```
 
-Or an infix `do` method can be used. 
+An infix version is also proposed with the Monad extension method `do`: 
 
 ```kotlin
 Option.monad `do` {
@@ -109,6 +152,8 @@ Option.monad `do` {
 }
 ```
 
+Finally, an generalized version can be proposed for any Monad and not only for `Option`.
+
 ```kotlin
 suspend fun <T> doSomething(m: Monad.API<T>): App<T, Int> =
     m `do` {
@@ -116,6 +161,18 @@ suspend fun <T> doSomething(m: Monad.API<T>): App<T, Int> =
         val (b) = returns(2)
         a + b
     }
+```
+
+Note: the `Comprehension` uses Kotlin coroutine suspension. 
+
+Of course the applicative can be used in this case:
+
+```kotlin
+val plus: Fun<Int, Fun<Int, Int>> = { a -> { b -> a + b } }
+
+with(Option.applicative.infix) {
+    plus map pure(40) apply pure(2)
+}
 ```
 
 # License
