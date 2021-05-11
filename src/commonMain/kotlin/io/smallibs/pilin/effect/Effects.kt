@@ -1,6 +1,6 @@
 package io.smallibs.pilin.effect
 
-data class Effects<O, H : Handler>(private val block: suspend Effects<O, H>.(H) -> O) {
+data class Effects<H : Handler, O>(private val block: suspend Effects<H, O>.(H) -> O) {
 
     infix fun with(effect: () -> H): HandledEffects<O> =
         with(effect())
@@ -9,7 +9,7 @@ data class Effects<O, H : Handler>(private val block: suspend Effects<O, H>.(H) 
         HandledEffects { block(effect) }
 
     companion object {
-        fun <O, H : Handler> handle(block: suspend Effects<O, H>.(H) -> O): Effects<O, H> =
+        fun <H : Handler, O> handle(block: suspend Effects<H, O>.(H) -> O): Effects<H, O> =
             Effects(block)
     }
 }

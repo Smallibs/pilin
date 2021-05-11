@@ -16,7 +16,7 @@ data class Continuation<I, O>(private val behavior: Fun<Fun<I, O>, O>) : App<Con
     }
 
     companion object {
-        fun <I, O> continuation(behavior: Fun<Fun<I, O>, O>) = Continuation(behavior)
+        fun <I, O> continuation(behavior: Fun<Fun<I, O>, O>): Continuation<I, O> = Continuation(behavior)
 
         fun <O> functor() = Functor.functor<O>()
         fun <O> applicative() = Applicative.applicative<O>()

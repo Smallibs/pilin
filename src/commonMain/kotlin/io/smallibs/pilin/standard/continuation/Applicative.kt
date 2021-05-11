@@ -14,7 +14,7 @@ object Applicative {
         Applicative.WithPureAndApply<TK<O>> {
         override suspend fun <I> pure(a: I): App<TK<O>, I> = continuation { k -> k(a) }
         override suspend fun <A, B> apply(mf: App<TK<O>, Fun<A, B>>): Fun<App<TK<O>, A>, App<TK<O>, B>> = { ma ->
-            Continuation { k -> mf { f -> ma(f then k) } }
+            continuation { k -> mf { f -> ma(f then k) } }
         }
     }
 

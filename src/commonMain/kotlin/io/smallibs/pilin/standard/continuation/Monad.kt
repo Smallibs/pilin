@@ -3,6 +3,7 @@ package io.smallibs.pilin.standard.continuation
 import io.smallibs.pilin.control.Applicative.API
 import io.smallibs.pilin.control.Monad
 import io.smallibs.pilin.standard.continuation.Applicative.applicative
+import io.smallibs.pilin.standard.continuation.Continuation.Companion.continuation
 import io.smallibs.pilin.standard.continuation.Continuation.TK
 import io.smallibs.pilin.standard.continuation.Continuation.TK.Companion.invoke
 import io.smallibs.pilin.type.App
@@ -13,7 +14,7 @@ object Monad {
         Monad.WithReturnsMapAndJoin<TK<O>>,
         Monad.ViaApplicative<TK<O>>(applicative) {
         override suspend fun <A> join(mma: App<TK<O>, App<TK<O>, A>>): App<TK<O>, A> =
-            Continuation { a -> mma { ma -> ma(a) } }
+            continuation { a -> mma { ma -> ma(a) } }
     }
 
     fun <O> monad(): Monad.API<TK<O>> = MonadImpl(applicative())
