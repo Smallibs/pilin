@@ -1,7 +1,6 @@
 package io.smallibs.pilin.effect
 
 import io.smallibs.pilin.effect.Effects.Companion.handle
-import io.smallibs.pilin.extension.Comprehension.Companion.`do`
 import io.smallibs.pilin.standard.continuation.Continuation
 import io.smallibs.pilin.standard.continuation.Continuation.Companion.continuation
 import io.smallibs.pilin.standard.continuation.Continuation.Companion.monad
@@ -12,16 +11,17 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class EffectTest {
+class SingleEffectTest {
     private class IOConsole<R>(
         val printString: (String) -> Continuation<Unit, R>,
         val readString: Continuation<String, R>,
     ) : Handler
 
     private fun <R> effects(): Effects<IOConsole<R>, App<TK<R>, Unit>> = handle { console ->
-        monad<R>() `do` {
-            val (value) = console.readString
-            val (any) = console.printString("Hello $value")
+        with(monad<R>().infix) {
+            console.readString bind { value ->
+                console.printString("Hello $value")
+            }
         }
     }
 
