@@ -1,5 +1,6 @@
 package io.smallibs.pilin.control
 
+import io.smallibs.pilin.core.Standard.Infix.then
 import io.smallibs.pilin.core.Standard.curry
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
@@ -14,9 +15,7 @@ object Applicative {
 
     interface WithPureMapAndProduct<F> : Core<F> {
         override suspend fun <A, B> apply(mf: App<F, Fun<A, B>>): Fun<App<F, A>, App<F, B>> =
-            { ma ->
-                map<Pair<Fun<A, B>, A>, B> { p -> p.first(p.second) }(product<Fun<A, B>, A>(mf)(ma))
-            }
+            product<Fun<A, B>, A>(mf) then map { p -> p.first(p.second) }
     }
 
     interface WithPureAndApply<F> : Core<F> {
@@ -34,10 +33,10 @@ object Applicative {
             map(f)
 
         suspend fun <A, B, C> lift2(f: Fun<A, Fun<B, C>>): Fun<App<F, A>, Fun<App<F, B>, App<F, C>>> =
-            curry { ma, mb -> apply(apply(pure(f))(ma))(mb) }
+            apply(pure(f)) then ::apply
 
         suspend fun <A, B, C, D> lift3(f: Fun<A, Fun<B, Fun<C, D>>>): Fun<App<F, A>, Fun<App<F, B>, Fun<App<F, C>, App<F, D>>>> =
-            curry { ma, mb, mc -> apply(lift2(f)(ma)(mb))(mc) }
+            { ma -> lift2(f)(ma) then ::apply }
     }
 
     @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")

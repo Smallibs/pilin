@@ -1,6 +1,7 @@
 package io.smallibs.pilin.control
 
 import io.smallibs.pilin.core.Standard
+import io.smallibs.pilin.core.Standard.Infix.then
 import io.smallibs.pilin.core.Standard.curry
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
@@ -16,21 +17,21 @@ object Monad {
 
     interface WithReturnsAndBind<F> : Core<F> {
         override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<F, A>, App<F, B>> =
-            bind { a -> returns(f(a)) }
+            bind(f then ::returns)
 
         override suspend fun <A> join(mma: App<F, App<F, A>>): App<F, A> =
             bind<App<F, A>, A>(Standard::id)(mma)
 
         override suspend fun <A, B, C> leftToRight(f: Fun<A, App<F, B>>): Fun<Fun<B, App<F, C>>, Fun<A, App<F, C>>> =
-            curry { g, x -> bind(g)(f(x)) }
+            { g -> f then bind(g) }
     }
 
     interface WithReturnsMapAndJoin<F> : Core<F> {
         override suspend fun <A, B> bind(f: Fun<A, App<F, B>>): Fun<App<F, A>, App<F, B>> =
-            { x -> join(map(f)(x)) }
+            map(f) then ::join
 
         override suspend fun <A, B, C> leftToRight(f: Fun<A, App<F, B>>): Fun<Fun<B, App<F, C>>, Fun<A, App<F, C>>> =
-            curry { g, x -> bind(g)(f(x)) }
+            { g -> f then bind(g) }
     }
 
     interface WithReturnsAndKleisli<F> : Core<F> {
@@ -38,7 +39,7 @@ object Monad {
             { m -> leftToRight<Unit, A, B> { m }(f)(Unit) }
 
         override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<F, A>, App<F, B>> =
-            bind { a -> returns(f(a)) }
+            bind(f then ::returns)
 
         override suspend fun <A> join(mma: App<F, App<F, A>>): App<F, A> =
             bind<App<F, A>, A>(Standard::id)(mma)
@@ -55,11 +56,11 @@ object Monad {
             map(f)
 
         suspend fun <A, B, C> lift2(f: Fun<A, Fun<B, C>>): Fun<App<F, A>, Fun<App<F, B>, App<F, C>>> =
-            curry { ma, mb -> bind<A, C> { a -> bind<B, C> { b -> returns(f(a)(b)) }(mb) }(ma) }
+            curry { ma, mb -> bind<A, C> { a -> bind(f(a) then ::returns)(mb) }(ma) }
 
         suspend fun <A, B, C, D> lift3(f: Fun<A, Fun<B, Fun<C, D>>>): Fun<App<F, A>, Fun<App<F, B>, Fun<App<F, C>, App<F, D>>>> =
             curry { ma, mb, mc ->
-                bind<A, D> { a -> bind<B, D> { b -> bind<C, D> { c -> returns(f(a)(b)(c)) }(mc) }(mb) }(ma)
+                bind<A, D> { a -> bind<B, D> { b -> bind(f(a)(b) then ::returns)(mc) }(mb) }(ma)
             }
     }
 
