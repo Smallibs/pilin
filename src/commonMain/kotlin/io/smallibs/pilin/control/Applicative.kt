@@ -34,11 +34,10 @@ object Applicative {
             map(f)
 
         suspend fun <A, B, C> lift2(f: Fun<A, Fun<B, C>>): Fun<App<F, A>, Fun<App<F, B>, App<F, C>>> =
-            { ma -> { mb -> apply(apply(pure(f))(ma))(mb) } }
+            curry { ma, mb -> apply(apply(pure(f))(ma))(mb) }
 
         suspend fun <A, B, C, D> lift3(f: Fun<A, Fun<B, Fun<C, D>>>): Fun<App<F, A>, Fun<App<F, B>, Fun<App<F, C>, App<F, D>>>> =
-            { ma -> { mb -> { mc -> apply(lift2(f)(ma)(mb))(mc) } } }
-
+            curry { ma, mb, mc -> apply(lift2(f)(ma)(mb))(mc) }
     }
 
     @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")

@@ -1,6 +1,7 @@
 package io.smallibs.pilin.control
 
 import io.smallibs.pilin.core.Standard
+import io.smallibs.pilin.core.Standard.curry
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
@@ -21,7 +22,7 @@ object Monad {
             bind<App<F, A>, A>(Standard::id)(mma)
 
         override suspend fun <A, B, C> leftToRight(f: Fun<A, App<F, B>>): Fun<Fun<B, App<F, C>>, Fun<A, App<F, C>>> =
-            { g -> { x -> bind(g)(f(x)) } }
+            curry { g, x -> bind(g)(f(x)) }
     }
 
     interface WithReturnsMapAndJoin<F> : Core<F> {
@@ -29,7 +30,7 @@ object Monad {
             { x -> join(map(f)(x)) }
 
         override suspend fun <A, B, C> leftToRight(f: Fun<A, App<F, B>>): Fun<Fun<B, App<F, C>>, Fun<A, App<F, C>>> =
-            { g -> { x -> bind(g)(f(x)) } }
+            curry { g, x -> bind(g)(f(x)) }
     }
 
     interface WithReturnsAndKleisli<F> : Core<F> {
@@ -54,15 +55,11 @@ object Monad {
             map(f)
 
         suspend fun <A, B, C> lift2(f: Fun<A, Fun<B, C>>): Fun<App<F, A>, Fun<App<F, B>, App<F, C>>> =
-            { ma -> { mb -> bind<A, C> { a -> bind<B, C> { b -> returns(f(a)(b)) }(mb) }(ma) } }
+            curry { ma, mb -> bind<A, C> { a -> bind<B, C> { b -> returns(f(a)(b)) }(mb) }(ma) }
 
         suspend fun <A, B, C, D> lift3(f: Fun<A, Fun<B, Fun<C, D>>>): Fun<App<F, A>, Fun<App<F, B>, Fun<App<F, C>, App<F, D>>>> =
-            { ma ->
-                { mb ->
-                    { mc ->
-                        bind<A, D> { a -> bind<B, D> { b -> bind<C, D> { c -> returns(f(a)(b)(c)) }(mc) }(mb) }(ma)
-                    }
-                }
+            curry { ma, mb, mc ->
+                bind<A, D> { a -> bind<B, D> { b -> bind<C, D> { c -> returns(f(a)(b)(c)) }(mc) }(mb) }(ma)
             }
     }
 
