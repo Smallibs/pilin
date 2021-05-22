@@ -1,6 +1,7 @@
 package io.smallibs.pilin.control
 
 import io.smallibs.pilin.core.Standard
+import io.smallibs.pilin.core.Standard.compose
 import io.smallibs.pilin.core.Standard.curry
 import io.smallibs.pilin.standard.either.Either.Companion.functor
 import io.smallibs.pilin.standard.either.Either.Companion.left
@@ -19,8 +20,8 @@ object Selective {
     interface WithSelect<F> : Core<F> {
         override suspend fun <A, B, C> branch(e: App<F, App<TK<A>, B>>): Fun<App<F, Fun<A, C>>, Fun<App<F, Fun<B, C>>, App<F, C>>> =
             curry { l, r ->
-                val a = map<App<TK<A>, B>, App<TK<A>, App<TK<B>, C>>>(functor<A>().map { left(it) })(e)
-                val b = map<Fun<A, C>, Fun<A, App<TK<B>, C>>> { f -> { right(f(it)) } }(l)
+                val a = map(functor<A>().map<B, App<TK<B>, C>>(::left))(e)
+                val b = map(compose<A, C, App<TK<B>, C>>(::right))(l)
                 select(select(a)(b))(r)
             }
     }
@@ -30,7 +31,6 @@ object Selective {
             branch<A, B, B>(e)(r)(pure(Standard::id))
         }
     }
-
 
 
     interface API<F> : Core<F>
