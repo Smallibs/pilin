@@ -11,6 +11,8 @@ object Standard {
 
     suspend fun <A> id(a: A): A = a
 
+    suspend fun <A,B> const(a:A) : Fun<B,A> = { a }
+
     suspend fun <A, B, C> flip(f: Fun<A, Fun<B, C>>): Fun<B, Fun<A, C>> =
         { b -> { a -> f(a)(b) } }
 
