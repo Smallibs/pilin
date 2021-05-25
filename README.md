@@ -8,6 +8,7 @@
 Pilin is a library for [Kotlin multiplatform](https://kotlinlang.org/docs/multiplatform.html) providing some functional programming constructions like:
 - Functor,
 - Applicative,
+- Selective,
 - Monad.
 
 Some incarnations are available like Identity, Option and Either.
@@ -24,13 +25,13 @@ library and of course [Arrow.kt](https://arrow-kt.io) for the comprehension impl
 
 ## A taste of Pilin
 
-In this section we show how the `Functor` abstraction is designed. 
+In this section we show how the `Functor` abstraction is design. 
 
 ### Functor design
 
-First we use `object` in order to have a string namespacing. Then a first interface named `Core` is proposed with the minimal set 
-of function required. In addition two implementations are  proposed for `Operation` and `Infix` expressed thanks to the `Core`. 
-The first one contains contains additional functions when the second proposes an infix version of `Core` functions using OOP 
+First we use `object` in order to have a simple namespacing. Then, a first interface named `Core` is proposed with the minimal set 
+of functions required. In addition, two implementations are  proposed for `Operation` and `Infix` expressed thanks to the `Core`. 
+The first one contains additional functions when the second proposes an infix version of `Core` functions using OOP 
 capabilities.
 
 ```kotlin
@@ -68,12 +69,13 @@ In this section we show how `Option` can be designed.
 
 #### Data type definition
 
-First at all, the data type should be specified. Of course, an optional value is `None` of `Some` value. In addition an internal class `TK` - for type kind - 
-using a type defunctionalised as illustrated in [Lightweight higher-kinded polymorphism](https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf).
+First at all, the data type should be specified. Of course, an optional value is `None` of `Some` value. In addition, an 
+internal class `TK` - for type kind - using a type defunctionalised as illustrated in [Lightweight higher-kinded polymorphism](https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf).
 
-In this `TK` class, a `fix` value is proposed when a downcast is required. This operation is of course dangerous, but to reduce this aspect the scope of the constructor is limited to `Option`. In addtion, the catamorphism `fold` function is proposed.
+In this `TK` class, a `fix` value is proposed when a downcast is required. This operation is of course unsafe, but to reduce 
+this aspect the scope of the constructor is limited to `Option`. Finally, the catamorphism `fold` function is proposed.
 
-Finally, smart constructors and abstraction implementation references can be proposed.
+Smart constructors and abstraction implementation references can be proposed.
 
 ```kotlin
 sealed class Option<A> : App<Option.TK, A> {
@@ -134,7 +136,7 @@ with(Option.monad.infix) {
 ```
 
 In order to have a more readable version a comprehension based formulation is provided. 
-Then the previoux expression can be proposed using such comprehension facility:
+Then the previous expression can be proposed using such comprehension facility:
 
 ```kotlin
 Comprehension(Option.monad) {
@@ -154,7 +156,7 @@ Option.monad `do` {
 }
 ```
 
-Finally, an generalized version can be proposed for any Monad and not only for `Option`.
+Finally, a generalized version can be proposed for any Monad and not only for `Option`.
 
 ```kotlin
 suspend fun <T> doSomething(m: Monad.API<T>): App<T, Int> =
@@ -165,8 +167,8 @@ suspend fun <T> doSomething(m: Monad.API<T>): App<T, Int> =
     }
 ```
 
-Note: the `Comprehension` uses Kotlin continuation. Then each operation should be executed thanks to
-the destructured operation or the explicit bind call. Otherwise the effect is not executed.
+Note: the `Comprehension` uses Kotlin coroutine suspension. Then each operation should be executed thanks to
+the destructured operation, or the explicit bind call. Otherwise, the effect is not executed.
 
 Of course the applicative can be used in this case:
 

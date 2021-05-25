@@ -1,5 +1,6 @@
 package io.smallibs.pilin.standard.either
 
+import io.smallibs.pilin.core.Standard.curry
 import io.smallibs.pilin.standard.either.Either.EitherK
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
@@ -18,12 +19,15 @@ sealed class Either<L, R> : App<EitherK<L>, R> {
                     is Left -> l(self.value)
                     is Right -> r(self.value)
                 }
+
+            suspend fun <L, R, B> fold(l: Fun<L, B>): Fun<Fun<R, B>, Fun<App<TK<L>, R>, B>> =
+                curry { r, e -> e.fold(l, r) }
         }
     }
 
     companion object {
-        fun <L, R> left(l: L): Either<L,R> = Left(l)
-        fun <L, R> right(r: R): Either<L,R> = Right(r)
+        fun <L, R> left(l: L): Either<L, R> = Left(l)
+        fun <L, R> right(r: R): Either<L, R> = Right(r)
 
         fun <L> functor() = Functor.functor<L>()
         fun <L> applicative() = Applicative.applicative<L>()

@@ -32,14 +32,15 @@ object Selective {
         }
     }
 
-    class Operation<F>(private val c: Core<F>) : Core<F> by c {
+    @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
+    class Operation<F>(private val c: Core<F>) : Applicative.Operation<F>(c), Core<F> by c {
         suspend fun <A> if_(predicate: App<F, Boolean>): Fun<App<F, A>, Fun<App<F, A>, App<F, A>>> =
             curry { ifTrue, ifFalse ->
-                val btrue = map<A, Fun<Unit, A>>(Standard::const)(ifTrue)
-                val bfalse = map<A, Fun<Unit, A>>(Standard::const)(ifFalse)
+                val bTrue = map<A, Fun<Unit, A>>(Standard::const)(ifTrue)
+                val bFalse = map<A, Fun<Unit, A>>(Standard::const)(ifFalse)
                 val test = map<Boolean, App<TK<Unit>, Unit>> { if (it) left(Unit) else right(Unit) }
 
-                branch<Unit, Unit, A>(test((predicate)))(btrue)(bfalse)
+                branch<Unit, Unit, A>(test((predicate)))(bTrue)(bFalse)
             }
 
         suspend fun <A> bindBool(test: App<F, Boolean>): Fun<Fun<Boolean, App<F, A>>, App<F, A>> =
@@ -77,8 +78,14 @@ object Selective {
             }
     }
 
-    class Infix<F>(private val c: Core<F>, private val o: Operation<F>) : Core<F> by c {
-        suspend fun <A, B> App<F, App<TK<A>, B>>.select(r: App<F, Fun<A, B>>): App<F, B> =
+    @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
+    class Infix<F>(private val c: Core<F>) : Applicative.Infix<F>(c), Core<F> by c {
+        private val o = Operation(c)
+
+        suspend infix fun <A, B, C> App<F, App<TK<A>, B>>.branch(l: App<F, Fun<A, C>>): Fun<App<F, Fun<B, C>>, App<F, C>> =
+            c.branch<A, B, C>(this)(l)
+
+        suspend infix fun <A, B> App<F, App<TK<A>, B>>.select(r: App<F, Fun<A, B>>): App<F, B> =
             c.select(this)(r)
 
         suspend infix fun App<F, Boolean>.or(right: App<F, Boolean>): App<F, Boolean> =
@@ -87,16 +94,16 @@ object Selective {
         suspend infix fun App<F, Boolean>.and(right: App<F, Boolean>): App<F, Boolean> =
             o.and(this)(right)
 
-        suspend fun <A> Fun<A, App<F, Boolean>>.exists(list: List<A>): App<F, Boolean> =
+        suspend infix fun <A> Fun<A, App<F, Boolean>>.exists(list: List<A>): App<F, Boolean> =
             o.exists(this)(list)
 
-        suspend fun <A> Fun<A, App<F, Boolean>>.forall(list: List<A>): App<F, Boolean> =
+        suspend infix fun <A> Fun<A, App<F, Boolean>>.forall(list: List<A>): App<F, Boolean> =
             o.forall(this)(list)
     }
 
     interface API<F> : Core<F> {
         val operation: Operation<F> get() = Operation(this)
-        val infix: Infix<F> get() = Infix(this, operation)
+        val infix: Infix<F> get() = Infix(this)
     }
 
 }
