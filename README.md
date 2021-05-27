@@ -171,11 +171,11 @@ the destructured operation or the explicit bind call. Otherwise the effect is no
 Of course the applicative can be used in this case:
 
 ```kotlin
-val plus = curry { a: Int, b: Int -> a + b }
-
-with(Option.applicative.infix) {
-    plus map pure(40) apply pure(2)
-}
+suspend fun <T> doSomething(a: Applicative.API<T>): App<T, Int> =
+    with(a.infix) {
+        val plus = curry { a: Int, b: Int -> a + b }
+        plus map pure(40) apply pure(2)
+    }
 ```
 
 # License
