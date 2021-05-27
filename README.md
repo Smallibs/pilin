@@ -174,7 +174,7 @@ Of course the applicative can be used in this case:
 suspend fun <T> doSomething(a: Applicative.API<T>): App<T, Int> =
     with(a.infix) {
         val plus = curry { a: Int, b: Int -> a + b }
-        plus map pure(40) apply pure(2)
+        plus map pure(40) apply pure(2) // or pure(plus) apply pure(40) apply pure(2)
     }
 ```
 
