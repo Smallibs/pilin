@@ -49,8 +49,10 @@ object Functor {
     }
 
     open class Infix<F>(private val c: Core<F>) : Core<F> by c {
-        suspend infix fun <A, B> (Fun<A, B>).map(ma: App<F, A>): App<F, B> = 
+        suspend infix fun <A, B> Fun<A, B>.map(ma: App<F, A>): App<F, B> = 
             c.map(this)(ma)
+        suspend infix fun <A, B> App<F, A>.map(f: Fun<A, B>): App<F, B> = 
+            c.map(f)(this)
     }
 
     interface API<F> : Core<F> {
@@ -124,8 +126,8 @@ we must write the following code:
 ```kotlin
 with(Option.monad.infix) {
     returns(40) bind { a ->
-        returns(2) bind { b -> 
-            returns(a + b)
+        returns(2) map { b -> 
+            a + b
         }
     } 
 }
