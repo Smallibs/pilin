@@ -7,6 +7,7 @@ import kotlin.coroutines.*
 class Comprehension<F, A>(private val monad: Monad.Core<F>) : Monad.Core<F> by monad {
 
     private class ComprehensionCompleted(private val app: App<*, *>) : Exception() {
+        @Suppress("UNCHECKED_CAST")
         fun <F, A> get(): App<F, A> = app as App<F, A>
     }
 
@@ -44,16 +45,12 @@ class Comprehension<F, A>(private val monad: Monad.Core<F>) : Monad.Core<F> by m
     suspend fun <B> App<F, B>.bind(): B {
         var value: B? = null
 
-        monad.map<B, Unit> {
-            value = it
-        }(this)
+        monad.map<B, Unit> { value = it }(this)
 
-        if (value != null) {
+        return value?.let {
             continuation.setIntermediate(this)
-            return value!!
-        } else {
-            throw ComprehensionCompleted(this)
-        }
+            return it
+        } ?: throw ComprehensionCompleted(this)
     }
 
     companion object {
@@ -73,5 +70,4 @@ class Comprehension<F, A>(private val monad: Monad.Core<F>) : Monad.Core<F> by m
                 comprehension.continuation.getResult()
             }
     }
-
 }
