@@ -171,8 +171,7 @@ the destructured operation or the explicit bind call. Otherwise the effect is no
 Of course the applicative can be used in this case:
 
 ```kotlin
-// Type is required in order to "introduce" suspension capability
-val plus : Fun<Int,Fun<Int,Int>> = curry { a: Int, b: Int -> a + b }
+val plus = curry { a: Int, b: Int -> a + b }
 
 with(Option.applicative.infix) {
     plus map pure(40) apply pure(2)
