@@ -1,4 +1,4 @@
-package io.smallibs.pilin.standard
+package io.smallibs.pilin.syntax
 
 import io.smallibs.pilin.extension.Comprehension.Companion.`do`
 import io.smallibs.pilin.standard.either.Either
@@ -13,7 +13,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import kotlin.test.assertEquals
 
-internal class SyntaxTest {
+internal class ComprehensionTest {
 
     @Test
     fun `Should be able to chain Identity effects`() {
