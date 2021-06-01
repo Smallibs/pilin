@@ -33,17 +33,18 @@ object Selective {
         }
     }
 
-    open class ViaMonad<F>(private val monad: Monad.Core<F>) : Core<F>,
+    open class ViaMonad<F>(private val monad: Monad.API<F>) : Core<F>,
         WithSelect<F>,
         Monad.Core<F> by monad {
-        override suspend fun <A, B> select(e: App<F, App<TK<A>, B>>): Fun<App<F, Fun<A, B>>, App<F, B>> = { f ->
-            bind { e: App<TK<A>, B> -> e.fold({ a -> map { f: Fun<A, B> -> f(a) }(f) }, ::pure) }(e)
-        }
+        override suspend fun <A, B> select(e: App<F, App<TK<A>, B>>): Fun<App<F, Fun<A, B>>, App<F, B>> =
+            with(monad.infix) {
+                { f -> e bind { it.fold({ a -> map { f: Fun<A, B> -> f(a) }(f) }, ::pure) } }
+            }
     }
 
     @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
     class Operation<F>(private val c: Core<F>) : Applicative.Operation<F>(c), Core<F> by c {
-        suspend fun <A> if_(predicate: App<F, Boolean>): Fun<App<F, A>, Fun<App<F, A>, App<F, A>>> =
+        suspend fun <A> ifS(predicate: App<F, Boolean>): Fun<App<F, A>, Fun<App<F, A>, App<F, A>>> =
             curry { ifTrue, ifFalse ->
                 val bTrue = map<A, Fun<Unit, A>>(Standard::const)(ifTrue)
                 val bFalse = map<A, Fun<Unit, A>>(Standard::const)(ifFalse)
@@ -53,22 +54,22 @@ object Selective {
             }
 
         suspend fun <A> bindBool(test: App<F, Boolean>): Fun<Fun<Boolean, App<F, A>>, App<F, A>> =
-            { if_<A>(test)(it(true))(it(false)) }
+            { ifS<A>(test)(it(true))(it(false)) }
 
-        suspend fun when_(predicate: App<F, Boolean>): Fun<App<F, Unit>, App<F, Unit>> =
-            { if_<Unit>(predicate)(it)(pure(Unit)) }
+        suspend fun whenS(predicate: App<F, Boolean>): Fun<App<F, Unit>, App<F, Unit>> =
+            { ifS<Unit>(predicate)(it)(pure(Unit)) }
 
         suspend fun or(left: App<F, Boolean>): Fun<App<F, Boolean>, App<F, Boolean>> =
-            { if_<Boolean>(left)(pure(true))(it) }
+            { ifS<Boolean>(left)(pure(true))(it) }
 
         suspend fun and(left: App<F, Boolean>): Fun<App<F, Boolean>, App<F, Boolean>> =
-            { if_<Boolean>(pure(false))(left)(it) }
+            { ifS<Boolean>(pure(false))(left)(it) }
 
         suspend fun <A> exists(predicate: Fun<A, App<F, Boolean>>): Fun<List<A>, App<F, Boolean>> =
             { list ->
                 suspend fun exists(index: Int): App<F, Boolean> =
                     if (index < list.size)
-                        if_<Boolean>(predicate(list[index]))(pure(true))(exists(index + 1))
+                        ifS<Boolean>(predicate(list[index]))(pure(true))(exists(index + 1))
                     else
                         pure(false)
 
@@ -79,7 +80,7 @@ object Selective {
             { list ->
                 suspend fun forall(index: Int): App<F, Boolean> =
                     if (index < list.size)
-                        if_<Boolean>(predicate(list[index]))(forall(index + 1))(pure(false))
+                        ifS<Boolean>(predicate(list[index]))(forall(index + 1))(pure(false))
                     else
                         pure(true)
 
