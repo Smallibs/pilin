@@ -7,6 +7,7 @@ import io.smallibs.pilin.standard.either.Either.Companion.functor
 import io.smallibs.pilin.standard.either.Either.Companion.left
 import io.smallibs.pilin.standard.either.Either.Companion.right
 import io.smallibs.pilin.standard.either.Either.TK
+import io.smallibs.pilin.standard.either.Either.TK.Companion.fold
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
@@ -29,6 +30,14 @@ object Selective {
     interface WithBranch<F> : Core<F> {
         override suspend fun <A, B> select(e: App<F, App<TK<A>, B>>): Fun<App<F, Fun<A, B>>, App<F, B>> = { r ->
             branch<A, B, B>(e)(r)(pure(Standard::id))
+        }
+    }
+
+    open class ViaMonad<F>(private val monad: Monad.Core<F>) : Core<F>,
+        WithSelect<F>,
+        Monad.Core<F> by monad {
+        override suspend fun <A, B> select(e: App<F, App<TK<A>, B>>): Fun<App<F, Fun<A, B>>, App<F, B>> = { f ->
+            bind { e: App<TK<A>, B> -> e.fold({ a -> map { f: Fun<A, B> -> f(a) }(f) }, ::pure) }(e)
         }
     }
 

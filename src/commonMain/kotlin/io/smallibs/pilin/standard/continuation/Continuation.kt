@@ -20,6 +20,7 @@ data class Continuation<I, O>(private val behavior: Fun<Fun<I, O>, O>) : App<Con
 
         fun <O> functor() = Functor.functor<O>()
         fun <O> applicative() = Applicative.applicative<O>()
+        fun <O> selective() = Selective.selective<O>()
         fun <O> monad() = Monad.monad<O>()
     }
 }

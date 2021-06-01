@@ -31,6 +31,7 @@ sealed class Either<L, R> : App<EitherK<L>, R> {
 
         fun <L> functor() = Functor.functor<L>()
         fun <L> applicative() = Applicative.applicative<L>()
+        fun <O> selective() = Selective.selective<O>()
         fun <L> monad() = Monad.monad<L>()
     }
 }

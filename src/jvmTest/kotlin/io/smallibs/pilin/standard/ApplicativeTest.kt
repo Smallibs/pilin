@@ -5,13 +5,13 @@ import io.smallibs.pilin.laws.Applicative.`apply (pure f) (pure x) = pure (f x)`
 import io.smallibs.pilin.laws.Applicative.`apply f (pure x) = apply (pure ($ y)) f`
 import io.smallibs.pilin.laws.Applicative.`map f x = apply (pure f) x`
 import io.smallibs.pilin.standard.either.Either
-import io.smallibs.pilin.standard.either.Either.Companion.left
 import io.smallibs.pilin.standard.either.Either.Companion.right
-import io.smallibs.pilin.standard.either.Either.Left
+import io.smallibs.pilin.standard.generator.either
+import io.smallibs.pilin.standard.generator.identity
+import io.smallibs.pilin.standard.generator.option
 import io.smallibs.pilin.standard.identity.Identity
 import io.smallibs.pilin.standard.identity.Identity.Companion.id
 import io.smallibs.pilin.standard.option.Option
-import io.smallibs.pilin.standard.option.Option.Companion.none
 import io.smallibs.pilin.standard.option.Option.Companion.some
 import io.smallibs.pilin.type.Fun
 import kotlinx.coroutines.runBlocking
@@ -21,59 +21,46 @@ import org.quicktheories.WithQuickTheories
 internal class ApplicativeTest : WithQuickTheories {
 
     private val str: Fun<Int, String> = { i -> i.toString() }
-    private val ten: Fun<String, String> = { s -> s + "0" }
-    private val int: Fun<String, Int> = { s -> s.toInt() }
-
-    // TODO(didier)
-    // A dedicate generator per ADT should be provided
 
     @Test
     fun `(Identity) map f x = apply (pure f) x`() {
-        qt().forAll(integers().all()).check { a ->
-            runBlocking { Identity.applicative.`map f x = apply (pure f) x`(str, Identity(a)) }
+        qt().forAll(identity(integers().all())).check { a ->
+            runBlocking { Identity.applicative.`map f x = apply (pure f) x`(str, a) }
         }
     }
 
     @Test
     fun `(Option) map f x = apply (pure f) x`() {
-        check(runBlocking { Option.applicative.`map f x = apply (pure f) x`(str, Option.None()) })
-
-        qt().forAll(integers().all()).check { a ->
-            runBlocking { Option.applicative.`map f x = apply (pure f) x`(str, Option.Some(a)) }
+        qt().forAll(option(integers().all())).check { a ->
+            runBlocking { Option.applicative.`map f x = apply (pure f) x`(str, a) }
         }
     }
 
     @Test
     fun `(Either) map f x = apply (pure f) x`() {
-        check(runBlocking { Either.applicative<Unit>().`map f x = apply (pure f) x`(str, Left(Unit)) })
-
-        qt().forAll(integers().all()).check { a ->
-            runBlocking { Either.applicative<Unit>().`map f x = apply (pure f) x`(str, Either.Right(a)) }
+        qt().forAll(either(integers().all())).check { a ->
+            runBlocking { Either.applicative<Int>().`map f x = apply (pure f) x`(str, a) }
         }
     }
 
     @Test
     fun `(Identity) (pure id) apply v = v`() {
-        qt().forAll(integers().all()).check { a ->
-            runBlocking { Identity.applicative.`(pure id) apply v = v`(id(a)) }
+        qt().forAll(identity(integers().all())).check { a ->
+            runBlocking { Identity.applicative.`(pure id) apply v = v`(a) }
         }
     }
 
     @Test
     fun `(Option) (pure id) apply v = v`() {
-        check(runBlocking { Option.applicative.`(pure id) apply v = v`(none<Int>()) })
-
-        qt().forAll(integers().all()).check { a ->
-            runBlocking { Option.applicative.`(pure id) apply v = v`(some(a)) }
+        qt().forAll(option(integers().all())).check { a ->
+            runBlocking { Option.applicative.`(pure id) apply v = v`(a) }
         }
     }
 
     @Test
     fun `(Either) (pure id) apply v = v`() {
-        check(runBlocking { Either.applicative<Unit>().`(pure id) apply v = v`(left<Unit, Int>(Unit)) })
-
-        qt().forAll(integers().all()).check { a ->
-            runBlocking { Either.applicative<Unit>().`(pure id) apply v = v`(right(a)) }
+        qt().forAll(either(integers().all())).check { a ->
+            runBlocking { Either.applicative<Int>().`(pure id) apply v = v`(a) }
         }
     }
 
