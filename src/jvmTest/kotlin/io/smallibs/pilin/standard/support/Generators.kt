@@ -48,12 +48,12 @@ fun <A, B> either(lgen: Gen<A>): (Gen<B>) -> Gen<App<Either.TK<A>, B>> =
         }
     }
 
-fun <A> either(): Gen<Fun<A, App<Either.TK<Unit>, A>>> =
+fun <A, B> either(l: A): Gen<Fun<B, App<Either.TK<A>, B>>> =
     integers().allPositive().map { i ->
         if (i % 2 == 0) {
             { r -> Either.right(r) }
         } else {
-            { Either.left(Unit) }
+            { Either.left(l) }
         }
     }
 

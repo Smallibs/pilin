@@ -50,7 +50,7 @@ internal class MonadTest : WithQuickTheories {
 
     @Test
     fun `(Either) returns a bind h = h a`() {
-        qt().forAll(integers().all(), either<String>()).check { a, r ->
+        qt().forAll(integers().all(), either<Unit, String>(Unit)).check { a, r ->
             runBlocking {
                 Either.monad<Unit>().`returns a bind h = h a`(retStr(r), a)
             }
@@ -108,7 +108,9 @@ internal class MonadTest : WithQuickTheories {
 
     @Test
     fun `(Either) (a bind f) bind g = a bind {x in f x bind g}`() {
-        qt().forAll(either<Unit, Int>(constant(Unit))(integers().all()), either<String>(), either<Int>())
+        qt().forAll(either<Unit, Int>(constant(Unit))(integers().all()),
+            either<Unit, String>(Unit),
+            either<Unit, Int>(Unit))
             .check { a, rf, rg ->
                 runBlocking {
                     Either.monad<Unit>().`(a bind f) bind g = a bind {x in f x bind g}`(retStr(rf), retInt(rg), a)
