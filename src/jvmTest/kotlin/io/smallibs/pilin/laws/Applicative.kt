@@ -41,7 +41,7 @@ object Applicative {
             f apply pure(x) == pure(g) apply (f)
         }
 
-    suspend fun <F, A, B, C> Applicative.API<F>.`apply f (apply g x) == apply (apply (apply (pure compose) f) g) x  `(
+    suspend fun <F, A, B, C> Applicative.API<F>.`apply f (apply g x) == apply (apply (apply (pure compose) f) g) x`(
         f: App<F, Fun<B, C>>,
         g: App<F, Fun<A, B>>,
         x: App<F, A>,
