@@ -17,7 +17,7 @@ import org.quicktheories.WithQuickTheories
 internal class MonadTest : WithQuickTheories {
 
     @Test
-    fun `(Either) returns a bind h = h a`() {
+    fun `returns a bind h = h a`() {
         qt().forAll(integers().all(), either<Unit, String>(Unit)).check { a, r ->
             runBlocking {
                 Either.monad<Unit>().`returns a bind h = h a`(retStr(r), a)
@@ -26,7 +26,7 @@ internal class MonadTest : WithQuickTheories {
     }
 
     @Test
-    fun `(Either) a bind returns = a`() {
+    fun `a bind returns = a`() {
         qt().forAll(either<Unit, Int>(constant(Unit))(integers().all())).check { a ->
             runBlocking {
                 Either.monad<Unit>().`a bind returns = a`(a)
@@ -35,7 +35,7 @@ internal class MonadTest : WithQuickTheories {
     }
 
     @Test
-    fun `(Either) (a bind f) bind g = a bind {x in f x bind g}`() {
+    fun `(a bind f) bind g = a bind {x in f x bind g}`() {
         qt().forAll(either<Unit, Int>(constant(Unit))(integers().all()),
             either<Unit, String>(Unit),
             either<Unit, Int>(Unit))

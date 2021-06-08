@@ -20,14 +20,14 @@ internal class FunctorTest : WithQuickTheories {
     private val int: Fun<String, Int> = { i -> i.toInt() }
 
     @Test
-    fun `(Option) map id = id `() {
+    fun `map id = id `() {
         qt().forAll(option(integers().all())).check { a ->
             runBlocking { Option.functor.`map id = id`(a) }
         }
     }
 
     @Test
-    fun `(Option) map (incr compose toString) = (map incr) compose (map toString) `() {
+    fun `map (incr compose toString) = (map incr) compose (map toString) `() {
         qt().forAll(option(integers().all())).check { a ->
             runBlocking { Option.functor.`map (f compose g) = map f compose map g`(int, str, a) }
         }

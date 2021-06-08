@@ -33,7 +33,7 @@ object Selective {
         }
     }
 
-    open class ViaMonad<F>(private val monad: Monad.API<F>) : Core<F>,
+    open class ViaMonad<F>(private val monad: Monad.API<F>) : API<F>,
         WithSelect<F>,
         Monad.Core<F> by monad {
         override suspend fun <A, B> select(e: App<F, App<TK<A>, B>>): Fun<App<F, Fun<A, B>>, App<F, B>> =

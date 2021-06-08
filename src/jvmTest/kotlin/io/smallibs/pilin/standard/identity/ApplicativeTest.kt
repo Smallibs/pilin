@@ -23,35 +23,35 @@ internal class ApplicativeTest : WithQuickTheories {
     private val int: Fun<String, Int> = { i -> i.toInt() }
 
     @Test
-    fun `(Identity) map f x = apply (pure f) x`() {
+    fun `map f x = apply (pure f) x`() {
         qt().forAll(identity(integers().all())).check { a ->
             runBlocking { Identity.applicative.`map f x = apply (pure f) x`(str, a) }
         }
     }
 
     @Test
-    fun `(Identity) (pure id) apply v = v`() {
+    fun `(pure id) apply v = v`() {
         qt().forAll(identity(integers().all())).check { a ->
             runBlocking { Identity.applicative.`(pure id) apply v = v`(a) }
         }
     }
 
     @Test
-    fun `(Identity) apply (pure f) (pure x) = pure (f x)`() {
+    fun `apply (pure f) (pure x) = pure (f x)`() {
         qt().forAll(integers().all()).check { a ->
             runBlocking { Identity.applicative.`apply (pure f) (pure x) = pure (f x)`(str, a) }
         }
     }
 
     @Test
-    fun `(Identity) apply f (pure x) = apply (pure ($ y)) f`() {
+    fun `apply f (pure x) = apply (pure ($ y)) f`() {
         qt().forAll(integers().all(), identity(constant(str))).check { a, f ->
             runBlocking { Identity.applicative.`apply f (pure x) = apply (pure ($ y)) f`(f, a) }
         }
     }
 
     @Test
-    fun `(Identity) apply f (apply g x) == apply (apply (apply (pure compose) f) g) x`() {
+    fun `apply f (apply g x) == apply (apply (apply (pure compose) f) g) x`() {
         qt().forAll(identity(integers().all()), identity(constant(int)), identity(constant(str))).check { a, f, g ->
             runBlocking {
                 Identity.applicative.`apply f (apply g x) == apply (apply (apply (pure compose) f) g) x`(f, g, a)

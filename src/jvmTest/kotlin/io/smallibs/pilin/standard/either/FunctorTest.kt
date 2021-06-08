@@ -19,14 +19,14 @@ import org.quicktheories.WithQuickTheories
 internal class FunctorTest : WithQuickTheories {
 
     @Test
-    fun `(Either) map id = id `() {
+    fun `map id = id `() {
         qt().forAll(either<Unit, Int>(constant(Unit))(integers().all())).check { a ->
             runBlocking { Either.functor<Unit>().`map id = id`(a) }
         }
     }
 
     @Test
-    fun `(Either) map (incr compose toString) = (map incr) compose (map toString) `() {
+    fun `map (incr compose toString) = (map incr) compose (map toString) `() {
         qt().forAll(either<Unit, Int>(constant(Unit))(integers().all())).check { a ->
             runBlocking { Either.functor<Unit>().`map (f compose g) = map f compose map g`(int, str, a) }
         }

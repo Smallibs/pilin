@@ -29,7 +29,7 @@ internal class MonadTest : WithQuickTheories {
         ret<F, String, Int>(int)(r)
 
     @Test
-    fun `(Identity) returns a bind h = h a`() {
+    fun `returns a bind h = h a`() {
         qt().forAll(integers().all(), identity<String>()).check { a, r ->
             runBlocking {
                 Identity.monad.`returns a bind h = h a`(retStr(r), a)
@@ -38,7 +38,7 @@ internal class MonadTest : WithQuickTheories {
     }
 
     @Test
-    fun `(Identity) a bind returns = a`() {
+    fun `a bind returns = a`() {
         qt().forAll(identity(integers().all())).check { a ->
             runBlocking {
                 Identity.monad.`a bind returns = a`(a)
@@ -47,7 +47,7 @@ internal class MonadTest : WithQuickTheories {
     }
 
     @Test
-    fun `(Identity) (a bind f) bind g = a bind {x in f x bind g}`() {
+    fun `(a bind f) bind g = a bind {x in f x bind g}`() {
         qt().forAll(identity(integers().all()), identity<String>(), identity<Int>()).check { a, rf, rg ->
             runBlocking {
                 Identity.monad.`(a bind f) bind g = a bind {x in f x bind g}`(retStr(rf), retInt(rg), a)
