@@ -4,17 +4,17 @@ import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 import io.smallibs.pilin.type.Supplier
 
-sealed class Option<A> : App<Option.TK, A> {
+sealed class Option<A> : App<Option.OptionK, A> {
     data class None<A>(private val u: Unit = Unit) : Option<A>()
     data class Some<A>(val value: A) : Option<A>()
 
     // This code can be automatically generated
-    class TK private constructor() {
+    class OptionK private constructor() {
         companion object {
-            private val <A> App<TK, A>.fix: Option<A>
+            private val <A> App<OptionK, A>.fix: Option<A>
                 get() = this as Option<A>
 
-            suspend fun <A, B> App<TK, A>.fold(n: Supplier<B>, s: Fun<A, B>): B =
+            suspend fun <A, B> App<OptionK, A>.fold(n: Supplier<B>, s: Fun<A, B>): B =
                 when (val self = this.fix) {
                     is None -> n()
                     is Some -> s(self.value)
@@ -23,8 +23,8 @@ sealed class Option<A> : App<Option.TK, A> {
     }
 
     companion object {
-        fun <A> none(): App<TK, A> = None()
-        fun <A> some(a: A): App<TK, A> = Some(a)
+        fun <A> none(): Option<A> = None()
+        fun <A> some(a: A): Option<A> = Some(a)
 
         val functor = Functor.functor
         val applicative = Applicative.applicative

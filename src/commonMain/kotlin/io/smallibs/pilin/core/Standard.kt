@@ -26,9 +26,6 @@ object Standard {
     suspend fun <A, B, C> uncurry(f: Fun<A, Fun<B, C>>): Fun2<A, B, C> =
         { a, b -> f(a)(b) }
 
-    suspend fun <A, B, C, D> uncurry(f: Fun<A, Fun<B, Fun<C, D>>>): Fun3<A, B, C, D> =
-        { a, b, c -> f(a)(b)(c) }
-
     object Infix {
         suspend infix fun <A, B, C> (Fun<B, C>).compose(g: Fun<A, B>): Fun<A, C> =
             { x -> this(g(x)) }
