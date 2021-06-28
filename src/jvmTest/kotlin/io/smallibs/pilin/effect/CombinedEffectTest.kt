@@ -5,8 +5,8 @@ import io.smallibs.pilin.effect.And.Companion.and
 import io.smallibs.pilin.effect.Effects.Companion.handle
 import io.smallibs.pilin.standard.continuation.Continuation
 import io.smallibs.pilin.standard.continuation.Continuation.Companion.continuation
-import io.smallibs.pilin.standard.continuation.Continuation.TK
-import io.smallibs.pilin.standard.continuation.Continuation.TK.Companion.invoke
+import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK
+import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.Companion.invoke
 import io.smallibs.pilin.type.App
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
@@ -36,7 +36,7 @@ class CombinedEffectTest {
             }
         }
 
-    private fun state(): State<TK<List<String>>> {
+    private fun state(): State<ContinuationK<List<String>>> {
         var state = ""
 
         return State(
@@ -52,7 +52,7 @@ class CombinedEffectTest {
         )
     }
 
-    private fun console(): IOConsole<TK<List<String>>> =
+    private fun console(): IOConsole<ContinuationK<List<String>>> =
         IOConsole(
             printString = { text ->
                 continuation { k ->
@@ -66,7 +66,7 @@ class CombinedEffectTest {
 
     @Test
     fun shouldPerformEffect() {
-        val handled = effects<TK<List<String>>>(Continuation.monad()) with {
+        val handled = effects<ContinuationK<List<String>>>(Continuation.monad()) with {
             state() and console()
         }
 

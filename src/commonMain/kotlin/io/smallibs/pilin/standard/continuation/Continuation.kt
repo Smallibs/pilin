@@ -3,14 +3,14 @@ package io.smallibs.pilin.standard.continuation
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
-data class Continuation<I, O>(private val behavior: Fun<Fun<I, O>, O>) : App<Continuation.TK<O>, I> {
+data class Continuation<I, O>(private val behavior: Fun<Fun<I, O>, O>) : App<Continuation.ContinuationK<O>, I> {
     suspend operator fun invoke(a: Fun<I, O>) = behavior(a)
 
-    class TK<O> private constructor() {
+    class ContinuationK<O> private constructor() {
         companion object {
-            val <I, O> App<TK<O>, I>.fix: Continuation<I, O> get() = this as Continuation<I, O>
+            val <I, O> App<ContinuationK<O>, I>.fix: Continuation<I, O> get() = this as Continuation<I, O>
 
-            suspend operator fun <A, B> App<TK<B>, A>.invoke(a: Fun<A, B>): B =
+            suspend operator fun <A, B> App<ContinuationK<B>, A>.invoke(a: Fun<A, B>): B =
                 this.fix(a)
         }
     }

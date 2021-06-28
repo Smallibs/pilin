@@ -4,8 +4,8 @@ import io.smallibs.pilin.effect.Effects.Companion.handle
 import io.smallibs.pilin.standard.continuation.Continuation
 import io.smallibs.pilin.standard.continuation.Continuation.Companion.continuation
 import io.smallibs.pilin.standard.continuation.Continuation.Companion.monad
-import io.smallibs.pilin.standard.continuation.Continuation.TK
-import io.smallibs.pilin.standard.continuation.Continuation.TK.Companion.invoke
+import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK
+import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.Companion.invoke
 import io.smallibs.pilin.type.App
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
@@ -17,7 +17,7 @@ class SingleEffectTest {
         val readString: Continuation<String, R>,
     ) : Handler
 
-    private fun <R> effects(): Effects<IOConsole<R>, App<TK<R>, Unit>> = handle { console ->
+    private fun <R> effects(): Effects<IOConsole<R>, App<ContinuationK<R>, Unit>> = handle { console ->
         with(monad<R>().infix) {
             console.readString bind { value ->
                 console.printString("Hello $value")
