@@ -80,12 +80,12 @@ sealed class Option<A> : App<Option.TK, A> {
     data class None<A>(private val u: Unit = Unit) : Option<A>()
     data class Some<A>(val value: A) : Option<A>()
 
-    class TK private constructor() {
+    class OptionK private constructor() {
         companion object {
-            val <A> App<TK, A>.fix: Option<A>
+            val <A> App<OptionK, A>.fix: Option<A>
                 get() = this as Option<A>
 
-            suspend fun <A, B> App<TK, A>.fold(n: Supplier<B>, s: Fun<A, B>): B =
+            suspend fun <A, B> App<OptionK, A>.fold(n: Supplier<B>, s: Fun<A, B>): B =
                 when (val self = this.fix) {
                     is None -> n()
                     is Some -> s(self.value)
@@ -94,8 +94,8 @@ sealed class Option<A> : App<Option.TK, A> {
     }
 
     companion object {
-        fun <A> none(): App<TK, A> = None()
-        fun <A> some(a: A): App<TK, A> = Some(a)
+        fun <A> none(): App<OptionK, A> = None()
+        fun <A> some(a: A): App<OptionK, A> = Some(a)
 
         val functor = Functor.functor
         // ...
@@ -109,12 +109,12 @@ The `Functor` abstraction implementation can then be proposed. This is done once
 
 ```kotlin
 object Functor {
-    private class FunctorImpl : Functor.API<Option.TK> {
-        override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<Option.TK, A>, App<Option.TK, B>> =
+    private class FunctorImpl : Functor.API<OptionK> {
+        override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<OptionK, A>, App<OptionK, B>> =
             { ma -> ma.fold(::none) { a -> some(f(a)) } }
     }
 
-    val functor: Functor.API<Option.TK> = FunctorImpl()
+    val functor: Functor.API<OptionK> = FunctorImpl()
 }
 ```
 
@@ -176,6 +176,68 @@ suspend fun <T> doSomething(a: Applicative.API<T>): App<T, Int> =
         val plus = curry { a: Int, b: Int -> a + b }
         plus map pure(40) apply pure(2) // or pure(plus) apply pure(40) apply pure(2)
     }
+```
+
+## Onboarding user defined effects
+
+In addition user defined effects can be proposed and seamlessly combined with predefined effects like
+continuation, either option etc.
+
+### IOConsole effect specification
+
+We define a effect able to read and print strings. The resulting effect of each operation is defined 
+using a parametric `F`.
+
+```kotlin
+class IOConsole<F>(
+    val printString: (String) -> App<F, Unit>,
+    val readString: App<F, String>,
+) : Handler
+```    
+
+## Code using effect specification
+
+Therefor we can write a naive program usign such effect specification.
+
+```kotlin
+private fun <F> program(monad: Monad.API<F>): Effects<IOConsole<F>, App<F, Unit>> =
+    with(monad.infix) {
+        console.readString bind { value ->
+            console.printString("Hello $value")
+        }
+    }
+}
+```
+
+## Defining my own console 
+
+Of course, an implementation can be provided. In this example the effect if the 
+`Continuation`.
+
+```kotlin
+private fun console(): IOConsole<ContinuationK<List<String>>> =
+        IOConsole(
+            printString = { text ->
+                continuation { k ->
+                    listOf("printString($text)") + k(Unit)
+                }
+            },
+            readString = continuation { k ->
+                listOf("readStream(World)") + k("World")
+            }
+        )
+```
+
+## Execution the program with a dedicated console
+
+Finally the previous program can be executed with the `console()` uyser defined effect.
+
+```kotlin
+val handled = program(Continuation.monad<List<String>>()) with {
+     console()
+}
+
+val traces = runBlocking { (handled()) { listOf() } }
 ```
 
 # License
