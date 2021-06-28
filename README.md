@@ -228,7 +228,7 @@ private fun console(): IOConsole<ContinuationK<List<String>>> =
         )
 ```
 
-## Execution the program with a dedicated console
+## Executing the program with a dedicated console
 
 Finally the previous program can be executed with the `console()` uyser defined effect.
 
