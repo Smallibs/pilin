@@ -185,7 +185,7 @@ continuation, either option etc.
 
 ### IOConsole effect specification
 
-We define a effect able to read and print strings. The resulting effect of each operation is defined 
+We specify a user defined effect able to read and print strings. The resulting effect of each operation is defined 
 using a parametric `F`.
 
 ```kotlin
