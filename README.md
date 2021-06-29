@@ -212,8 +212,7 @@ private fun <F> program(monad: Monad.API<F>): Effects<IOConsole<F>, App<F, Unit>
 
 ## Defining my own console 
 
-Of course, an implementation can be provided. In this example the effect if the 
-`Continuation`.
+Of course, an implementation can be provided. In this example the used effect is `Continuation`.
 
 ```kotlin
 fun console(): IOConsole<ContinuationK<List<String>>> =
