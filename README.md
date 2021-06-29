@@ -230,7 +230,7 @@ fun console(): IOConsole<ContinuationK<List<String>>> =
 
 ## Executing the program with a dedicated console
 
-Finally the previous program can be executed with the `console()` uyser defined effect.
+Finally the previous program can be executed with the user defined effect implemented by `console()`.
 
 ```kotlin
 val handled = program(Continuation.monad<List<String>>()) with {
