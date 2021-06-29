@@ -216,17 +216,17 @@ Of course, an implementation can be provided. In this example the effect if the
 `Continuation`.
 
 ```kotlin
-private fun console(): IOConsole<ContinuationK<List<String>>> =
-        IOConsole(
-            printString = { text ->
-                continuation { k ->
-                    listOf("printString($text)") + k(Unit)
-                }
-            },
-            readString = continuation { k ->
-                listOf("readStream(World)") + k("World")
+fun console(): IOConsole<ContinuationK<List<String>>> =
+    IOConsole(
+        printString = { text ->
+            continuation { k ->
+                listOf("printString($text)") + k(Unit)
             }
-        )
+        },
+        readString = continuation { k ->
+            listOf("readStream(World)") + k("World")
+        }
+    )
 ```
 
 ## Executing the program with a dedicated console
