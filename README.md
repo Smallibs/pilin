@@ -200,7 +200,7 @@ class IOConsole<F>(
 Therefor we can write a naive program usign such effect specification.
 
 ```kotlin
-private fun <F> program(monad: Monad.API<F>): Effects<IOConsole<F>, App<F, Unit>> =
+private fun <F> program(monad: Monad.API<F>): Effects<IOConsole<F>, App<F, Unit>> = handle { console ->
     with(monad.infix) {
         console.readString bind { value ->
             console.printString("Hello $value")
