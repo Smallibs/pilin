@@ -6,29 +6,29 @@ import io.smallibs.pilin.core.Standard.curry
 import io.smallibs.pilin.standard.either.Either.Companion.functor
 import io.smallibs.pilin.standard.either.Either.Companion.left
 import io.smallibs.pilin.standard.either.Either.Companion.right
-import io.smallibs.pilin.standard.either.Either.TK
-import io.smallibs.pilin.standard.either.Either.TK.Companion.fold
+import io.smallibs.pilin.standard.either.Either.EitherK
+import io.smallibs.pilin.standard.either.Either.EitherK.Companion.fold
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
 object Selective {
 
     interface Core<F> : Applicative.Core<F> {
-        suspend fun <A, B> select(e: App<F, App<TK<A>, B>>): Fun<App<F, Fun<A, B>>, App<F, B>>
-        suspend fun <A, B, C> branch(e: App<F, App<TK<A>, B>>): Fun<App<F, Fun<A, C>>, Fun<App<F, Fun<B, C>>, App<F, C>>>
+        suspend fun <A, B> select(e: App<F, App<EitherK<A>, B>>): Fun<App<F, Fun<A, B>>, App<F, B>>
+        suspend fun <A, B, C> branch(e: App<F, App<EitherK<A>, B>>): Fun<App<F, Fun<A, C>>, Fun<App<F, Fun<B, C>>, App<F, C>>>
     }
 
     interface WithSelect<F> : Core<F> {
-        override suspend fun <A, B, C> branch(e: App<F, App<TK<A>, B>>): Fun<App<F, Fun<A, C>>, Fun<App<F, Fun<B, C>>, App<F, C>>> =
+        override suspend fun <A, B, C> branch(e: App<F, App<EitherK<A>, B>>): Fun<App<F, Fun<A, C>>, Fun<App<F, Fun<B, C>>, App<F, C>>> =
             curry { l, r ->
-                val a = map(functor<A>().map<B, App<TK<B>, C>>(::left))(e)
-                val b = map(compose<A, C, App<TK<B>, C>>(::right))(l)
+                val a = map(functor<A>().map<B, App<EitherK<B>, C>>(::left))(e)
+                val b = map(compose<A, C, App<EitherK<B>, C>>(::right))(l)
                 select(select(a)(b))(r)
             }
     }
 
     interface WithBranch<F> : Core<F> {
-        override suspend fun <A, B> select(e: App<F, App<TK<A>, B>>): Fun<App<F, Fun<A, B>>, App<F, B>> = { r ->
+        override suspend fun <A, B> select(e: App<F, App<EitherK<A>, B>>): Fun<App<F, Fun<A, B>>, App<F, B>> = { r ->
             branch<A, B, B>(e)(r)(pure(Standard::id))
         }
     }
@@ -36,7 +36,7 @@ object Selective {
     open class ViaMonad<F>(private val monad: Monad.API<F>) : API<F>,
         WithSelect<F>,
         Monad.Core<F> by monad {
-        override suspend fun <A, B> select(e: App<F, App<TK<A>, B>>): Fun<App<F, Fun<A, B>>, App<F, B>> =
+        override suspend fun <A, B> select(e: App<F, App<EitherK<A>, B>>): Fun<App<F, Fun<A, B>>, App<F, B>> =
             with(monad.infix) {
                 { f -> e bind { it.fold({ a -> map { f: Fun<A, B> -> f(a) }(f) }, ::pure) } }
             }
@@ -48,7 +48,7 @@ object Selective {
             curry { ifTrue, ifFalse ->
                 val bTrue = map<A, Fun<Unit, A>>(Standard::const)(ifTrue)
                 val bFalse = map<A, Fun<Unit, A>>(Standard::const)(ifFalse)
-                val test = map<Boolean, App<TK<Unit>, Unit>> { if (it) left(Unit) else right(Unit) }
+                val test = map<Boolean, App<EitherK<Unit>, Unit>> { if (it) left(Unit) else right(Unit) }
 
                 branch<Unit, Unit, A>(test((predicate)))(bTrue)(bFalse)
             }
@@ -92,10 +92,10 @@ object Selective {
     class Infix<F>(private val c: Core<F>) : Applicative.Infix<F>(c), Core<F> by c {
         private val o = Operation(c)
 
-        suspend infix fun <A, B, C> App<F, App<TK<A>, B>>.branch(l: App<F, Fun<A, C>>): Fun<App<F, Fun<B, C>>, App<F, C>> =
+        suspend infix fun <A, B, C> App<F, App<EitherK<A>, B>>.branch(l: App<F, Fun<A, C>>): Fun<App<F, Fun<B, C>>, App<F, C>> =
             c.branch<A, B, C>(this)(l)
 
-        suspend infix fun <A, B> App<F, App<TK<A>, B>>.select(r: App<F, Fun<A, B>>): App<F, B> =
+        suspend infix fun <A, B> App<F, App<EitherK<A>, B>>.select(r: App<F, Fun<A, B>>): App<F, B> =
             c.select(this)(r)
 
         suspend infix fun App<F, Boolean>.or(right: App<F, Boolean>): App<F, Boolean> =

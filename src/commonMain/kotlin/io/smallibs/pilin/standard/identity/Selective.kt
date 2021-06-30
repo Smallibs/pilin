@@ -1,12 +1,12 @@
 package io.smallibs.pilin.standard.identity
 
 import io.smallibs.pilin.control.Selective
-import io.smallibs.pilin.standard.identity.Identity.TK
+import io.smallibs.pilin.standard.identity.Identity.IdentityK
 
 object Selective {
-    private class SelectiveImpl(monad: io.smallibs.pilin.control.Monad.API<TK>) :
-        Selective.ViaMonad<TK>(monad) {
+    private class SelectiveImpl(monad: io.smallibs.pilin.control.Monad.API<IdentityK>) :
+        Selective.ViaMonad<IdentityK>(monad) {
     }
 
-    val selective: Selective.ViaMonad<TK> = SelectiveImpl(Monad.monad)
+    val selective: Selective.ViaMonad<IdentityK> = SelectiveImpl(Monad.monad)
 }

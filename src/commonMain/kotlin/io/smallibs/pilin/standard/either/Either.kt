@@ -20,14 +20,14 @@ sealed class Either<L, R> : App<EitherK<L>, R> {
                     is Right -> r(self.value)
                 }
 
-            suspend fun <L, R, A> fold(l: Fun<L, A>): Fun<Fun<R, A>, Fun<App<TK<L>, R>, A>> =
+            suspend fun <L, R, A> fold(l: Fun<L, A>): Fun<Fun<R, A>, Fun<App<EitherK<L>, R>, A>> =
                 curry { r, e -> e.fold(l, r) }
 
-            suspend fun <L, R, A, B> bimap(l: Fun<L, A>, r: Fun<R, B>): Fun<App<TK<L>, R>, App<TK<A>, B>> =
+            suspend fun <L, R, A, B> bimap(l: Fun<L, A>, r: Fun<R, B>): Fun<App<EitherK<L>, R>, App<EitherK<A>, B>> =
                 { e ->
-                    when (val e = e.fix) {
-                        is Left -> left(l(e.value))
-                        is Right -> right(r(e.value))
+                    when (val v = e.fix) {
+                        is Left -> left(l(v.value))
+                        is Right -> right(r(v.value))
                     }
                 }
         }

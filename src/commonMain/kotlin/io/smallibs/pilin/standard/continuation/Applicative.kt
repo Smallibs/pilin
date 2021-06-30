@@ -13,9 +13,10 @@ object Applicative {
         Applicative.API<ContinuationK<O>>,
         Applicative.WithPureAndApply<ContinuationK<O>> {
         override suspend fun <I> pure(a: I): App<ContinuationK<O>, I> = continuation { k -> k(a) }
-        override suspend fun <A, B> apply(mf: App<ContinuationK<O>, Fun<A, B>>): Fun<App<ContinuationK<O>, A>, App<ContinuationK<O>, B>> = { ma ->
-            continuation { k -> mf { f -> ma(f then k) } }
-        }
+        override suspend fun <A, B> apply(mf: App<ContinuationK<O>, Fun<A, B>>): Fun<App<ContinuationK<O>, A>, App<ContinuationK<O>, B>> =
+            { ma ->
+                continuation { k -> mf { f -> ma(f then k) } }
+            }
     }
 
     fun <L> applicative(): Applicative.API<ContinuationK<L>> = ApplicativeImpl()
