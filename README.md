@@ -197,7 +197,7 @@ class IOConsole<F>(
 
 ## Code using effect specification
 
-Therefor we can write a naive program usign such effect specification.
+Therefor we can write a naive program using such effect specification.
 
 ```kotlin
 private fun <F> program(monad: Monad.API<F>): Effects<IOConsole<F>, App<F, Unit>> = 
@@ -212,7 +212,7 @@ private fun <F> program(monad: Monad.API<F>): Effects<IOConsole<F>, App<F, Unit>
 
 ## Defining my own console 
 
-Of course, an implementation can be provided. In this example the used effect is `Continuation`.
+Of course, an implementation can be provided. In this example the effect used is `Continuation`.
 
 ```kotlin
 fun console(): IOConsole<ContinuationK<List<String>>> =
@@ -237,7 +237,7 @@ val handled = program(Continuation.monad<List<String>>()) with {
      console()
 }
 
-val traces = runBlocking { (handled()) { listOf() } }
+val traces = runBlocking { handled() { listOf() } }
 ```
 
 # License
