@@ -68,15 +68,15 @@ In this section we show how `Option` can be designed.
 
 #### Data type definition
 
-First at all, the data type should be specified. Of course, an optional value is `None` of `Some` value. In addition an internal class `TK` - for type kind - 
+First at all, the data type should be specified. Of course, an optional value is `None` of `Some` value. In addition an internal class `OptionK` - for type kind - 
 using a type defunctionalised as illustrated in [Lightweight higher-kinded polymorphism](https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf).
 
-In this `TK` class, a `fix` value is proposed when a downcast is required. This operation is of course dangerous, but to reduce this aspect the scope of the constructor is limited to `Option`. In addtion, the catamorphism `fold` function is proposed.
+In this `OptionK` class, a `fix` value is proposed when a downcast is required. This operation is of course dangerous, but to reduce this aspect the scope of the constructor is limited to `Option`. In addtion, the catamorphism `fold` function is proposed.
 
 Finally, smart constructors and abstraction implementation references can be proposed.
 
 ```kotlin
-sealed class Option<A> : App<Option.TK, A> {
+sealed class Option<A> : App<OptionK, A> {
     data class None<A>(private val u: Unit = Unit) : Option<A>()
     data class Some<A>(val value: A) : Option<A>()
 
