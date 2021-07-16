@@ -3,7 +3,9 @@ package io.smallibs.pilin.syntax
 import io.smallibs.pilin.extension.Comprehension
 import io.smallibs.pilin.extension.Comprehension.Companion.`do`
 import io.smallibs.pilin.standard.continuation.Continuation
-import io.smallibs.pilin.standard.continuation.Continuation.TK.Companion.invoke
+import io.smallibs.pilin.standard.continuation.Continuation.Companion.continuation
+import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK
+import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.Companion.invoke
 import io.smallibs.pilin.standard.either.Either
 import io.smallibs.pilin.standard.either.Either.Companion.left
 import io.smallibs.pilin.standard.either.Either.Companion.right
@@ -89,13 +91,13 @@ internal class ComprehensionTest {
     @Test
     fun `Should be able to Chain continuation effects`() {
         assertEquals(42, runBlocking {
-            (Comprehension<Continuation.TK<Int>, Int>(Continuation.monad()) {
-                val (a) = pure(1)
+            (Comprehension<ContinuationK<Int>, Int>(Continuation.monad()) {
+                val (a) = continuation<Int, Int> { k -> k(1) + k(1) }
                 delay(100)
-                val (b) = pure(38)
+                val (b) = returns(38)
                 delay(100)
                 a + b
-            }).invoke { it + 3 }
+            }) { it + 3 }
         })
     }
 
