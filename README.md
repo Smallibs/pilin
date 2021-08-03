@@ -230,7 +230,9 @@ val console =
 
 ## Executing the program with a dedicated console
 
-Finally the previous program can be executed with the user defined effect implemented by `console()`.
+Then the previous program can be executed with the user defined effect implemented by `console()`.
+Since all constuctions return suspended functions this execution should be performed thanks to the
+standard `runBlocking` function.
 
 ```kotlin
 val handled = program(Continuation.monad<List<String>>()) with console
