@@ -240,7 +240,7 @@ val handled = program(Continuation.monad<List<String>>()) with console
 val traces = runBlocking { handled() { listOf() } }
 ```
 
-Finally `traces`, after execution has the following value: `listOf("readString(World)", "printString(Hello World)")
+Finally, after the execution, `traces` has the following value: `listOf("readString(World)", "printString(Hello World)")
 
 # License
 
