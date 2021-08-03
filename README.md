@@ -215,15 +215,15 @@ private fun <F> program(monad: Monad.API<F>): Effects<IOConsole<F>, App<F, Unit>
 Of course, an implementation can be provided. In this example the effect used is `Continuation`.
 
 ```kotlin
-fun console(): IOConsole<ContinuationK<List<String>>> =
-    IOConsole(
+val console =
+    IOConsole<ContinuationK<List<String>>>(
         printString = { text ->
             continuation { k ->
                 listOf("printString($text)") + k(Unit)
             }
         },
         readString = continuation { k ->
-            listOf("readStream(World)") + k("World")
+            listOf("readString(World)") + k("World")
         }
     )
 ```
@@ -233,12 +233,12 @@ fun console(): IOConsole<ContinuationK<List<String>>> =
 Finally the previous program can be executed with the user defined effect implemented by `console()`.
 
 ```kotlin
-val handled = program(Continuation.monad<List<String>>()) with {
-     console()
-}
+val handled = program(Continuation.monad<List<String>>()) with console
 
 val traces = runBlocking { handled() { listOf() } }
 ```
+
+Finally `traces`, after execution has the following value: `listOf("readString(World)", "printString(Hello World)")
 
 # License
 
