@@ -78,7 +78,7 @@ this aspect the scope of the constructor is limited to `Option`. Finally, the ca
 Smart constructors and abstraction implementation references can be proposed.
 
 ```kotlin
-sealed class Option<A> : App<Option.TK, A> {
+sealed class Option<A> : App<OptionK, A> {
     data class None<A>(private val u: Unit = Unit) : Option<A>()
     data class Some<A>(val value: A) : Option<A>()
 
@@ -199,48 +199,50 @@ class IOConsole<F>(
 
 ## Code using effect specification
 
-Therefor we can write a naive program usign such effect specification.
+Therefor we can write a naive program using such effect specification.
 
 ```kotlin
-private fun <F> program(monad: Monad.API<F>): Effects<IOConsole<F>, App<F, Unit>> =
-    with(monad.infix) {
-        console.readString bind { value ->
-            console.printString("Hello $value")
-        }
+private fun <F> program(monad: Monad.API<F>): Effects<IOConsole<F>, App<F, Unit>> = 
+    handle { console ->
+        with(monad.infix) {
+            console.readString bind { value ->
+                console.printString("Hello $value")
+            }
+        } 
     }
-}
 ```
 
 ## Defining my own console 
 
-Of course, an implementation can be provided. In this example the effect if the 
-`Continuation`.
+Of course, an implementation can be provided. In this example the effect used is `Continuation`.
 
 ```kotlin
-private fun console(): IOConsole<ContinuationK<List<String>>> =
-        IOConsole(
-            printString = { text ->
-                continuation { k ->
-                    listOf("printString($text)") + k(Unit)
-                }
-            },
-            readString = continuation { k ->
-                listOf("readStream(World)") + k("World")
+val console =
+    IOConsole<ContinuationK<List<String>>>(
+        printString = { text ->
+            continuation { k ->
+                listOf("printString($text)") + k(Unit)
             }
-        )
+        },
+        readString = continuation { k ->
+            listOf("readString(World)") + k("World")
+        }
+    )
 ```
 
 ## Executing the program with a dedicated console
 
-Finally the previous program can be executed with the `console()` uyser defined effect.
+Then the previous program can be executed with the user defined effect implemented by `console`.
+Since all constuctions return suspended functions this execution should be performed thanks to the
+standard `runBlocking` function.
 
 ```kotlin
-val handled = program(Continuation.monad<List<String>>()) with {
-     console()
-}
+val handled = program(Continuation.monad<List<String>>()) with console
 
-val traces = runBlocking { (handled()) { listOf() } }
+val traces = runBlocking { handled() { listOf() } }
 ```
+
+Finally, after the execution, `traces` has the following value: `listOf("readString(World)", "printString(Hello World)")
 
 # License
 
