@@ -72,7 +72,7 @@ In this section we show how `Option` can be designed.
 First at all, the data type should be specified. Of course, an optional value is `None` of `Some` value. In addition, an 
 internal class `OptionK` - for type kind - using a type defunctionalised as illustrated in [Lightweight higher-kinded polymorphism](https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf).
 
-In this `TK` class, a `fix` value is proposed when a downcast is required. This operation is of course unsafe, but to reduce 
+In this `OptionK` class, a `fix` value is proposed when a downcast is required. This operation is of course unsafe, but to reduce 
 this aspect the scope of the constructor is limited to `Option`. Finally, the catamorphism `fold` function is proposed.
 
 Smart constructors and abstraction implementation references can be proposed.
