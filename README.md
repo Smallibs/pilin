@@ -218,13 +218,13 @@ Of course, an implementation can be provided. In this example the effect used is
 
 ```kotlin
 val console =
-    IOConsole<ContinuationK<List<String>>>(
+    IOConsole<ContinuationK>(
         printString = { text ->
-            continuation { k ->
+            continuation<Unit,List<String>> { k ->
                 listOf("printString($text)") + k(Unit)
             }
         },
-        readString = continuation { k ->
+        readString = continuation<String,List<String>> { k ->
             listOf("readString(World)") + k("World")
         }
     )
@@ -237,9 +237,9 @@ Since all constuctions return suspended functions this execution should be perfo
 standard `runBlocking` function.
 
 ```kotlin
-val handled = program(Continuation.monad<List<String>>()) with console
+val handled = program(Continuation.monad) with console
 
-val traces = runBlocking { handled() { listOf() } }
+val traces = runBlocking { handled().invoke<Unit,List<String>> { listOf() } }
 ```
 
 Finally, after the execution, `traces` has the following value: `listOf("readString(World)", "printString(Hello World)")
