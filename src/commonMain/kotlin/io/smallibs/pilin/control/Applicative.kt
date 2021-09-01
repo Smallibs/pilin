@@ -1,5 +1,6 @@
 package io.smallibs.pilin.control
 
+import io.smallibs.pilin.core.Standard
 import io.smallibs.pilin.core.Standard.Infix.then
 import io.smallibs.pilin.core.Standard.curry
 import io.smallibs.pilin.type.App
@@ -28,7 +29,7 @@ object Applicative {
 
     abstract class ViaFunctor<F>(functor: Functor.Core<F>) : Core<F>, Functor.Core<F> by functor
 
-    class Operation<F>(private val c: Core<F>) : Core<F> by c {
+    open class Operation<F>(private val c: Core<F>) : Core<F> by c {
         suspend fun <A, B> lift1(f: Fun<A, B>): Fun<App<F, A>, App<F, B>> =
             map(f)
 
@@ -37,11 +38,27 @@ object Applicative {
 
         suspend fun <A, B, C, D> lift3(f: Fun<A, Fun<B, Fun<C, D>>>): Fun<App<F, A>, Fun<App<F, B>, Fun<App<F, C>, App<F, D>>>> =
             { ma -> lift2(f)(ma) then ::apply }
+
+        suspend fun <A, B> discardLeft(ma: App<F, A>): Fun<App<F, B>, App<F, B>> =
+            lift2<A, B, B>(curry { _, y -> y })(ma)
+
+        suspend fun <A, B> discardRight(ma: App<F, A>): Fun<App<F, B>, App<F, A>> =
+            lift2<A, B, A>(Standard::const)(ma)
     }
 
     @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
     open class Infix<F>(private val c: Core<F>) : Functor.Infix<F>(c), Core<F> by c {
-        suspend infix fun <A, B> App<F, Fun<A, B>>.apply(ma: App<F, A>): App<F, B> = c.apply(this)(ma)
+        private val o = Operation(c)
+
+        suspend infix fun <A, B> App<F, Fun<A, B>>.apply(ma: App<F, A>): App<F, B> =
+            c.apply(this)(ma)
+
+        suspend infix fun <A, B> App<F, A>.discardLeft(mb: App<F, B>): App<F, B> =
+            o.discardLeft<A, B>(this)(mb)
+
+        suspend infix fun <A, B> App<F, A>.discardRight(mb: App<F, B>): App<F, A> =
+            o.discardRight<A, B>(this)(mb)
+
     }
 
     interface API<F> : Core<F> {

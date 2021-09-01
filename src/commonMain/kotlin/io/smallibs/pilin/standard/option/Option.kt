@@ -28,6 +28,7 @@ sealed class Option<A> : App<Option.OptionK, A> {
 
         val functor = Functor.functor
         val applicative = Applicative.applicative
+        val selective = Selective.selective
         val monad = Monad.monad
 
     }

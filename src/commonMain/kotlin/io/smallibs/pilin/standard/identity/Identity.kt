@@ -20,6 +20,7 @@ data class Identity<A>(val value: A) : App<IdentityK, A> {
 
         val functor = Functor.functor
         val applicative = Applicative.applicative
+        val selective = Selective.selective
         val monad = Monad.monad
     }
 }
