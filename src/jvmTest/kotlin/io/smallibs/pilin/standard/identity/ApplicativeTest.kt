@@ -5,13 +5,8 @@ import io.smallibs.pilin.laws.Applicative.`apply (pure f) (pure x) = pure (f x)`
 import io.smallibs.pilin.laws.Applicative.`apply f (apply g x) == apply (apply (apply (pure compose) f) g) x`
 import io.smallibs.pilin.laws.Applicative.`apply f (pure x) = apply (pure ($ y)) f`
 import io.smallibs.pilin.laws.Applicative.`map f x = apply (pure f) x`
-import io.smallibs.pilin.standard.either.Either
-import io.smallibs.pilin.standard.identity.Identity
-import io.smallibs.pilin.standard.option.Option
 import io.smallibs.pilin.standard.support.constant
-import io.smallibs.pilin.standard.support.either
 import io.smallibs.pilin.standard.support.identity
-import io.smallibs.pilin.standard.support.option
 import io.smallibs.pilin.type.Fun
 import kotlinx.coroutines.runBlocking
 import org.junit.Test

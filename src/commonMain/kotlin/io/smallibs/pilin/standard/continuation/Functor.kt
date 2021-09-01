@@ -9,11 +9,11 @@ import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
 object Functor {
-    private class FunctorImpl<O> : Functor.API<ContinuationK<O>> {
-        override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<ContinuationK<O>, A>, App<ContinuationK<O>, B>> = { ma ->
-            continuation { b -> ma(f then b) }
+    private class FunctorImpl : Functor.API<ContinuationK> {
+        override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<ContinuationK, A>, App<ContinuationK, B>> = { ma ->
+            continuation<B, Any> { b -> ma(f then b) }
         }
     }
 
-    fun <O> functor(): Functor.API<ContinuationK<O>> = FunctorImpl()
+    val functor: Functor.API<ContinuationK> = FunctorImpl()
 }

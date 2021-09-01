@@ -36,15 +36,15 @@ class CombinedEffectTest {
             }
         }
 
-    private fun state(): State<ContinuationK<List<String>>> {
+    private fun state(): State<ContinuationK> {
         var state = ""
 
         return State(
-            get = continuation { k ->
+            get = continuation<String, List<String>> { k ->
                 listOf("get()") + k(state)
             },
             set = { value ->
-                continuation { k ->
+                continuation<Unit, List<String>> { k ->
                     state = value
                     listOf("set($value)") + k(Unit)
                 }
@@ -52,25 +52,25 @@ class CombinedEffectTest {
         )
     }
 
-    private fun console(): IOConsole<ContinuationK<List<String>>> =
+    private fun console(): IOConsole<ContinuationK> =
         IOConsole(
             printString = { text ->
-                continuation { k ->
+                continuation<Unit, List<String>> { k ->
                     listOf("printString($text)") + k(Unit)
                 }
             },
-            readString = continuation { k ->
+            readString = continuation<String, List<String>> { k ->
                 listOf("readStream(World)") + k("World")
             }
         )
 
     @Test
     fun shouldPerformEffect() {
-        val handled = effects<ContinuationK<List<String>>>(Continuation.monad()) with {
+        val handled = effects(Continuation.monad) with {
             state() and console()
         }
 
-        val traces = runBlocking { (handled()) { listOf() } }
+        val traces = runBlocking { (handled()).invoke<Unit, List<String>> { listOf() } }
 
         assertEquals(listOf("readStream(World)", "set(World)", "get()", "printString(Hello World)"), traces)
     }

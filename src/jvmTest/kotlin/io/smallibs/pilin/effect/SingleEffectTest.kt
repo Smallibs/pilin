@@ -12,36 +12,36 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 class SingleEffectTest {
-    private class IOConsole<R>(
-        val printString: (String) -> Continuation<Unit, R>,
-        val readString: Continuation<String, R>,
+    private class IOConsole(
+        val printString: (String) -> Continuation<Unit>,
+        val readString: Continuation<String>,
     ) : Handler
 
-    private fun <R> effects(): Effects<IOConsole<R>, App<ContinuationK<R>, Unit>> = handle { console ->
-        with(monad<R>().infix) {
+    private fun effects(): Effects<IOConsole, App<ContinuationK, Unit>> = handle { console ->
+        with(monad.infix) {
             console.readString bind { value ->
                 console.printString("Hello $value")
             }
         }
     }
 
-    private fun console(): IOConsole<List<String>> =
+    private fun console(): IOConsole =
         IOConsole(
             printString = { text ->
-                continuation { k ->
+                continuation<Unit, List<String>> { k ->
                     listOf("printString($text)") + k(Unit)
                 }
             },
-            readString = continuation { k ->
+            readString = continuation<String, List<String>> { k ->
                 listOf("readStream(World)") + k("World")
             }
         )
 
     @Test
     fun shouldPerformEffect() {
-        val handled = effects<List<String>>() with console()
+        val handled: HandledEffects<App<ContinuationK, Unit>> = effects() with console()
 
-        val traces = runBlocking { (handled()) { listOf() } }
+        val traces = runBlocking { handled().invoke<Unit, List<String>> { listOf() } }
 
         assertEquals(listOf("readStream(World)", "printString(Hello World)"), traces)
     }

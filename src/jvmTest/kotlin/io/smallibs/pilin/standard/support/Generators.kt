@@ -61,9 +61,15 @@ fun <A, B> either(l: A): Gen<Fun<B, App<EitherK<A>, B>>> =
         }
     }
 
-fun <A> continuation(gen: Gen<A>): Gen<App<ContinuationK<A>, A>> =
+fun <A> continuation(gen: Gen<A>): Gen<App<ContinuationK, A>> =
     gen.map { a ->
-        Continuation.continuation { k -> k(a) }
+        Continuation.continuation<A, Any> { k -> k(a) }
+    }
+
+
+fun <A> continuation(): Gen<Fun<A, App<ContinuationK, A>>> =
+    integers().all().map { _ ->
+        { a -> Continuation.continuation<A, Any> { k -> k(a) } }
     }
 
 fun <A> constant(a: A): Gen<A> = Gen { a }

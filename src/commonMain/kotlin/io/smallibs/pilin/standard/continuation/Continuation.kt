@@ -3,24 +3,31 @@ package io.smallibs.pilin.standard.continuation
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
-data class Continuation<I, O>(private val behavior: Fun<Fun<I, O>, O>) : App<Continuation.ContinuationK<O>, I> {
-    suspend operator fun invoke(a: Fun<I, O>) = behavior(a)
+data class Continuation<I>(private val behavior: C<I>) : App<Continuation.ContinuationK, I> {
+    interface C<I> {
+        suspend fun <O> get(): Fun<Fun<I, O>, O>
+    }
 
-    class ContinuationK<O> private constructor() {
+    suspend operator fun <O> invoke(a: Fun<I, O>) = behavior.get<O>()(a)
+
+    class ContinuationK private constructor() {
         companion object {
-            val <I, O> App<ContinuationK<O>, I>.fix: Continuation<I, O> get() = this as Continuation<I, O>
+            val <I> App<ContinuationK, I>.fix: Continuation<I> get() = this as Continuation<I>
 
-            suspend operator fun <A, B> App<ContinuationK<B>, A>.invoke(a: Fun<A, B>): B =
+            suspend operator fun <A, B> App<ContinuationK, A>.invoke(a: Fun<A, B>): B =
                 this.fix(a)
         }
     }
 
     companion object {
-        fun <I, O> continuation(behavior: Fun<Fun<I, O>, O>): Continuation<I, O> = Continuation(behavior)
+        fun <I, O> continuation(behavior: Fun<Fun<I, O>, O>): Continuation<I> = Continuation(object : C<I> {
+            @Suppress("UNCHECKED_CAST")
+            override suspend fun <O> get(): Fun<Fun<I, O>, O> = behavior as Fun<Fun<I, O>, O> /* UNSAFE */
+        })
 
-        fun <O> functor() = Functor.functor<O>()
-        fun <O> applicative() = Applicative.applicative<O>()
-        fun <O> selective() = Selective.selective<O>()
-        fun <O> monad() = Monad.monad<O>()
+        val functor = Functor.functor
+        val applicative = Applicative.applicative
+        val selective = Selective.selective
+        val monad = Monad.monad
     }
 }
