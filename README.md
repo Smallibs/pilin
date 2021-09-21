@@ -180,7 +180,7 @@ suspend fun <T> doSomething(a: Applicative.API<T>): App<T, Int> =
     }
 ```
 
-Warning: This pseudo do notation uses suspend block as continuations and this does not work correctly with 
+Warning: This comprehension mechanism uses suspended blocks as continuations and this does not work correctly with 
 the continuation effect for the moment.
 
 ## Onboarding user defined effects
