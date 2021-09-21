@@ -11,7 +11,7 @@ Pilin is a library for [Kotlin multiplatform](https://kotlinlang.org/docs/multip
 - Selective,
 - Monad.
 
-Some incarnations are available like Identity, Option and Either.
+Some incarnations are available like Identity, Option, Either and Continuation.
 
 Since Kotlin has colored functions, the design has been done with only suspended functions.
 In this approach `suspend` does not mean functions interacting with the subsystem 
@@ -179,6 +179,9 @@ suspend fun <T> doSomething(a: Applicative.API<T>): App<T, Int> =
         plus map pure(40) apply pure(2) // or pure(plus) apply pure(40) apply pure(2)
     }
 ```
+
+Warning: This pseudo do notation uses suspend block as continuations and this does not work correctly with 
+the continuation effect for the moment.
 
 ## Onboarding user defined effects
 
