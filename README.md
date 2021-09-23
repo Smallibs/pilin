@@ -181,7 +181,7 @@ suspend fun <T> doSomething(a: Applicative.API<T>): App<T, Int> =
 ```
 
 Warning: This comprehension mechanism uses suspended blocks as continuations and this does not work correctly with 
-the continuation effect for the moment.
+the continuation effect for the moment [#issue6](https://github.com/d-plaindoux/pilin/issues/6).
 
 ## Onboarding user defined effects
 
