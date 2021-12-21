@@ -2,6 +2,7 @@ package io.smallibs.pilin.standard.option
 
 import io.smallibs.pilin.control.Applicative
 import io.smallibs.pilin.control.Monad
+import io.smallibs.pilin.core.Standard.id
 import io.smallibs.pilin.standard.option.Applicative.applicative
 import io.smallibs.pilin.standard.option.Option.Companion.none
 import io.smallibs.pilin.standard.option.Option.OptionK
@@ -14,7 +15,7 @@ object Monad {
         Monad.WithReturnsMapAndJoin<OptionK>,
         Monad.ViaApplicative<OptionK>(applicative) {
         override suspend fun <A> join(mma: App<OptionK, App<OptionK, A>>): App<OptionK, A> =
-            mma.fold(::none) { it }
+            mma.fold(::none, ::id)
     }
 
     val monad: Monad.API<OptionK> = MonadImpl(applicative)

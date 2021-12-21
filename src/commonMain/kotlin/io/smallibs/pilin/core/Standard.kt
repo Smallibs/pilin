@@ -4,14 +4,15 @@ import io.smallibs.pilin.type.Fun
 import io.smallibs.pilin.type.Fun2
 import io.smallibs.pilin.type.Fun3
 
-typealias Lambda<A, B> = Fun<A, B>
-typealias Compose<A, B, C> = Lambda<Lambda<B, C>, Lambda<Lambda<A, B>, Lambda<A, C>>>
+typealias Compose<A, B, C> = Fun<Fun<B, C>, Fun<Fun<A, B>, Fun<A, C>>>
 
 object Standard {
 
     suspend fun <A> mkId(): suspend (A) -> A = { it }
 
     suspend fun <A> id(a: A): A = a
+
+    suspend fun <A, B> apply(f: Fun<A, B>, a: A): B = f(a)
 
     suspend fun <A, B> const(a: A): Fun<B, A> = { a }
 
@@ -26,9 +27,6 @@ object Standard {
 
     suspend fun <A, B, C, D> curry(f: Fun3<A, B, C, D>): Fun<A, Fun<B, Fun<C, D>>> =
         { a -> { b -> { c -> f(a, b, c) } } }
-
-    suspend fun <A, B, C> uncurry(f: Fun<A, Fun<B, C>>): Fun2<A, B, C> =
-        { a, b -> f(a)(b) }
 
     object Infix {
         suspend infix fun <A, B, C> (Fun<B, C>).compose(g: Fun<A, B>): Fun<A, C> =

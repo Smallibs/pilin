@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform") version "1.4.31"
+    kotlin("multiplatform") version "1.6.10"
 }
 
 group = "io.smallibs"
@@ -42,7 +42,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-common:1.3.8")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-RC3")
             }
         }
         val commonTest by getting {
@@ -53,7 +53,7 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.8")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.0-RC3")
             }
         }
         val jvmTest by getting {
@@ -64,7 +64,7 @@ kotlin {
         }
         val jsMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.8")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.6.0-RC3")
             }
         }
         val jsTest by getting {
@@ -75,7 +75,7 @@ kotlin {
         /*
         val nativeMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.3.8")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.6.0")
             }
         }
         val nativeTest by getting

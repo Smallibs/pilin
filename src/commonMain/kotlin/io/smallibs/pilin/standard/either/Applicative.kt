@@ -1,6 +1,7 @@
 package io.smallibs.pilin.standard.either
 
 import io.smallibs.pilin.control.Applicative
+import io.smallibs.pilin.core.Standard.Infix.then
 import io.smallibs.pilin.standard.either.Either.Companion.left
 import io.smallibs.pilin.standard.either.Either.Companion.right
 import io.smallibs.pilin.standard.either.Either.EitherK
@@ -14,7 +15,7 @@ object Applicative {
         Applicative.WithPureAndApply<EitherK<L>> {
         override suspend fun <R> pure(a: R): App<EitherK<L>, R> = right(a)
         override suspend fun <A, B> apply(mf: App<EitherK<L>, Fun<A, B>>): Fun<App<EitherK<L>, A>, App<EitherK<L>, B>> =
-            { ma -> mf.fold(::left) { f -> ma.fold(::left) { a -> pure(f(a)) } } }
+            { ma -> mf.fold(::left) { f -> ma.fold(::left, f then ::right) } }
     }
 
     fun <L> applicative(): Applicative.API<EitherK<L>> = ApplicativeImpl()

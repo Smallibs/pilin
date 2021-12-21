@@ -68,7 +68,7 @@ fun <A> continuation(gen: Gen<A>): Gen<App<ContinuationK, A>> =
 
 
 fun <A> continuation(): Gen<Fun<A, App<ContinuationK, A>>> =
-    integers().all().map { _ ->
+    identity<Unit>().map { _ ->
         { a -> Continuation.continuation<A, Any> { k -> k(a) } }
     }
 
