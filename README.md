@@ -11,7 +11,7 @@ Pilin is a library for [Kotlin multiplatform](https://kotlinlang.org/docs/multip
 - Selective,
 - Monad.
 
-Some incarnations are available like Identity, Option and Either.
+Some incarnations are available like Identity, Option, Either and Continuation.
 
 Since Kotlin has colored functions, the design has been done with only suspended functions.
 In this approach `suspend` does not mean functions interacting with the subsystem 
@@ -70,9 +70,9 @@ In this section we show how `Option` can be designed.
 #### Data type definition
 
 First at all, the data type should be specified. Of course, an optional value is `None` of `Some` value. In addition, an 
-internal class `TK` - for type kind - using a type defunctionalised as illustrated in [Lightweight higher-kinded polymorphism](https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf).
+internal class `OptionK` - for type kind - using a type defunctionalised as illustrated in [Lightweight higher-kinded polymorphism](https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf).
 
-In this `TK` class, a `fix` value is proposed when a downcast is required. This operation is of course unsafe, but to reduce 
+In this `OptionK` class, a `fix` value is proposed when a downcast is required. This operation is of course unsafe, but to reduce 
 this aspect the scope of the constructor is limited to `Option`. Finally, the catamorphism `fold` function is proposed.
 
 Smart constructors and abstraction implementation references can be proposed.
@@ -180,6 +180,9 @@ suspend fun <T> doSomething(a: Applicative.API<T>): App<T, Int> =
     }
 ```
 
+Warning: This comprehension mechanism uses suspended blocks as continuations and this does not work correctly with 
+the continuation effect for the moment [#issue6](https://github.com/d-plaindoux/pilin/issues/6).
+
 ## Onboarding user defined effects
 
 In addition user defined effects can be proposed and seamlessly combined with predefined effects like
@@ -218,13 +221,13 @@ Of course, an implementation can be provided. In this example the effect used is
 
 ```kotlin
 val console =
-    IOConsole<ContinuationK<List<String>>>(
+    IOConsole<ContinuationK>(
         printString = { text ->
-            continuation { k ->
+            continuation<Unit,List<String>> { k ->
                 listOf("printString($text)") + k(Unit)
             }
         },
-        readString = continuation { k ->
+        readString = continuation<String,List<String>> { k ->
             listOf("readString(World)") + k("World")
         }
     )
@@ -237,9 +240,9 @@ Since all constuctions return suspended functions this execution should be perfo
 standard `runBlocking` function.
 
 ```kotlin
-val handled = program(Continuation.monad<List<String>>()) with console
+val handled = program(Continuation.monad) with console
 
-val traces = runBlocking { handled() { listOf() } }
+val traces = runBlocking { handled().invoke<Unit,List<String>> { listOf() } }
 ```
 
 Finally, after the execution, `traces` has the following value: `listOf("readString(World)", "printString(Hello World)")
