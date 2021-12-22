@@ -9,13 +9,13 @@ import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.Compan
 import io.smallibs.pilin.type.App
 
 object Monad {
-    private class MonadImpl(applicative: API<ContinuationK>) :
-        Monad.API<ContinuationK>,
-        Monad.WithReturnsMapAndJoin<ContinuationK>,
-        Monad.ViaApplicative<ContinuationK>(applicative) {
-        override suspend fun <A> join(mma: App<ContinuationK, App<ContinuationK, A>>): App<ContinuationK, A> =
-            continuation<A, Any> { a -> mma { ma -> ma(a) } }
+    private class MonadImpl<O>(applicative: API<ContinuationK<O>>) :
+        Monad.API<ContinuationK<O>>,
+        Monad.WithReturnsMapAndJoin<ContinuationK<O>>,
+        Monad.ViaApplicative<ContinuationK<O>>(applicative) {
+        override suspend fun <A> join(mma: App<ContinuationK<O>, App<ContinuationK<O>, A>>): App<ContinuationK<O>, A> =
+            continuation { a -> mma { ma -> ma(a) } }
     }
 
-    val monad: Monad.API<ContinuationK> = MonadImpl(applicative)
+    fun <O> monad(): Monad.API<ContinuationK<O>> = MonadImpl(applicative())
 }

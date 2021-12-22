@@ -30,9 +30,6 @@ class Comprehension<F, A>(private val m: Monad.Core<F>) : Monad.Core<F> by m {
 
     private val completion = ComprehensionContinuation<F, A>()
 
-    suspend operator fun <B> App<F, B>.component1(): B =
-        this.bind()
-
     suspend fun <B> App<F, B>.bind(): B =
         currentCoroutineContext().let { coroutineContext ->
             suspendCoroutine { cont ->

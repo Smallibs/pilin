@@ -3,31 +3,31 @@ package io.smallibs.pilin.standard.continuation
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
-data class Continuation<I>(private val behavior: C<I>) : App<Continuation.ContinuationK, I> {
-    interface C<I> {
-        suspend fun <O> get(): Fun<Fun<I, O>, O>
+data class Continuation<I, O>(private val behavior: C<I, O>) : App<Continuation.ContinuationK<O>, I> {
+    interface C<I, O> {
+        suspend fun get(): Fun<Fun<I, O>, O>
     }
 
-    suspend operator fun <O> invoke(a: Fun<I, O>) = behavior.get<O>()(a)
+    suspend operator fun invoke(a: Fun<I, O>) = behavior.get()(a)
 
-    class ContinuationK private constructor() {
+    class ContinuationK<O> private constructor() {
         companion object {
-            val <I> App<ContinuationK, I>.fix: Continuation<I> get() = this as Continuation<I>
+            val <I, O> App<ContinuationK<O>, I>.fix: Continuation<I, O> get() = this as Continuation<I, O>
 
-            suspend operator fun <A, B> App<ContinuationK, A>.invoke(a: Fun<A, B>): B =
+            suspend operator fun <I, O> App<ContinuationK<O>, I>.invoke(a: Fun<I, O>): O =
                 this.fix(a)
         }
     }
 
     companion object {
-        fun <I, O> continuation(behavior: Fun<Fun<I, O>, O>): Continuation<I> = Continuation(object : C<I> {
+        fun <I, O> continuation(behavior: Fun<Fun<I, O>, O>): Continuation<I, O> = Continuation(object : C<I, O> {
             @Suppress("UNCHECKED_CAST")
-            override suspend fun <O> get(): Fun<Fun<I, O>, O> = behavior as Fun<Fun<I, O>, O> /* UNSAFE */
+            override suspend fun get(): Fun<Fun<I, O>, O> = behavior
         })
 
-        val functor = Functor.functor
-        val applicative = Applicative.applicative
-        val selective = Selective.selective
-        val monad = Monad.monad
+        fun <O> functor() = Functor.functor<O>()
+        fun <O> applicative() = Applicative.applicative<O>()
+        fun <O> selective() = Selective.selective<O>()
+        fun <O> monad() = Monad.monad<O>()
     }
 }

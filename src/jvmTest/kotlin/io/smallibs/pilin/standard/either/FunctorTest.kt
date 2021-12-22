@@ -2,16 +2,10 @@ package io.smallibs.pilin.standard.either
 
 import io.smallibs.pilin.laws.Functor.`map (f compose g) = map f compose map g`
 import io.smallibs.pilin.laws.Functor.`map id = id`
-import io.smallibs.pilin.standard.either.Either
-import io.smallibs.pilin.standard.identity.Identity
-import io.smallibs.pilin.standard.option.Option
 import io.smallibs.pilin.standard.support.Functions.int
 import io.smallibs.pilin.standard.support.Functions.str
-import io.smallibs.pilin.standard.support.constant
-import io.smallibs.pilin.standard.support.either
-import io.smallibs.pilin.standard.support.identity
-import io.smallibs.pilin.standard.support.option
-import io.smallibs.pilin.type.Fun
+import io.smallibs.pilin.standard.support.Generators.constant
+import io.smallibs.pilin.standard.support.Generators.either
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.quicktheories.WithQuickTheories

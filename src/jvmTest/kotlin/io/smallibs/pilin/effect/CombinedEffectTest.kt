@@ -3,8 +3,8 @@ package io.smallibs.pilin.effect
 import io.smallibs.pilin.control.Monad
 import io.smallibs.pilin.effect.And.Companion.and
 import io.smallibs.pilin.effect.Effects.Companion.handle
-import io.smallibs.pilin.standard.continuation.Continuation
 import io.smallibs.pilin.standard.continuation.Continuation.Companion.continuation
+import io.smallibs.pilin.standard.continuation.Continuation.Companion.monad
 import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK
 import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.Companion.invoke
 import io.smallibs.pilin.type.App
@@ -36,41 +36,34 @@ class CombinedEffectTest {
             }
         }
 
-    private fun state(): State<ContinuationK> {
+    private fun state(): State<ContinuationK<List<String>>> {
         var state = ""
 
-        return State(
-            get = continuation<String, List<String>> { k ->
-                listOf("get()") + k(state)
-            },
-            set = { value ->
-                continuation<Unit, List<String>> { k ->
-                    state = value
-                    listOf("set($value)") + k(Unit)
-                }
+        return State(get = continuation { k ->
+            listOf("get()") + k(state)
+        }, set = { value ->
+            continuation { k ->
+                state = value
+                listOf("set($value)") + k(Unit)
             }
-        )
+        })
     }
 
-    private fun console(): IOConsole<ContinuationK> =
-        IOConsole(
-            printString = { text ->
-                continuation<Unit, List<String>> { k ->
-                    listOf("printString($text)") + k(Unit)
-                }
-            },
-            readString = continuation<String, List<String>> { k ->
-                listOf("readStream(World)") + k("World")
-            }
-        )
+    private fun console(): IOConsole<ContinuationK<List<String>>> = IOConsole(printString = { text ->
+        continuation { k ->
+            listOf("printString($text)") + k(Unit)
+        }
+    }, readString = continuation { k ->
+        listOf("readStream(World)") + k("World")
+    })
 
     @Test
     fun shouldPerformEffect() {
-        val handled = effects(Continuation.monad) with {
+        val handled = effects(monad<List<String>>()) with {
             state() and console()
         }
 
-        val traces = runBlocking { (handled()).invoke<Unit, List<String>> { listOf() } }
+        val traces = runBlocking { (handled()).invoke { listOf() } }
 
         assertEquals(listOf("readStream(World)", "set(World)", "get()", "printString(Hello World)"), traces)
     }

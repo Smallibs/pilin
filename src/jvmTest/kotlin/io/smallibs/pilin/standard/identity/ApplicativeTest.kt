@@ -5,17 +5,16 @@ import io.smallibs.pilin.laws.Applicative.`apply (pure f) (pure x) = pure (f x)`
 import io.smallibs.pilin.laws.Applicative.`apply f (apply g x) == apply (apply (apply (pure compose) f) g) x`
 import io.smallibs.pilin.laws.Applicative.`apply f (pure x) = apply (pure ($ y)) f`
 import io.smallibs.pilin.laws.Applicative.`map f x = apply (pure f) x`
-import io.smallibs.pilin.standard.support.constant
-import io.smallibs.pilin.standard.support.identity
+import io.smallibs.pilin.standard.support.Functions.int
+import io.smallibs.pilin.standard.support.Functions.str
+import io.smallibs.pilin.standard.support.Generators.constant
+import io.smallibs.pilin.standard.support.Generators.identity
 import io.smallibs.pilin.type.Fun
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.quicktheories.WithQuickTheories
 
 internal class ApplicativeTest : WithQuickTheories {
-
-    private val str: Fun<Int, String> = { i -> i.toString() }
-    private val int: Fun<String, Int> = { i -> i.toInt() }
 
     @Test
     fun `map f x = apply (pure f) x`() {

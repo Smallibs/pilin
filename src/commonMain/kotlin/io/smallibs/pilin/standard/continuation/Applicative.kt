@@ -9,13 +9,13 @@ import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
 object Applicative {
-    private class ApplicativeImpl :
-        Applicative.API<ContinuationK>,
-        Applicative.WithPureAndApply<ContinuationK> {
-        override suspend fun <I> pure(a: I): App<ContinuationK, I> = continuation<I, Any> { k -> k(a) }
-        override suspend fun <A, B> apply(mf: App<ContinuationK, Fun<A, B>>): Fun<App<ContinuationK, A>, App<ContinuationK, B>> =
-            { ma -> continuation<B, Any> { k -> mf { f -> ma(f then k) } } }
+    private class ApplicativeImpl<O> :
+        Applicative.API<ContinuationK<O>>,
+        Applicative.WithPureAndApply<ContinuationK<O>> {
+        override suspend fun <I> pure(a: I): App<ContinuationK<O>, I> = continuation { k -> k(a) }
+        override suspend fun <A, B> apply(mf: App<ContinuationK<O>, Fun<A, B>>): Fun<App<ContinuationK<O>, A>, App<ContinuationK<O>, B>> =
+            { ma -> continuation { k -> mf { f -> ma(f then k) } } }
     }
 
-    val applicative: Applicative.API<ContinuationK> = ApplicativeImpl()
+    fun <O> applicative(): Applicative.API<ContinuationK<O>> = ApplicativeImpl()
 }

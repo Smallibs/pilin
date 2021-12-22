@@ -3,13 +3,10 @@ package io.smallibs.pilin.standard.either
 import io.smallibs.pilin.laws.Monad.`(a bind f) bind g = a bind {x in f x bind g}`
 import io.smallibs.pilin.laws.Monad.`a bind returns = a`
 import io.smallibs.pilin.laws.Monad.`returns a bind h = h a`
-import io.smallibs.pilin.standard.support.Functions.ret
 import io.smallibs.pilin.standard.support.Functions.retInt
 import io.smallibs.pilin.standard.support.Functions.retStr
-import io.smallibs.pilin.standard.support.constant
-import io.smallibs.pilin.standard.support.either
-import io.smallibs.pilin.type.App
-import io.smallibs.pilin.type.Fun
+import io.smallibs.pilin.standard.support.Generators.constant
+import io.smallibs.pilin.standard.support.Generators.either
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.quicktheories.WithQuickTheories

@@ -4,10 +4,10 @@ import io.smallibs.pilin.control.Selective
 import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK
 
 object Selective {
-    private class SelectiveImpl(monad: io.smallibs.pilin.control.Monad.API<ContinuationK>) :
-        Selective.API<ContinuationK>,
-        Selective.ViaMonad<ContinuationK>(monad) {
+    private class SelectiveImpl<O>(monad: io.smallibs.pilin.control.Monad.API<ContinuationK<O>>) :
+        Selective.API<ContinuationK<O>>,
+        Selective.ViaMonad<ContinuationK<O>>(monad) {
     }
 
-    val selective: Selective.API<ContinuationK> = SelectiveImpl(Monad.monad)
+    fun <O> selective(): Selective.API<ContinuationK<O>> = SelectiveImpl(Monad.monad())
 }

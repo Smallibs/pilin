@@ -3,7 +3,7 @@ package io.smallibs.pilin.standard.identity
 import io.smallibs.pilin.laws.Selective.`pure(x) select (y discardLeft z) = (pure(x) select y) discardLeft ((pure(x) select z)`
 import io.smallibs.pilin.laws.Selective.`x select (pure id) = fold(id)(id) map x`
 import io.smallibs.pilin.standard.support.Functions.str
-import io.smallibs.pilin.standard.support.either
+import io.smallibs.pilin.standard.support.Generators.either
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.quicktheories.WithQuickTheories
