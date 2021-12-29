@@ -26,7 +26,9 @@ internal class ComprehensionTest {
         assertEquals(id(42), runBlocking {
             Identity.monad `do` {
                 val a = returns(40).bind()
+                delay(100)
                 val b = returns(2).bind()
+                delay(100)
                 a + b
             }
         })
@@ -37,7 +39,9 @@ internal class ComprehensionTest {
         assertEquals(some(42), runBlocking {
             Option.monad `do` {
                 val a = returns(40).bind()
+                delay(100)
                 val b = returns(2).bind()
+                delay(100)
                 a + b
             }
         })
@@ -48,7 +52,9 @@ internal class ComprehensionTest {
         assertEquals(none<Int>(), runBlocking {
             Option.monad `do` {
                 val a = returns(2).bind()
+                delay(100)
                 val b = none<Int>().bind()
+                delay(100)
                 a + b
             }
         })
@@ -59,7 +65,9 @@ internal class ComprehensionTest {
         assertEquals(right<String, Int>(42), runBlocking {
             Either.monad<String>() `do` {
                 val a = returns(2).bind()
+                delay(100)
                 val b = returns(40).bind()
+                delay(100)
                 a + b
             }
         })

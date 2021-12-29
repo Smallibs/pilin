@@ -15,7 +15,7 @@ class SingleEffectTest {
     private class IOConsole<F>(
         val printString: (String) -> App<F, Unit>,
         val readString: App<F, String>,
-    ) : Handler
+    ) : EffectHandler
 
     private fun <F> effects(monad: Monad.API<F>): Effects<IOConsole<F>, App<F, Unit>> = handle { console ->
         with(monad.infix) {

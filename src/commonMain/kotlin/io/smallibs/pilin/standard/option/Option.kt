@@ -30,6 +30,5 @@ sealed class Option<A> : App<Option.OptionK, A> {
         val applicative = Applicative.applicative
         val selective = Selective.selective
         val monad = Monad.monad
-
     }
 }

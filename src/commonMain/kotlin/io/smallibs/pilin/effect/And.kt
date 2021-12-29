@@ -1,7 +1,7 @@
 package io.smallibs.pilin.effect
 
-data class And<L : Handler, R : Handler>(val left: L, val right: R) : Handler {
+data class And<L : EffectHandler, R : EffectHandler>(val left: L, val right: R) : EffectHandler {
     companion object {
-        infix fun <L : Handler, R : Handler> L.and(right: R) = And(this, right)
+        infix fun <L : EffectHandler, R : EffectHandler> L.and(right: R) = And(this, right)
     }
 }

@@ -16,12 +16,12 @@ class CombinedEffectTest {
     private class State<F>(
         val get: App<F, String>,
         val set: (String) -> App<F, Unit>,
-    ) : Handler
+    ) : EffectHandler
 
     private class IOConsole<F>(
         val printString: (String) -> App<F, Unit>,
         val readString: App<F, String>,
-    ) : Handler
+    ) : EffectHandler
 
     private fun <F> effects(monad: Monad.API<F>): Effects<And<State<F>, IOConsole<F>>, App<F, Unit>> =
         handle { (state, console) ->

@@ -1,3 +1,3 @@
 package io.smallibs.pilin.effect
 
-interface Handler
+interface EffectHandler
