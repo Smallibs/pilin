@@ -140,8 +140,8 @@ Then the previous expression can be proposed using such comprehension facility:
 
 ```kotlin
 Comprehension(Option.monad) {
-    val (a) = returns(40)       // or val a = returns(40).bind()
-    val (b) = returns(2)        // or val b = returns(2).bind()
+    val a = returns(40).bind()       // or val a = returns(40).bind()
+    val b = returns(2).bind()        // or val b = returns(2).bind()
     a + b
 }
 ```
@@ -150,8 +150,8 @@ An infix version is also proposed with the Monad extension method `do`:
 
 ```kotlin
 Option.monad `do` {
-    val (a) = returns(40)
-    val (b) = returns(2)
+    val a = returns(40).bind()
+    val b = returns(2).bind() 
     a + b
 }
 ```
@@ -161,8 +161,8 @@ Finally, a generalized version can be proposed for any Monad and not only for `O
 ```kotlin
 suspend fun <T> doSomething(m: Monad.API<T>): App<T, Int> =
     m `do` {
-        val (a) = returns(40)
-        val (b) = returns(2)
+        val a = returns(40).bind() 
+        val b = returns(2).bind()  
         a + b
     }
 ```

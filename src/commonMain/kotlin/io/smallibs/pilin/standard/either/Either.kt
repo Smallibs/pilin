@@ -5,12 +5,12 @@ import io.smallibs.pilin.standard.either.Either.EitherK
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
-sealed class Either<L, R> : App<EitherK<L>, R> {
-    data class Left<L, R>(val value: L) : Either<L, R>()
-    data class Right<L, R>(val value: R) : Either<L, R>()
+sealed class Either<out L, out R> : App<EitherK<L>, R> {
+    data class Left<out L>(val value: L) : Either<L, Nothing>()
+    data class Right<out R>(val value: R) : Either<Nothing, R>()
 
     // This code can be automatically generated
-    class EitherK<L> private constructor() {
+    class EitherK<out L> private constructor() {
         companion object {
             private val <L, R> App<EitherK<L>, R>.fix: Either<L, R> get() = this as Either<L, R>
 
@@ -22,14 +22,6 @@ sealed class Either<L, R> : App<EitherK<L>, R> {
 
             suspend fun <L, R, A> fold(l: Fun<L, A>): Fun<Fun<R, A>, Fun<App<EitherK<L>, R>, A>> =
                 curry { r, e -> e.fold(l, r) }
-
-            suspend fun <L, R, A, B> bimap(l: Fun<L, A>, r: Fun<R, B>): Fun<App<EitherK<L>, R>, App<EitherK<A>, B>> =
-                { e ->
-                    when (val v = e.fix) {
-                        is Left -> left(l(v.value))
-                        is Right -> right(r(v.value))
-                    }
-                }
         }
     }
 

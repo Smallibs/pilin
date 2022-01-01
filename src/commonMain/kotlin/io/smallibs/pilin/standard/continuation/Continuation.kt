@@ -3,12 +3,8 @@ package io.smallibs.pilin.standard.continuation
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
-data class Continuation<I, O>(private val behavior: C<I, O>) : App<Continuation.ContinuationK<O>, I> {
-    interface C<I, O> {
-        suspend fun get(): Fun<Fun<I, O>, O>
-    }
-
-    suspend operator fun invoke(a: Fun<I, O>) = behavior.get()(a)
+data class Continuation<I, O>(private val behavior: Fun<Fun<I, O>, O>) : App<Continuation.ContinuationK<O>, I> {
+    suspend operator fun invoke(a: Fun<I, O>) = behavior(a)
 
     class ContinuationK<O> private constructor() {
         companion object {
@@ -20,10 +16,7 @@ data class Continuation<I, O>(private val behavior: C<I, O>) : App<Continuation.
     }
 
     companion object {
-        fun <I, O> continuation(behavior: Fun<Fun<I, O>, O>): Continuation<I, O> = Continuation(object : C<I, O> {
-            @Suppress("UNCHECKED_CAST")
-            override suspend fun get(): Fun<Fun<I, O>, O> = behavior
-        })
+        fun <I, O> continuation(behavior: Fun<Fun<I, O>, O>): Continuation<I, O> = Continuation(behavior)
 
         fun <O> functor() = Functor.functor<O>()
         fun <O> applicative() = Applicative.applicative<O>()

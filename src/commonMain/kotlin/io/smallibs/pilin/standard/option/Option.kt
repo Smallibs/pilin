@@ -4,9 +4,9 @@ import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 import io.smallibs.pilin.type.Supplier
 
-sealed class Option<A> : App<Option.OptionK, A> {
-    data class None<A>(private val u: Unit = Unit) : Option<A>()
-    data class Some<A>(val value: A) : Option<A>()
+sealed class Option<out A> : App<Option.OptionK, A> {
+    object None : Option<Nothing>()
+    data class Some<out A>(val value: A) : Option<A>()
 
     // This code can be automatically generated
     class OptionK private constructor() {
@@ -23,7 +23,7 @@ sealed class Option<A> : App<Option.OptionK, A> {
     }
 
     companion object {
-        fun <A> none(): Option<A> = None()
+        fun <A> none(): Option<A> = None
         fun <A> some(a: A): Option<A> = Some(a)
 
         val functor = Functor.functor
