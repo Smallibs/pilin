@@ -180,12 +180,9 @@ suspend fun <T> doSomething(a: Applicative.API<T>): App<T, Int> =
     }
 ```
 
-Warning: This comprehension mechanism uses suspended blocks as continuations and this does not work correctly with 
-the continuation effect for the moment [#issue6](https://github.com/d-plaindoux/pilin/issues/6).
+## Onboard user defined effects
 
-## Onboarding user defined effects
-
-In addition user defined effects can be proposed and seamlessly combined with predefined effects like
+In addition, user defined effects can be proposed and seamlessly combined with predefined effects like
 continuation, either option etc.
 
 ### IOConsole effect specification
@@ -236,7 +233,7 @@ val console =
 ## Executing the program with a dedicated console
 
 Then the previous program can be executed with the user defined effect implemented by `console`.
-Since all constuctions return suspended functions this execution should be performed thanks to the
+Since all constructions return suspended functions this execution should be performed thanks to the
 standard `runBlocking` function.
 
 ```kotlin
@@ -251,7 +248,7 @@ Finally, after the execution, `traces` has the following value: `listOf("readStr
 
 MIT License
 
-Copyright (c) 2021 Didier Plaindoux
+Copyright (c) 2021-2022 Didier Plaindoux
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

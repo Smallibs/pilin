@@ -85,18 +85,8 @@ internal class ComprehensionTest {
     }
 
     @Test
-    fun `Should be able to execute more than once continuation effects`() {
-        assertEquals(8, runBlocking {
-            (Comprehension<Continuation.ContinuationK<Int>, Int>(Continuation.monad()) {
-                continuation<Int, Int> { k -> k(1) + k(1) }.bind()
-            }) { it + 3 }
-        })
-    }
-
-    @Test
-    @Ignore /* Bug 7 */
     fun `Should be able to Chain continuation effects`() {
-        assertEquals(42, runBlocking {
+        assertEquals(84, runBlocking {
             (Comprehension<Continuation.ContinuationK<Int>, Int>(Continuation.monad()) {
         val a = continuation<Int, Int> { k -> k(1) + k(1) }.bind()
         delay(100)
