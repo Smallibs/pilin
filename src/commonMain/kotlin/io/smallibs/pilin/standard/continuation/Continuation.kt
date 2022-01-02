@@ -8,7 +8,8 @@ data class Continuation<I, O>(private val behavior: Fun<Fun<I, O>, O>) : App<Con
 
     class ContinuationK<O> private constructor() {
         companion object {
-            val <I, O> App<ContinuationK<O>, I>.fix: Continuation<I, O> get() = this as Continuation<I, O>
+            val <I, O> App<ContinuationK<O>, I>.fix: Continuation<I, O> get() =
+                this as Continuation<I, O>
 
             suspend operator fun <I, O> App<ContinuationK<O>, I>.invoke(a: Fun<I, O>): O =
                 this.fix(a)
