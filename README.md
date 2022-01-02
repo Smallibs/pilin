@@ -99,8 +99,8 @@ sealed class Option<A> : App<OptionK, A> {
     }
 
     companion object {
-        fun <A> none(): App<OptionK, A> = None()
-        fun <A> some(a: A): App<OptionK, A> = Some(a)
+        fun <A> none(): Option<A> = None
+        fun <A> some(a: A): Option<A> = Some(a)
 
         val functor = Functor.functor
         // ...
@@ -140,14 +140,6 @@ In order to have a more readable version a comprehension based formulation is pr
 be proposed using such comprehension facility:
 
 ```kotlin
-Comprehension(Option.monad) {
-    returns(40).bind() + returns(2).bind()
-}
-```
-
-An infix version is also proposed with the Monad extension method `do`:
-
-```kotlin
 Option.monad `do` {
     returns(40).bind() + returns(2).bind()
 }
@@ -156,7 +148,7 @@ Option.monad `do` {
 Finally, a generalized version can be proposed for any Monad and not only for `Option`.
 
 ```kotlin
-suspend fun <T> doSomething(m: Monad.API<T>): App<T, Int> =
+suspend fun <F> doSomething(m: Monad.API<F>): App<F, Int> =
     m `do` {
         returns(40).bind() + returns(2).bind()
     }
@@ -179,7 +171,7 @@ suspend fun <T> doSomething(a: Applicative.API<T>): App<T, Int> =
 In addition, user defined effects can be proposed and seamlessly combined with predefined effects like continuation,
 either, option etc.
 
-### IOConsole effect specification
+### Console effect specification
 
 We specify a user defined effect able to read and print strings. The resulting effect of each operation is defined using
 a parametric `F`.
