@@ -149,9 +149,7 @@ An infix version is also proposed with the Monad extension method `do`:
 
 ```kotlin
 Option.monad `do` {
-    val a = returns(40).bind()
-    val b = returns(2).bind()
-    a + b
+    returns(40).bind() + returns(2).bind()
 }
 ```
 
@@ -160,9 +158,7 @@ Finally, a generalized version can be proposed for any Monad and not only for `O
 ```kotlin
 suspend fun <T> doSomething(m: Monad.API<T>): App<T, Int> =
     m `do` {
-        val a = returns(40).bind()
-        val b = returns(2).bind()
-        a + b
+        returns(40).bind() + returns(2).bind()
     }
 ```
 
@@ -181,7 +177,7 @@ suspend fun <T> doSomething(a: Applicative.API<T>): App<T, Int> =
 ## Onboard user defined effects
 
 In addition, user defined effects can be proposed and seamlessly combined with predefined effects like continuation,
-either option etc.
+either, option etc.
 
 ### IOConsole effect specification
 
@@ -189,7 +185,7 @@ We specify a user defined effect able to read and print strings. The resulting e
 a parametric `F`.
 
 ```kotlin
-class IOConsole<F>(
+class Console<F>(
     val printString: (String) -> App<F, Unit>,
     val readString: App<F, String>,
 ) : Handler
@@ -197,15 +193,14 @@ class IOConsole<F>(
 
 ## Code using effect specification
 
-Therefor we can write a naive program using such effect specification.
+Therefor we can write a naive program using such effect specification thanks to comprehension.
 
 ```kotlin
-private fun <F> program(monad: Monad.API<F>): Effects<IOConsole<F>, App<F, Unit>> =
+private fun <F> program(monad: Monad.API<F>): Effects<Console<F>, App<F, Unit>> =
     handle { console ->
-        with(monad.infix) {
-            console.readString bind { value ->
-                console.printString("Hello $value")
-            }
+        monad `do` {
+            val value = console.readString.bind()
+            console.printString("Hello $value").bind()
         }
     }
 ```
@@ -239,7 +234,7 @@ val handled = program(Continuation.monad) with console
 val traces = runBlocking { handled().invoke<Unit, List<String>> { listOf() } }
 ```
 
-Finally, after the execution, `traces` has the following value: `listOf("readString(World)", "printString(Hello World)")
+Finally, after the execution `traces` has the following value: `listOf("readString(World)", "printString(Hello World)")`
 
 # License
 
