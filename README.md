@@ -144,8 +144,8 @@ be proposed using such comprehension facility:
 
 ```kotlin
 Comprehension(Option.monad) {
-    val a = returns(40).bind()       // or val a = returns(40).bind()
-    val b = returns(2).bind()        // or val b = returns(2).bind()
+    val a = returns(40).bind()       
+    val b = returns(2).bind()        
     a + b
 }
 ```
