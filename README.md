@@ -143,8 +143,8 @@ In order to have a more readable version a comprehension based formulation is pr
 be proposed using such comprehension facility:
 
 ```kotlin
-    val a = returns(40).bind()       // or val a = returns(40).bind()
 Comprehension(Option.monad) {
+    val a = returns(40).bind()       // or val a = returns(40).bind()
     val b = returns(2).bind()        // or val b = returns(2).bind()
     a + b
 }
