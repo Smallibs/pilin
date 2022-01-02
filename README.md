@@ -16,10 +16,7 @@ programming constructions like:
 Some incarnations are available like Identity, Option, Either and Continuation.
 
 Since Kotlin has colored functions, the design has been done with only suspended functions. In this approach `suspend`
-does not mean functions interacting with the subsystem i.e. no Relationship with IO.
-
-The main advantage of this approach is the capability to deliver a comprehension like approach in order to simplify the
-code.
+does not mean functions interacting with the subsystem i.e. no relationship with IO for instance.
 
 The construction is based on a highly modular system inspired by
 the [Preface](https://ocaml-preface.github.io/preface/index.html)
@@ -85,7 +82,7 @@ Smart constructors and abstraction implementation references can be proposed.
 
 ```kotlin
 sealed class Option<A> : App<OptionK, A> {
-    data class None<A>(private val u: Unit = Unit) : Option<A>()
+    object None : Option<Nothing>()
     data class Some<A>(val value: A) : Option<A>()
 
     class OptionK private constructor() {
@@ -128,12 +125,12 @@ object Functor {
 
 ## Comprehension in action
 
-Using functional idioms like `Monad` can be painfull. For instance if we want to add to optional integers we must write
+Using functional idioms like `Monad` can be painful. For instance, if we want to add two optional integers we must write
 the following code:
 
 ```kotlin
 with(Option.monad.infix) {
-    returns(40) * returns(2) map { (a,b) ->
+    returns(40) * returns(2) map { (a, b) ->
         a + b
     }
 }
@@ -144,9 +141,7 @@ be proposed using such comprehension facility:
 
 ```kotlin
 Comprehension(Option.monad) {
-    val a = returns(40).bind()       
-    val b = returns(2).bind()        
-    a + b
+    returns(40).bind() + returns(2).bind()
 }
 ```
 
