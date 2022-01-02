@@ -1,6 +1,6 @@
-package io.smallibs.pilin.delimited.thermometer
+package io.smallibs.pilin.control.extension.delimited.thermometer
 
-import io.smallibs.pilin.delimited.Control
+import io.smallibs.pilin.control.extension.delimited.Control
 import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK
 import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.Companion.fix
 import io.smallibs.pilin.type.App

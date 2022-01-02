@@ -1,4 +1,4 @@
-package io.smallibs.pilin.delimited.thermometer
+package io.smallibs.pilin.control.extension.delimited.thermometer
 
 import io.smallibs.pilin.type.Supplier
 

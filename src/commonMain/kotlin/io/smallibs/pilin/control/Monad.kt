@@ -72,7 +72,7 @@ object Monad {
 
     class Do<F>(private val c: Core<F>) : Core<F> by c {
         suspend infix operator fun <A> invoke(f: suspend Comprehension<F, A>.() -> A): App<F, A> =
-            Comprehension.invoke(this, f)
+            Comprehension.run(this, f)
     }
 
     interface API<F> : Core<F> {

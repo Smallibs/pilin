@@ -1,7 +1,7 @@
-package io.smallibs.pilin.delimited
+package io.smallibs.pilin.control.extension.delimited
 
 import io.smallibs.pilin.control.Monad
-import io.smallibs.pilin.delimited.thermometer.Universal
+import io.smallibs.pilin.control.extension.delimited.thermometer.Universal
 import io.smallibs.pilin.standard.continuation.Continuation.Companion.continuation
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Supplier
@@ -12,7 +12,7 @@ interface Reflection<F> {
 
     suspend fun <A> reify(f: Supplier<A>): App<F, A>
 
-    private class RMonad<F>(private val m: Monad.Core<F>) : Reflection<F> {
+    private class ReflectionMonad<F>(private val m: Monad.Core<F>) : Reflection<F> {
 
         private val cont: Control<App<F, Any>> = Control.new()
 
@@ -23,6 +23,6 @@ interface Reflection<F> {
     }
 
     companion object {
-        fun <F> represents(m: Monad.Core<F>): Reflection<F> = RMonad(m)
+        fun <F> represents(m: Monad.Core<F>): Reflection<F> = ReflectionMonad(m)
     }
 }
