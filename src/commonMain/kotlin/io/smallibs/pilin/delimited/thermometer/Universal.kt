@@ -4,6 +4,10 @@ object Universal {
 
     @Suppress("UNCHECKED_CAST")
     fun <B, A> from(a: B): A =
-        a as A
+        try {
+            a as A
+        } catch (e: ClassCastException) {
+            throw e
+        }
 
 }
