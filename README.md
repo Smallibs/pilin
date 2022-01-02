@@ -1,7 +1,7 @@
 # Pilin
 
 [![Build Status](https://travis-ci.org/d-plaindoux/pilin.svg?branch=main)](https://travis-ci.org/d-plaindoux/pilin.svg?branch=main)
-[![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
+[![unstable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
 [pilin (pilind-, as in pl. pilindi) noun "arrow" (PÍLIM)](https://www.elfdict.com/w/pilin?include_old=1)
 
