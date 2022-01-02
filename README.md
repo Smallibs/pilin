@@ -133,10 +133,8 @@ the following code:
 
 ```kotlin
 with(Option.monad.infix) {
-    returns(40) bind { a ->
-        returns(2) map { b ->
-            a + b
-        }
+    returns(40) * returns(2) map { (a,b) ->
+        a + b
     }
 }
 ```
