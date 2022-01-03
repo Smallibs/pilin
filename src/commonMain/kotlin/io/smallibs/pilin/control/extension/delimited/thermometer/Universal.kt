@@ -1,13 +1,11 @@
 package io.smallibs.pilin.control.extension.delimited.thermometer
 
-object Universal {
+class Universal<A> {
 
     @Suppress("UNCHECKED_CAST")
-    fun <B, A> from(a: B): A =
-        try {
-            a as A
-        } catch (e: ClassCastException) {
-            throw e
-        }
+    fun <B> fromU(a: B): A = a as A
+
+    @Suppress("UNCHECKED_CAST")
+    fun <B> toU(a: A): B = a as B
 
 }

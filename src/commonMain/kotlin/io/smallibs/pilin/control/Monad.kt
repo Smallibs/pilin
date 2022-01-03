@@ -71,7 +71,7 @@ object Monad {
     }
 
     class Do<F>(private val c: Core<F>) : Core<F> by c {
-        suspend infix operator fun <A> invoke(f: suspend Comprehension<F, A>.() -> A): App<F, A> =
+        suspend infix operator fun <A> invoke(f: suspend Comprehension<F>.() -> A): App<F, A> =
             Comprehension.run(this, f)
     }
 

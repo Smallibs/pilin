@@ -16,10 +16,11 @@ interface Reflection<F> {
 
         private val cont: Control<App<F, Any>> = Control.new()
 
-        override suspend fun <A> reflect(x: App<F, A>): A = cont.shift(continuation { k -> m.bind(k)(x) })
+        override suspend fun <A> reflect(x: App<F, A>): A =
+            cont.shift(continuation { k -> m.bind(k)(x) })
 
         override suspend fun <A> reify(f: Supplier<A>): App<F, A> =
-            m.bind<Any, A> { m.returns(Universal.from(it)) }(cont.reset { m.returns(f() as Any) })
+            m.bind<Any, A> { m.returns(Universal<A>().fromU(it)) }(cont.reset { m.returns(Universal<A>().toU(f())) })
     }
 
     companion object {
