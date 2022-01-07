@@ -9,7 +9,7 @@ import io.smallibs.pilin.type.Supplier
 
 interface Control<A> {
     suspend fun reset(block: Supplier<A>): A
-    suspend fun <B> shift(f: App<Continuation.ContinuationK<A>, B>): B
+    suspend fun <B> shift(f: Continuation<B, A>): B
 
     companion object {
         fun <A> new(): Control<A> = Thermometer.new(Context())

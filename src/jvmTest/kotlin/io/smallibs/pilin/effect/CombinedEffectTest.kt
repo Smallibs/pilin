@@ -13,25 +13,25 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 class CombinedEffectTest {
+
     private class State<F>(
         val get: App<F, String>,
         val set: (String) -> App<F, Unit>,
     ) : EffectHandler
 
-    private class IOConsole<F>(
+    private class Console<F>(
         val printString: (String) -> App<F, Unit>,
         val readString: App<F, String>,
     ) : EffectHandler
 
-    private fun <F> effects(monad: Monad.API<F>): Effects<And<State<F>, IOConsole<F>>, App<F, Unit>> =
+    private fun <F> effects(monad: Monad.API<F>): Effects<And<State<F>, Console<F>>, App<F, Unit>> =
         handle { (state, console) ->
-            with(monad.infix) {
-                console.readString bind {
-                    state.set(it)
-                } bind {
-                    state.get
-                } bind {
-                    console.printString("Hello $it")
+            monad `do` {
+                console.readString.bind().let {
+                    state.set(it).bind()
+                }
+                state.get.bind().let {
+                    console.printString("Hello $it").bind()
                 }
             }
         }
@@ -49,19 +49,19 @@ class CombinedEffectTest {
         })
     }
 
-    private fun console(): IOConsole<ContinuationK<List<String>>> = IOConsole(printString = { text ->
-        continuation { k ->
-            listOf("printString($text)") + k(Unit)
-        }
-    }, readString = continuation { k ->
-        listOf("readStream(World)") + k("World")
-    })
+    private fun console(): Console<ContinuationK<List<String>>> =
+        Console(printString = { text ->
+            continuation { k ->
+                listOf("printString($text)") + k(Unit)
+            }
+        }, readString = continuation { k ->
+            listOf("readStream(World)") + k("World")
+        })
 
     @Test
     fun shouldPerformEffect() {
-        val handled = effects(monad<List<String>>()) with {
-            state() and console()
-        }
+        val handler = state() and console()
+        val handled = effects(monad<List<String>>()) with handler
 
         val traces = runBlocking { (handled()).invoke { listOf() } }
 

@@ -4,7 +4,7 @@ import io.smallibs.pilin.control.Monad
 import io.smallibs.pilin.control.extension.delimited.Reflection
 import io.smallibs.pilin.type.App
 
-class Comprehension<F>(private val monad: Monad.Core<F>) : Monad.Core<F> by monad {
+class Comprehension<F>(private val monad: Monad.API<F>) : Monad.API<F> by monad {
 
     private var reflection = Reflection.represents(monad)
 
@@ -12,7 +12,7 @@ class Comprehension<F>(private val monad: Monad.Core<F>) : Monad.Core<F> by mona
         reflection.reflect(this)
 
     companion object {
-        suspend fun <F, A> run(monad: Monad.Core<F>, f: suspend Comprehension<F>.() -> A): App<F, A> =
+        suspend fun <F, A> run(monad: Monad.API<F>, f: suspend Comprehension<F>.() -> A): App<F, A> =
             Comprehension(monad).let { comprehension ->
                 comprehension.reflection.reify { comprehension.f() }
             }

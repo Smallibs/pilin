@@ -35,11 +35,11 @@ internal class ComprehensionTest {
     fun `Should be able to chain Option effects`() {
         assertEquals(some(42), runBlocking {
             Option.monad `do` {
-                val a = returns(40).bind()
+                val a = returns(44).bind()
                 delay(100)
                 val b = returns(2).bind()
                 delay(100)
-                a + b
+                a - b
             }
         })
     }

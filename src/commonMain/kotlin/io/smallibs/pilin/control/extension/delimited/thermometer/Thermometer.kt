@@ -1,9 +1,8 @@
 package io.smallibs.pilin.control.extension.delimited.thermometer
 
 import io.smallibs.pilin.control.extension.delimited.Control
+import io.smallibs.pilin.control.extension.delimited.thermometer.Frame.Enter
 import io.smallibs.pilin.standard.continuation.Continuation
-import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.Companion.fix
-import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 import io.smallibs.pilin.type.Supplier
 
@@ -15,8 +14,8 @@ internal class Thermometer<A> private constructor(private var context: Context<A
         return runWithFuture(block, Stack())
     }
 
-    override suspend fun <B> shift(f: App<Continuation.ContinuationK<A>, B>): B {
-        val (frame, future) = context.state.future.pop(Frame.Enter)
+    override suspend fun <B> shift(f: Continuation<B, A>): B {
+        val (frame, future) = context.state.future.pop(Enter)
 
         context = context.setFuture(future)
 
@@ -25,14 +24,14 @@ internal class Thermometer<A> private constructor(private var context: Context<A
                 context = context.addToPast(frame)
                 return Universal<B>().fromU(frame.value!!)
             }
-            is Frame.Enter -> {
-                val newFuture = context.state.past.reversed()
+            is Enter -> {
+                val newFuture = context.state.past
                 val block = context.state.block
                 val k: Fun<B, A> = { v: B ->
-                    runWithFuture(block!!, newFuture.push(Frame.Return(v)))
+                    runWithFuture(block!!, newFuture.push(Frame.Return(v)).reversed())
                 }
-                context = context.addToPast(Frame.Enter)
-                throw Done(f.fix(k) as Any)
+                context = context.addToPast(Enter)
+                throw Done(f(k) as Any)
             }
         }
     }
