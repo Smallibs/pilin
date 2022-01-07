@@ -42,7 +42,7 @@ object Applicative {
         suspend fun <A, B> discardLeft(ma: App<F, A>): Fun<App<F, B>, App<F, B>> =
             lift2<A, B, B>(curry { _, y -> y })(ma)
 
-        suspend inline fun <A, B> discardRight(ma: App<F, A>): Fun<App<F, B>, App<F, A>> =
+        suspend fun <A, B> discardRight(ma: App<F, A>): Fun<App<F, B>, App<F, A>> =
             lift2<A, B, A>(Standard::const)(ma)
     }
 
@@ -53,7 +53,7 @@ object Applicative {
         suspend infix operator fun <A, B> App<F, A>.times(mb: App<F, B>): App<F, Pair<A, B>> =
             c.product<A, B>(this)(mb)
 
-        suspend inline infix fun <A, B> App<F, A>.product(mb: App<F, B>): App<F, Pair<A, B>> =
+        suspend infix fun <A, B> App<F, A>.product(mb: App<F, B>): App<F, Pair<A, B>> =
             this * mb
 
         suspend infix fun <A, B> App<F, Fun<A, B>>.apply(ma: App<F, A>): App<F, B> =

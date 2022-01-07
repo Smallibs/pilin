@@ -12,21 +12,25 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 class SingleEffectTest {
-    private class IOConsole<F>(
+    private class Console<F>(
         val printString: (String) -> App<F, Unit>,
         val readString: App<F, String>,
     ) : EffectHandler
 
-    private fun <F> effects(monad: Monad.API<F>): Effects<IOConsole<F>, App<F, Unit>> = handle { console ->
-        with(monad.infix) {
-            console.readString bind { value ->
-                console.printString("Hello $value")
-            }
-        }
+    private fun <A> id(a: A): A {
+        return a
     }
 
-    private fun console(): IOConsole<ContinuationK<List<String>>> =
-        IOConsole(
+    private fun <F> effects(monad: Monad.API<F>): Effects<Console<F>, App<F, Unit>> =
+        handle { console ->
+            monad `do` {
+                val value = id(console.readString.bind())
+                id(console.printString("Hello $value").bind())
+            }
+        }
+
+    private fun console(): Console<ContinuationK<List<String>>> =
+        Console(
             printString = { text ->
                 continuation { k ->
                     listOf("printString($text)") + k(Unit)

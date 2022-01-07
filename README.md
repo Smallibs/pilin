@@ -1,11 +1,13 @@
 # Pilin
 
 [![Build Status](https://travis-ci.org/d-plaindoux/pilin.svg?branch=main)](https://travis-ci.org/d-plaindoux/pilin.svg?branch=main)
-[![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)](http://github.com/badges/stability-badges)
+[![unstable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
 [pilin (pilind-, as in pl. pilindi) noun "arrow" (PÍLIM)](https://www.elfdict.com/w/pilin?include_old=1)
 
-Pilin is a library for [Kotlin multiplatform](https://kotlinlang.org/docs/multiplatform.html) providing some functional programming constructions like:
+Pilin is a library for [Kotlin multiplatform](https://kotlinlang.org/docs/multiplatform.html) providing some functional
+programming constructions like:
+
 - Functor,
 - Applicative,
 - Selective,
@@ -13,26 +15,24 @@ Pilin is a library for [Kotlin multiplatform](https://kotlinlang.org/docs/multip
 
 Some incarnations are available like Identity, Option, Either and Continuation.
 
-Since Kotlin has colored functions, the design has been done with only suspended functions.
-In this approach `suspend` does not mean functions interacting with the subsystem 
-i.e. no Relationship with IO.
+Since Kotlin has colored functions, the design has been done with only suspended functions. In this approach `suspend`
+does not mean functions interacting with the subsystem i.e. no relationship with IO for instance.
 
-The main advantage of this approach is the capability to deliver a comprehension like
-approach in order to simplify the code.
-
-The construction is based on a highly modular system inspired by the [Preface](https://ocaml-preface.github.io/preface/index.html)
-library and of course [Arrow.kt](https://arrow-kt.io) for the comprehension implementation.
+The construction is based on a highly modular system inspired by
+the [Preface](https://ocaml-preface.github.io/preface/index.html)
+library and [Thermometer Continuations](https://hal.inria.fr/hal-01929178/document) for the comprehension
+implementation.
 
 ## A taste of Pilin
 
-In this section we show how the `Functor` abstraction is design. 
+In this section we show how the `Functor` abstraction is design.
 
 ### Functor design
 
-First we use `object` in order to have a simple namespacing. Then, a first interface named `Core` is proposed with the minimal set 
-of functions required. In addition, two implementations are  proposed for `Operation` and `Infix` expressed thanks to the `Core`. 
-The first one contains additional functions when the second proposes an infix version of `Core` functions using OOP 
-capabilities.
+First we use `object` in order to have a simple namespacing. Then, a first interface named `Core` is proposed with the
+minimal set of functions required. In addition, two implementations are proposed for `Operation` and `Infix` expressed
+thanks to the `Core`. The first one contains additional functions when the second proposes an infix version of `Core`
+functions using OOP capabilities.
 
 ```kotlin
 object Functor {
@@ -50,9 +50,9 @@ object Functor {
     }
 
     open class Infix<F>(private val c: Core<F>) : Core<F> by c {
-        suspend infix fun <A, B> Fun<A, B>.map(ma: App<F, A>): App<F, B> = 
+        suspend infix fun <A, B> Fun<A, B>.map(ma: App<F, A>): App<F, B> =
             c.map(this)(ma)
-        suspend infix fun <A, B> App<F, A>.map(f: Fun<A, B>): App<F, B> = 
+        suspend infix fun <A, B> App<F, A>.map(f: Fun<A, B>): App<F, B> =
             c.map(f)(this)
     }
 
@@ -69,17 +69,20 @@ In this section we show how `Option` can be designed.
 
 #### Data type definition
 
-First at all, the data type should be specified. Of course, an optional value is `None` of `Some` value. In addition, an 
-internal class `OptionK` - for type kind - using a type defunctionalised as illustrated in [Lightweight higher-kinded polymorphism](https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf).
+First at all, the data type should be specified. Of course, an optional value is `None` of `Some` value. In addition, an
+internal class `OptionK` - for type kind - using a type defunctionalised as illustrated
+in [Lightweight higher-kinded polymorphism](https://www.cl.cam.ac.uk/~jdy22/papers/lightweight-higher-kinded-polymorphism.pdf)
+.
 
-In this `OptionK` class, a `fix` value is proposed when a downcast is required. This operation is of course unsafe, but to reduce 
-this aspect the scope of the constructor is limited to `Option`. Finally, the catamorphism `fold` function is proposed.
+In this `OptionK` class, a `fix` value is proposed when a downcast is required. This operation is of course unsafe, but
+to reduce this aspect the scope of the constructor is limited to `Option`. Finally, the catamorphism `fold` function is
+proposed.
 
 Smart constructors and abstraction implementation references can be proposed.
 
 ```kotlin
 sealed class Option<A> : App<OptionK, A> {
-    data class None<A>(private val u: Unit = Unit) : Option<A>()
+    object None : Option<Nothing>()
     data class Some<A>(val value: A) : Option<A>()
 
     class OptionK private constructor() {
@@ -96,8 +99,8 @@ sealed class Option<A> : App<OptionK, A> {
     }
 
     companion object {
-        fun <A> none(): App<OptionK, A> = None()
-        fun <A> some(a: A): App<OptionK, A> = Some(a)
+        fun <A> none(): Option<A> = None
+        fun <A> some(a: A): Option<A> = Some(a)
 
         val functor = Functor.functor
         // ...
@@ -122,55 +125,38 @@ object Functor {
 
 ## Comprehension in action
 
-Using functional idioms like `Monad` can be painfull. For instance if we want to add to optional integers
-we must write the following code:
+Using functional idioms like `Monad` can be painful. For instance, if we want to add two optional integers we must write
+the following code:
 
 ```kotlin
 with(Option.monad.infix) {
-    returns(40) bind { a ->
-        returns(2) map { b -> 
-            a + b
-        }
-    } 
+    returns(40) * returns(2) map { (a, b) ->
+        a + b
+    }
 }
 ```
 
-In order to have a more readable version a comprehension based formulation is provided. 
-Then the previous expression can be proposed using such comprehension facility:
-
-```kotlin
-Comprehension(Option.monad) {
-    val a = returns(40).bind()       // or val a = returns(40).bind()
-    val b = returns(2).bind()        // or val b = returns(2).bind()
-    a + b
-}
-```
-
-An infix version is also proposed with the Monad extension method `do`: 
+In order to have a more readable version a comprehension based formulation is provided. Then the previous expression can
+be proposed using such comprehension facility:
 
 ```kotlin
 Option.monad `do` {
-    val a = returns(40).bind()
-    val b = returns(2).bind() 
-    a + b
+    returns(40).bind() + returns(2).bind()
 }
 ```
 
 Finally, a generalized version can be proposed for any Monad and not only for `Option`.
 
 ```kotlin
-suspend fun <T> doSomething(m: Monad.API<T>): App<T, Int> =
+suspend fun <F> doSomething(m: Monad.API<F>): App<F, Int> =
     m `do` {
-        val a = returns(40).bind() 
-        val b = returns(2).bind()  
-        a + b
+        returns(40).bind() + returns(2).bind()
     }
 ```
 
-Note: the `Comprehension` uses Kotlin coroutine suspension. Then each operation should be executed thanks to
-the destructured operation, or the explicit bind call. Otherwise, the effect is not executed.
+Each operation should be executed thanks to the `bind()` function. Otherwise, the effect is never executed.
 
-Of course the applicative can be used in this case:
+Of course, the applicative can be used in this case:
 
 ```kotlin
 suspend fun <T> doSomething(a: Applicative.API<T>): App<T, Int> =
@@ -180,21 +166,18 @@ suspend fun <T> doSomething(a: Applicative.API<T>): App<T, Int> =
     }
 ```
 
-Warning: This comprehension mechanism uses suspended blocks as continuations and this does not work correctly with 
-the continuation effect for the moment [#issue6](https://github.com/d-plaindoux/pilin/issues/6).
+## Onboard user defined effects
 
-## Onboarding user defined effects
+In addition, user defined effects can be proposed and seamlessly combined with predefined effects like continuation,
+either, option etc.
 
-In addition user defined effects can be proposed and seamlessly combined with predefined effects like
-continuation, either option etc.
+### Console effect specification
 
-### IOConsole effect specification
-
-We specify a user defined effect able to read and print strings. The resulting effect of each operation is defined 
-using a parametric `F`.
+We specify a user defined effect able to read and print strings. The resulting effect of each operation is defined using
+a parametric `F`.
 
 ```kotlin
-class IOConsole<F>(
+class Console<F>(
     val printString: (String) -> App<F, Unit>,
     val readString: App<F, String>,
 ) : Handler
@@ -202,32 +185,31 @@ class IOConsole<F>(
 
 ## Code using effect specification
 
-Therefor we can write a naive program using such effect specification.
+Therefor we can write a naive program using such effect specification thanks to comprehension.
 
 ```kotlin
-private fun <F> program(monad: Monad.API<F>): Effects<IOConsole<F>, App<F, Unit>> = 
+private fun <F> program(monad: Monad.API<F>): Effects<Console<F>, App<F, Unit>> =
     handle { console ->
-        with(monad.infix) {
-            console.readString bind { value ->
-                console.printString("Hello $value")
-            }
-        } 
+        monad `do` {
+            val value = console.readString.bind()
+            console.printString("Hello $value").bind()
+        }
     }
 ```
 
-## Defining my own console 
+## Defining my own console
 
 Of course, an implementation can be provided. In this example the effect used is `Continuation`.
 
 ```kotlin
 val console =
-    IOConsole<ContinuationK>(
+    Console<ContinuationK<List<String>>>(
         printString = { text ->
-            continuation<Unit,List<String>> { k ->
+            continuation<Unit, List<String>> { k ->
                 listOf("printString($text)") + k(Unit)
             }
         },
-        readString = continuation<String,List<String>> { k ->
+        readString = continuation<String, List<String>> { k ->
             listOf("readString(World)") + k("World")
         }
     )
@@ -235,27 +217,24 @@ val console =
 
 ## Executing the program with a dedicated console
 
-Then the previous program can be executed with the user defined effect implemented by `console`.
-Since all constuctions return suspended functions this execution should be performed thanks to the
-standard `runBlocking` function.
+Then the previous program can be executed with the user defined effect implemented by `console`. Since all constructions
+return suspended functions this execution should be performed thanks to the standard `runBlocking` function.
 
 ```kotlin
 val handled = program(Continuation.monad) with console
 
-val traces = runBlocking { handled().invoke<Unit,List<String>> { listOf() } }
+val traces = runBlocking { handled().invoke<Unit, List<String>> { listOf() } }
 ```
 
-Finally, after the execution, `traces` has the following value: `listOf("readString(World)", "printString(Hello World)")
+Finally, after the execution `traces` has the following value: `listOf("readString(World)", "printString(Hello World)")`
 
 # License
 
 MIT License
 
-Copyright (c) 2021 Didier Plaindoux
+Copyright (c) 2021-2022 Didier Plaindoux
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+persons to whom the Software is furnished to do so, subject to the following conditions:

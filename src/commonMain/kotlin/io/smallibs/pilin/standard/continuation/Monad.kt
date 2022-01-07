@@ -13,8 +13,10 @@ object Monad {
         Monad.API<ContinuationK<O>>,
         Monad.WithReturnsMapAndJoin<ContinuationK<O>>,
         Monad.ViaApplicative<ContinuationK<O>>(applicative) {
+
         override suspend fun <A> join(mma: App<ContinuationK<O>, App<ContinuationK<O>, A>>): App<ContinuationK<O>, A> =
             continuation { a -> mma { ma -> ma(a) } }
+        
     }
 
     fun <O> monad(): Monad.API<ContinuationK<O>> = MonadImpl(applicative())

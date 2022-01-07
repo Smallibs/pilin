@@ -1,5 +1,6 @@
 package io.smallibs.pilin.control
 
+import io.smallibs.pilin.control.extension.Comprehension
 import io.smallibs.pilin.core.Standard
 import io.smallibs.pilin.core.Standard.Infix.then
 import io.smallibs.pilin.core.Standard.curry
@@ -69,9 +70,15 @@ object Monad {
         suspend infix fun <A, B> App<F, A>.bind(f: Fun<A, App<F, B>>): App<F, B> = c.bind(f)(this)
     }
 
+    class Do<F>(private val c: API<F>) {
+        suspend infix operator fun <A> invoke(f: suspend Comprehension<F>.() -> A): App<F, A> =
+            Comprehension.run(c, f)
+    }
+
     interface API<F> : Core<F> {
         val operation: Operation<F> get() = Operation(this)
         val infix: Infix<F> get() = Infix(this)
+        val `do`: Do<F> get() = Do(this)
     }
 
 }

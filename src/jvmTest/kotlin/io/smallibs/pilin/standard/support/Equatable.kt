@@ -13,10 +13,9 @@ interface Equatable<A> {
             override suspend fun A.isEqualTo(a: A): Boolean = this == a
         }
 
-        fun <I> continuation(): Equatable<App<ContinuationK<I>, I>> =
-            object : Equatable<App<ContinuationK<I>, I>> {
-                override suspend fun App<ContinuationK<I>, I>.isEqualTo(a: App<ContinuationK<I>, I>): Boolean =
-                    this.fix(Standard::id) == a.fix(Standard::id)
-            }
+        fun <I> continuation(): Equatable<App<ContinuationK<I>, I>> = object : Equatable<App<ContinuationK<I>, I>> {
+            override suspend fun App<ContinuationK<I>, I>.isEqualTo(a: App<ContinuationK<I>, I>): Boolean =
+                this.fix(Standard::id) == a.fix(Standard::id)
+        }
     }
 }

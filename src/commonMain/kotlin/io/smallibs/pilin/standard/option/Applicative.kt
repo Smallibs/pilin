@@ -13,7 +13,9 @@ object Applicative {
     private class ApplicativeImpl :
         Applicative.API<OptionK>,
         Applicative.WithPureAndApply<OptionK> {
-        override suspend fun <A> pure(a: A): App<OptionK, A> = some(a)
+        override suspend fun <A> pure(a: A): App<OptionK, A> =
+            some(a)
+
         override suspend fun <A, B> apply(mf: App<OptionK, Fun<A, B>>): Fun<App<OptionK, A>, App<OptionK, B>> =
             { ma -> mf.fold(::none) { f -> ma.fold(::none, f then ::some) } }
     }

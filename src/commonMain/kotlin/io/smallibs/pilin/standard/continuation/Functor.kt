@@ -10,9 +10,8 @@ import io.smallibs.pilin.type.Fun
 
 object Functor {
     private class FunctorImpl<O> : Functor.API<ContinuationK<O>> {
-        override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<ContinuationK<O>, A>, App<ContinuationK<O>, B>> = { ma ->
-            continuation { b -> ma(f then b) }
-        }
+        override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<ContinuationK<O>, A>, App<ContinuationK<O>, B>> =
+            { ma -> continuation { b -> ma(f then b) } }
     }
 
     fun <O> functor(): Functor.API<ContinuationK<O>> = FunctorImpl()

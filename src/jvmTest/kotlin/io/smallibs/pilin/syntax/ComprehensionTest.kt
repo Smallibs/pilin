@@ -1,7 +1,5 @@
 package io.smallibs.pilin.syntax
 
-import io.smallibs.pilin.extension.Comprehension
-import io.smallibs.pilin.extension.Comprehension.Companion.`do`
 import io.smallibs.pilin.standard.continuation.Continuation
 import io.smallibs.pilin.standard.continuation.Continuation.Companion.continuation
 import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.Companion.invoke
@@ -15,7 +13,6 @@ import io.smallibs.pilin.standard.option.Option.Companion.none
 import io.smallibs.pilin.standard.option.Option.Companion.some
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import org.junit.Ignore
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -38,18 +35,18 @@ internal class ComprehensionTest {
     fun `Should be able to chain Option effects`() {
         assertEquals(some(42), runBlocking {
             Option.monad `do` {
-                val a = returns(40).bind()
+                val a = returns(44).bind()
                 delay(100)
                 val b = returns(2).bind()
                 delay(100)
-                a + b
+                a - b
             }
         })
     }
 
     @Test
     fun `Should be able to stop chained Option effects`() {
-        assertEquals(none<Int>(), runBlocking {
+        assertEquals(none(), runBlocking {
             Option.monad `do` {
                 val a = returns(2).bind()
                 delay(100)
@@ -62,20 +59,20 @@ internal class ComprehensionTest {
 
     @Test
     fun `Should be able to chain Either effects`() {
-        assertEquals(right<String, Int>(42), runBlocking {
+        assertEquals(right(42), runBlocking {
             Either.monad<String>() `do` {
                 val a = returns(2).bind()
                 delay(100)
-                val b = returns(40).bind()
+                val b = returns("40").bind()
                 delay(100)
-                a + b
+                a + b.toInt()
             }
         })
     }
 
     @Test
     fun `Should be able to stop chained Either effects`() {
-        assertEquals(left<String, Int>("Cannot compute A"), runBlocking {
+        assertEquals(left("Cannot compute A"), runBlocking {
             Either.monad<String>() `do` {
                 val a = left<String, Int>("Cannot compute A").bind()
                 val b = left<String, Int>("Cannot compute B").bind()
@@ -85,25 +82,15 @@ internal class ComprehensionTest {
     }
 
     @Test
-    fun `Should be able to execute more than once continuation effects`() {
-        assertEquals(8, runBlocking {
-            (Comprehension<Continuation.ContinuationK<Int>, Int>(Continuation.monad()) {
-                continuation<Int, Int> { k -> k(1) + k(1) }.bind()
-            }) { it + 3 }
-        })
-    }
-
-    @Test
-    @Ignore /* Bug 7 */
     fun `Should be able to Chain continuation effects`() {
-        assertEquals(42, runBlocking {
-            (Comprehension<Continuation.ContinuationK<Int>, Int>(Continuation.monad()) {
-        val a = continuation<Int, Int> { k -> k(1) + k(1) }.bind()
-        delay(100)
-        val b = returns(38).bind()
-        delay(100)
-        a + b
-    }) { it + 3 }
+        assertEquals(84, runBlocking {
+            (Continuation.monad<Int>() `do` {
+                val a = continuation<Int, Int> { k -> k(1) + k(1) }.bind()
+                delay(100)
+                val b = returns(38).bind()
+                delay(100)
+                a + b
+            }) { it + 3 }
         })
     }
 
