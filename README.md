@@ -116,7 +116,7 @@ The `Functor` abstraction implementation can then be proposed. This is done once
 object Functor {
     private class FunctorImpl : Functor.API<OptionK> {
         override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<OptionK, A>, App<OptionK, B>> =
-            { ma -> ma.fold(::none) { a -> some(f(a)) } }
+            { ma -> ma.fold(::none, f then ::some) }
     }
 
     val functor: Functor.API<OptionK> = FunctorImpl()
