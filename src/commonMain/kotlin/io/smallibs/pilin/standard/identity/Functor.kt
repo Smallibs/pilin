@@ -1,6 +1,6 @@
 package io.smallibs.pilin.standard.identity
 
-import io.smallibs.pilin.control.Functor
+import io.smallibs.pilin.abstractions.Functor
 import io.smallibs.pilin.standard.identity.Identity.Companion.id
 import io.smallibs.pilin.standard.identity.Identity.IdentityK
 import io.smallibs.pilin.standard.identity.Identity.IdentityK.Companion.fold

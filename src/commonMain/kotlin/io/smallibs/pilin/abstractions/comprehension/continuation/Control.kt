@@ -1,10 +1,8 @@
-package io.smallibs.pilin.control.extension.delimited
+package io.smallibs.pilin.abstractions.comprehension.continuation
 
-import io.smallibs.pilin.control.extension.delimited.thermometer.Context
-import io.smallibs.pilin.control.extension.delimited.thermometer.Thermometer
+import io.smallibs.pilin.abstractions.comprehension.continuation.thermometer.Context
+import io.smallibs.pilin.abstractions.comprehension.continuation.thermometer.Thermometer
 import io.smallibs.pilin.standard.continuation.Continuation
-import io.smallibs.pilin.type.App
-import io.smallibs.pilin.type.Fun
 import io.smallibs.pilin.type.Supplier
 
 interface Control<A> {

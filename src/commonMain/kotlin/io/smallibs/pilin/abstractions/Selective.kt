@@ -1,4 +1,4 @@
-package io.smallibs.pilin.control
+package io.smallibs.pilin.abstractions
 
 import io.smallibs.pilin.core.Standard
 import io.smallibs.pilin.core.Standard.compose

@@ -1,6 +1,6 @@
 package io.smallibs.pilin.laws
 
-import io.smallibs.pilin.control.Selective
+import io.smallibs.pilin.abstractions.Selective
 import io.smallibs.pilin.core.Standard
 import io.smallibs.pilin.standard.either.Either.EitherK
 import io.smallibs.pilin.standard.either.Either.EitherK.Companion.fold

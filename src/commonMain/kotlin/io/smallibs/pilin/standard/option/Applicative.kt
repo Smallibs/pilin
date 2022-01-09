@@ -1,6 +1,6 @@
 package io.smallibs.pilin.standard.option
 
-import io.smallibs.pilin.control.Applicative
+import io.smallibs.pilin.abstractions.Applicative
 import io.smallibs.pilin.core.Standard.Infix.then
 import io.smallibs.pilin.standard.option.Option.Companion.none
 import io.smallibs.pilin.standard.option.Option.Companion.some

@@ -1,4 +1,4 @@
-package io.smallibs.pilin.control.extension.delimited.thermometer
+package io.smallibs.pilin.abstractions.comprehension.continuation.thermometer
 
 import io.smallibs.pilin.core.Standard.id
 import io.smallibs.pilin.standard.option.Option.OptionK.Companion.fold

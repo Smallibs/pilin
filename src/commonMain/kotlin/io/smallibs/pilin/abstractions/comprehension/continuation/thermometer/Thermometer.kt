@@ -1,7 +1,7 @@
-package io.smallibs.pilin.control.extension.delimited.thermometer
+package io.smallibs.pilin.abstractions.comprehension.continuation.thermometer
 
-import io.smallibs.pilin.control.extension.delimited.Control
-import io.smallibs.pilin.control.extension.delimited.thermometer.Frame.Enter
+import io.smallibs.pilin.abstractions.comprehension.continuation.Control
+import io.smallibs.pilin.abstractions.comprehension.continuation.thermometer.Frame.Enter
 import io.smallibs.pilin.standard.continuation.Continuation
 import io.smallibs.pilin.type.Fun
 import io.smallibs.pilin.type.Supplier

@@ -1,7 +1,7 @@
 package io.smallibs.pilin.standard.option
 
-import io.smallibs.pilin.control.Applicative
-import io.smallibs.pilin.control.Monad
+import io.smallibs.pilin.abstractions.Applicative
+import io.smallibs.pilin.abstractions.Monad
 import io.smallibs.pilin.core.Standard.id
 import io.smallibs.pilin.standard.option.Applicative.applicative
 import io.smallibs.pilin.standard.option.Option.Companion.none

@@ -1,6 +1,6 @@
 package io.smallibs.pilin.laws
 
-import io.smallibs.pilin.control.Applicative
+import io.smallibs.pilin.abstractions.Applicative
 import io.smallibs.pilin.core.Compose
 import io.smallibs.pilin.core.Standard
 import io.smallibs.pilin.standard.support.Equatable

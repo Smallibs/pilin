@@ -1,7 +1,7 @@
-package io.smallibs.pilin.control.extension.delimited
+package io.smallibs.pilin.abstractions.comprehension.continuation
 
-import io.smallibs.pilin.control.Monad
-import io.smallibs.pilin.control.extension.delimited.thermometer.Universal
+import io.smallibs.pilin.abstractions.Monad
+import io.smallibs.pilin.abstractions.comprehension.continuation.thermometer.Universal
 import io.smallibs.pilin.standard.continuation.Continuation.Companion.continuation
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Supplier

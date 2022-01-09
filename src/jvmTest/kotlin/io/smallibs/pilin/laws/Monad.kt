@@ -1,6 +1,6 @@
 package io.smallibs.pilin.laws
 
-import io.smallibs.pilin.control.Monad
+import io.smallibs.pilin.abstractions.Monad
 import io.smallibs.pilin.standard.support.Equatable
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun

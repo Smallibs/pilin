@@ -1,7 +1,7 @@
 package io.smallibs.pilin.standard.continuation
 
-import io.smallibs.pilin.control.Applicative.API
-import io.smallibs.pilin.control.Monad
+import io.smallibs.pilin.abstractions.Applicative.API
+import io.smallibs.pilin.abstractions.Monad
 import io.smallibs.pilin.standard.continuation.Applicative.applicative
 import io.smallibs.pilin.standard.continuation.Continuation.Companion.continuation
 import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK

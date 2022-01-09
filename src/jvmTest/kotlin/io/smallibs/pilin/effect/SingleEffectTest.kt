@@ -1,6 +1,6 @@
 package io.smallibs.pilin.effect
 
-import io.smallibs.pilin.control.Monad
+import io.smallibs.pilin.abstractions.Monad
 import io.smallibs.pilin.effect.Effects.Companion.handle
 import io.smallibs.pilin.standard.continuation.Continuation.Companion.continuation
 import io.smallibs.pilin.standard.continuation.Continuation.Companion.monad

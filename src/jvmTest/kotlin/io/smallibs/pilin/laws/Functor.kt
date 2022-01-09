@@ -1,6 +1,6 @@
 package io.smallibs.pilin.laws
 
-import io.smallibs.pilin.control.Functor
+import io.smallibs.pilin.abstractions.Functor
 import io.smallibs.pilin.core.Standard
 import io.smallibs.pilin.core.Standard.Infix.compose
 import io.smallibs.pilin.core.Standard.id

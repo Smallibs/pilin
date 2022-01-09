@@ -1,6 +1,6 @@
-package io.smallibs.pilin.control
+package io.smallibs.pilin.abstractions
 
-import io.smallibs.pilin.control.extension.Comprehension
+import io.smallibs.pilin.abstractions.comprehension.Comprehension
 import io.smallibs.pilin.core.Standard
 import io.smallibs.pilin.core.Standard.Infix.then
 import io.smallibs.pilin.core.Standard.curry

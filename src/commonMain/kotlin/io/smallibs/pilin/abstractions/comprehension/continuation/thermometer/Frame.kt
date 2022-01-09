@@ -1,4 +1,4 @@
-package io.smallibs.pilin.control.extension.delimited.thermometer
+package io.smallibs.pilin.abstractions.comprehension.continuation.thermometer
 
 sealed interface Frame {
     object Enter : Frame
