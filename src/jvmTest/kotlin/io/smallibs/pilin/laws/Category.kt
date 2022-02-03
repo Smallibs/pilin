@@ -12,7 +12,7 @@ object Category {
     ): Boolean =
         with(this.infix) {
             with(equatable) {
-                f compose id<A>() isEqualTo f
+                f composeRightToLeft id<A>() isEqualTo f
             }
         }
 
@@ -22,7 +22,7 @@ object Category {
     ): Boolean =
         with(this.infix) {
             with(equatable) {
-                id<B>() compose f isEqualTo f
+                id<B>() composeRightToLeft f isEqualTo f
             }
         }
 }

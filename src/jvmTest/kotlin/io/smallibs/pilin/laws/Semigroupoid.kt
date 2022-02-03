@@ -14,7 +14,7 @@ object Semigroupoid {
     ): Boolean =
         with(this.infix) {
             with(equatable) {
-                f compose (g compose h) isEqualTo ((f compose g) compose h)
+                f composeRightToLeft (g composeRightToLeft h) isEqualTo ((f composeRightToLeft g) composeRightToLeft h)
             }
         }
 }

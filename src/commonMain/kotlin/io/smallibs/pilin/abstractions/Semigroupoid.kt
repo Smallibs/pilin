@@ -45,7 +45,7 @@ object Semigroupoid {
     }
 
     open class Infix<T>(private val c: Core<T>) : Core<T> by c {
-        suspend infix fun <A, B, C> App<App<T, B>, C>.compose(g: App<App<T, A>, B>): App<App<T, A>, C> =
+        suspend infix fun <A, B, C> App<App<T, B>, C>.composeRightToLeft(g: App<App<T, A>, B>): App<App<T, A>, C> =
             c.compose(this, g)
 
         suspend infix fun <A, B, C> App<App<T, A>, B>.composeLeftToRight(g: App<App<T, B>, C>): App<App<T, A>, C> =

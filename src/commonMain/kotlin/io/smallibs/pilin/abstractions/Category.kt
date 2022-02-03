@@ -22,7 +22,10 @@ object Category {
         }
     }
 
+    @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
     class Operation<T>(private val c: Core<T>) : Semigroupoid.Operation<T>(c), Core<T> by c
+
+    @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
     class Infix<T>(private val c: Core<T>) : Semigroupoid.Infix<T>(c), Core<T> by c
 
     interface API<T> : Core<T> {
