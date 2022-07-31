@@ -12,7 +12,7 @@ object Monad {
         Monad.WithReturnsMapAndJoin<IdentityK>,
         Monad.ViaApplicative<IdentityK>(applicative) {
         override suspend fun <A> join(mma: App<IdentityK, App<IdentityK, A>>): App<IdentityK, A> =
-            mma.fold (::id)
+            mma.fold(::id)
     }
 
     val monad: Monad.API<IdentityK> = MonadImpl(Applicative.applicative)
