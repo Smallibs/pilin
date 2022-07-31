@@ -76,7 +76,7 @@ in [Lightweight higher-kinded polymorphism](https://www.cl.cam.ac.uk/~jdy22/pape
 
 In this `OptionK` class, a `fix` value is proposed when a downcast is required. This operation is of course unsafe, but
 to reduce this aspect the scope of the constructor is limited to `Option`. Finally, the catamorphism `fold` function is
-proposed.
+suggested.
 
 Smart constructors and abstraction implementation references can be proposed.
 
