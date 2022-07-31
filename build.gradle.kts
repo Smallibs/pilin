@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform") version "1.6.10"
+    kotlin("multiplatform") version "1.7.10"
 }
 
 group = "io.smallibs"
@@ -18,7 +18,7 @@ kotlin {
             useJUnit()
         }
     }
-    js(LEGACY) {
+    js(BOTH) {
         browser {
             testTask {
                 useKarma {
@@ -28,7 +28,7 @@ kotlin {
             }
         }
     }
-    /*
+
     val hostOs = System.getProperty("os.name")
     val isMingwX64 = hostOs.startsWith("Windows")
     val nativeTarget = when {
@@ -37,12 +37,11 @@ kotlin {
         isMingwX64 -> mingwX64("native")
         else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
     }
-    */
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-RC3")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
             }
         }
         val commonTest by getting {
@@ -53,7 +52,7 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.0-RC3")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.4")
             }
         }
         val jvmTest by getting {
@@ -64,7 +63,7 @@ kotlin {
         }
         val jsMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.6.0-RC3")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.6.4")
             }
         }
         val jsTest by getting {
@@ -72,13 +71,11 @@ kotlin {
                 implementation(kotlin("test-js"))
             }
         }
-        /*
         val nativeMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.6.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.3.8")
             }
         }
         val nativeTest by getting
-        */
     }
 }
