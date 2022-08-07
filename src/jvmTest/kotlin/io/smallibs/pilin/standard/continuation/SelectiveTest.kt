@@ -15,8 +15,10 @@ internal class SelectiveTest : WithQuickTheories {
     fun `x select (pure id) = fold(id)(id) map x`() {
         qt().forAll(either<Int, Int>(integers().allPositive())(integers().allPositive())).check { a ->
             runBlocking {
-                Continuation.selective<Int>().`x select (pure id) = fold(id)(id) map x`(a,
-                    Equatable.continuation())
+                Continuation.selective.`x select (pure id) = fold(id)(id) map x`(
+                    a,
+                    Equatable.continuation()
+                )
             }
         }
     }
@@ -25,7 +27,7 @@ internal class SelectiveTest : WithQuickTheories {
     fun `pure(x) select (y discardLeft z) = (pure(x) select y) discardLeft ((pure(x) select z)`() {
         qt().forAll(either<Int, String>(integers().allPositive())(strings().numeric())).check { a ->
             runBlocking {
-                Continuation.selective<String>()
+                Continuation.selective
                     .`pure(x) select (y discardLeft z) = (pure(x) select y) discardLeft ((pure(x) select z)`(
                         str,
                         str,

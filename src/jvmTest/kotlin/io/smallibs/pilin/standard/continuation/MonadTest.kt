@@ -24,31 +24,33 @@ internal class MonadTest : WithQuickTheories {
 
     @Test
     fun `returns a bind h = h a`() {
-        qt().forAll(integers().all(), continuation<String, String>()).check { a, r ->
+        qt().forAll(integers().all(), continuation<String>()).check { a, r ->
             runBlocking {
-                Continuation.monad<String>().`returns a bind h = h a`(retStr(r), a, Equatable.continuation())
+                Continuation.monad.`returns a bind h = h a`(retStr(r), a, Equatable.continuation())
             }
         }
     }
 
     @Test
     fun `a bind returns = a`() {
-        qt().forAll(continuation<Int, Int>(integers().all())).check { a ->
+        qt().forAll(continuation(integers().all())).check { a ->
             runBlocking {
-                Continuation.monad<Int>().`a bind returns = a`(a, Equatable.continuation())
+                Continuation.monad.`a bind returns = a`(a, Equatable.continuation())
             }
         }
     }
 
     @Test
     fun `(a bind f) bind g = a bind {x in f x bind g}`() {
-        qt().forAll(continuation<Int, Int>(integers().all()), continuation<String, Int>(), continuation<Int, Int>())
+        qt().forAll(continuation(integers().all()), continuation<String>(), continuation<Int>())
             .check { a, rf, rg ->
                 runBlocking {
-                    Continuation.monad<Int>().`(a bind f) bind g = a bind {x in f x bind g}`(retStr(rf),
+                    Continuation.monad.`(a bind f) bind g = a bind {x in f x bind g}`(
+                        retStr(rf),
                         retInt(rg),
                         a,
-                        Equatable.continuation())
+                        Equatable.continuation()
+                    )
                 }
             }
     }

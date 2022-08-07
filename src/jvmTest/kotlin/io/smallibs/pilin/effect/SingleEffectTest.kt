@@ -2,11 +2,12 @@ package io.smallibs.pilin.effect
 
 import io.smallibs.pilin.abstractions.Monad
 import io.smallibs.pilin.effect.Effects.Companion.handle
-import io.smallibs.pilin.standard.continuation.Continuation.Companion.continuation
+import io.smallibs.pilin.standard.continuation.Continuation
 import io.smallibs.pilin.standard.continuation.Continuation.Companion.monad
 import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK
 import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.Companion.invoke
 import io.smallibs.pilin.type.App
+import io.smallibs.pilin.type.Fun
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -29,23 +30,30 @@ class SingleEffectTest {
             }
         }
 
-    private fun console(): Console<ContinuationK<List<String>>> =
+    private fun console(traces: MutableList<String>): Console<ContinuationK> =
         Console(
             printString = { text ->
-                continuation { k ->
-                    listOf("printString($text)") + k(Unit)
+                object : Continuation<Unit> {
+                    override suspend fun <O> invoke(k: Fun<Unit, O>): O {
+                        traces += listOf("printString($text)")
+                        return k(Unit)
+                    }
                 }
             },
-            readString = continuation { k ->
-                listOf("readStream(World)") + k("World")
+            readString = object : Continuation<String> {
+                override suspend fun <O> invoke(k: Fun<String, O>): O {
+                    traces += listOf("readStream(World)")
+                    return k("World")
+                }
             }
         )
 
     @Test
     fun shouldPerformEffect() {
-        val handled = effects(monad<List<String>>()) with console()
+        val traces = mutableListOf<String>()
+        val handled = effects(monad) with console(traces)
 
-        val traces = runBlocking { handled().invoke { listOf() } }
+        runBlocking { handled().invoke { } }
 
         assertEquals(listOf("readStream(World)", "printString(Hello World)"), traces)
     }

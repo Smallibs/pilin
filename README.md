@@ -199,18 +199,24 @@ private fun <F> program(monad: Monad.API<F>): Effects<Console<F>, App<F, Unit>> 
 
 ## Defining my own console
 
-Of course, an implementation can be provided. In this example the effect used is `Continuation`.
+Of course, an implementation can be provided. In this example the effect used is `Continuation`. 
 
 ```kotlin
-val console =
-    Console<ContinuationK<List<String>>>(
+fun console(traces : MutableList<String>) =
+    Console(
         printString = { text ->
-            continuation<Unit, List<String>> { k ->
-                listOf("printString($text)") + k(Unit)
+            object : Continuation<Unit> {
+                override suspend fun <O> invoke(k: Fun<Unit, O>): O {
+                    traces += listOf("printString($text)")
+                    return k(Unit)
+                }
             }
         },
-        readString = continuation<String, List<String>> { k ->
-            listOf("readString(World)") + k("World")
+        readString = object : Continuation<String> {
+            override suspend fun <O> invoke(k: Fun<String, O>): O {
+                traces += listOf("readStream(World)")
+                return k("World")
+            }
         }
     )
 ```
@@ -221,9 +227,10 @@ Then the previous program can be executed with the user defined effect implement
 return suspended functions this execution should be performed thanks to the standard `runBlocking` function.
 
 ```kotlin
-val handled = program(Continuation.monad) with console
+val traces = mutableListOf<String>()
+val handled = program(Continuation.monad) with console(traces)
 
-val traces = runBlocking { handled().invoke<Unit, List<String>> { listOf() } }
+runBlocking { handled().invoke { } }
 ```
 
 Finally, after the execution `traces` has the following value: `listOf("readString(World)", "printString(Hello World)")`

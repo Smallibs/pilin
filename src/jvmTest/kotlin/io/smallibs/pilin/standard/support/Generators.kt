@@ -62,16 +62,12 @@ object Generators {
             }
         }
 
-    fun <A, B> continuation(gen: Gen<A>): Gen<App<Continuation.ContinuationK<B>, A>> =
-        gen.map { a ->
-            Continuation.continuation { k -> k(a) }
-        }
+    fun <A> continuation(gen: Gen<A>): Gen<App<Continuation.ContinuationK, A>> =
+        gen.map { a -> Continuation.continuation(a) }
 
 
-    fun <A, B> continuation(): Gen<Fun<A, App<Continuation.ContinuationK<B>, A>>> =
-        identity<Unit>().map { _ ->
-            { a -> Continuation.continuation { k -> k(a) } }
-        }
+    fun <A> continuation(): Gen<Fun<A, App<Continuation.ContinuationK, A>>> =
+        identity<Unit>().map { _ -> { a -> Continuation.continuation(a) } }
 
     fun <A> constant(a: A): Gen<A> = Gen { a }
 

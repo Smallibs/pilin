@@ -13,17 +13,19 @@ internal class FunctorTest : WithQuickTheories {
 
     @Test
     fun `map id = id `() {
-        qt().forAll(continuation<Int, Int>(integers().all())).check { a ->
-            runBlocking { Continuation.functor<Int>().`map id = id`(a, Equatable.continuation()) }
+        qt().forAll(continuation(integers().all())).check { a ->
+            runBlocking { Continuation.functor.`map id = id`(a, Equatable.continuation()) }
         }
     }
 
     @Test
     fun `map (incr compose toString) = (map incr) compose (map toString) `() {
-        qt().forAll(continuation<Int, Int>(integers().all())).check { a ->
+        qt().forAll(continuation(integers().all())).check { a ->
             runBlocking {
-                Continuation.functor<Int>().`map (f compose g) = map f compose map g`(Functions.int,
-                    Functions.str, a, Equatable.continuation())
+                Continuation.functor.`map (f compose g) = map f compose map g`(
+                    Functions.int,
+                    Functions.str, a, Equatable.continuation()
+                )
             }
         }
     }

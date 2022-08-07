@@ -3,26 +3,29 @@ package io.smallibs.pilin.standard.continuation
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
-data class Continuation<I, O>(private val behavior: Fun<Fun<I, O>, O>) : App<Continuation.ContinuationK<O>, I> {
-    suspend operator fun invoke(a: Fun<I, O>) = behavior(a)
+interface Continuation<I> : App<Continuation.ContinuationK, I> {
+    suspend operator fun <O> invoke(k: Fun<I, O>): O
 
-    class ContinuationK<O> private constructor() {
+    class ContinuationK private constructor() {
         companion object {
-            val <I, O> App<ContinuationK<O>, I>.fix: Continuation<I, O>
+            val <I> App<ContinuationK, I>.fix: Continuation<I>
                 get() =
-                    this as Continuation<I, O>
+                    this as Continuation<I>
 
-            suspend operator fun <I, O> App<ContinuationK<O>, I>.invoke(a: Fun<I, O>): O =
-                this.fix(a)
+            suspend operator fun <I, O> App<ContinuationK, I>.invoke(k: Fun<I, O>): O =
+                this.fix(k)
         }
     }
 
     companion object {
-        fun <I, O> continuation(behavior: Fun<Fun<I, O>, O>): Continuation<I, O> = Continuation(behavior)
+        fun <I> continuation(a:I) : Continuation<I> =
+            object : Continuation<I> {
+                override suspend fun <O> invoke(k: Fun<I, O>): O = k(a)
+            }
 
-        fun <O> functor() = Functor.functor<O>()
-        fun <O> applicative() = Applicative.applicative<O>()
-        fun <O> selective() = Selective.selective<O>()
-        fun <O> monad() = Monad.monad<O>()
+        val functor = Functor.functor()
+        val applicative = Applicative.applicative()
+        val selective = Selective.selective()
+        val monad = Monad.monad()
     }
 }

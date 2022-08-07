@@ -3,11 +3,12 @@ package io.smallibs.pilin.effect
 import io.smallibs.pilin.abstractions.Monad
 import io.smallibs.pilin.effect.And.Companion.and
 import io.smallibs.pilin.effect.Effects.Companion.handle
-import io.smallibs.pilin.standard.continuation.Continuation.Companion.continuation
+import io.smallibs.pilin.standard.continuation.Continuation
 import io.smallibs.pilin.standard.continuation.Continuation.Companion.monad
 import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK
 import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.Companion.invoke
 import io.smallibs.pilin.type.App
+import io.smallibs.pilin.type.Fun
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -36,34 +37,53 @@ class CombinedEffectTest {
             }
         }
 
-    private fun state(): State<ContinuationK<List<String>>> {
+    private fun state(traces: MutableList<String>): State<ContinuationK> {
         var state = ""
 
-        return State(get = continuation { k ->
-            listOf("get()") + k(state)
-        }, set = { value ->
-            continuation { k ->
-                state = value
-                listOf("set($value)") + k(Unit)
+        return State(
+            set = { value ->
+                object : Continuation<Unit> {
+                    override suspend fun <O> invoke(k: Fun<Unit, O>): O {
+                        state = value
+                        traces.add("set($value)")
+                        return k(Unit)
+                    }
+                }
+            },
+            get = object : Continuation<String> {
+                override suspend fun <O> invoke(k: Fun<String, O>): O {
+                    traces.add("get()")
+                    return k(state)
+                }
             }
-        })
+        )
     }
 
-    private fun console(): Console<ContinuationK<List<String>>> =
-        Console(printString = { text ->
-            continuation { k ->
-                listOf("printString($text)") + k(Unit)
+    private fun console(traces: MutableList<String>): Console<ContinuationK> =
+        Console(
+            printString = { text ->
+                object : Continuation<Unit> {
+                    override suspend fun <O> invoke(k: Fun<Unit, O>): O {
+                        traces += listOf("printString($text)")
+                        return k(Unit)
+                    }
+                }
+            },
+            readString = object : Continuation<String> {
+                override suspend fun <O> invoke(k: Fun<String, O>): O {
+                    traces += listOf("readStream(World)")
+                    return k("World")
+                }
             }
-        }, readString = continuation { k ->
-            listOf("readStream(World)") + k("World")
-        })
+        )
 
     @Test
     fun shouldPerformEffect() {
-        val handler = state() and console()
-        val handled = effects(monad<List<String>>()) with handler
+        val traces = mutableListOf<String>()
+        val handler = state(traces) and console(traces)
+        val handled = effects(monad) with handler
 
-        val traces = runBlocking { (handled()).invoke { listOf() } }
+        runBlocking { (handled()).invoke { } }
 
         assertEquals(listOf("readStream(World)", "set(World)", "get()", "printString(Hello World)"), traces)
     }

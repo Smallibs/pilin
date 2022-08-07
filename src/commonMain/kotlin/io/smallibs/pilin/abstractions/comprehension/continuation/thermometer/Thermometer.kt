@@ -2,7 +2,6 @@ package io.smallibs.pilin.abstractions.comprehension.continuation.thermometer
 
 import io.smallibs.pilin.abstractions.comprehension.continuation.Control
 import io.smallibs.pilin.abstractions.comprehension.continuation.thermometer.Frame.Enter
-import io.smallibs.pilin.standard.continuation.Continuation
 import io.smallibs.pilin.type.Fun
 import io.smallibs.pilin.type.Supplier
 
@@ -14,7 +13,7 @@ internal class Thermometer<A> private constructor(private var context: Context<A
         return runWithFuture(block, Stack())
     }
 
-    override suspend fun <B> shift(f: Continuation<B, A>): B {
+    override suspend fun <B> shift(f: Fun<Fun<B, A>, A>): B {
         val (frame, future) = context.state.future.pop(Enter)
 
         context = context.setFuture(future)
