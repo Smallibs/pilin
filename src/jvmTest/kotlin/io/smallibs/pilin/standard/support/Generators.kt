@@ -36,7 +36,7 @@ object Generators {
     fun <A> option(): Gen<Fun<A, App<OptionK, A>>> =
         integers().allPositive().map { i ->
             if (i % 2 == 0) {
-                { _ -> Option.none() }
+                { Option.none() }
             } else {
                 { a -> Option.some(a) }
             }
@@ -62,12 +62,17 @@ object Generators {
             }
         }
 
+    private fun <I> continuation(a: I): Continuation<I> =
+        object : Continuation<I> {
+            override suspend fun <O> invoke(k: Fun<I, O>): O = k(a)
+        }
+
     fun <A> continuation(gen: Gen<A>): Gen<App<Continuation.ContinuationK, A>> =
-        gen.map { a -> Continuation.continuation(a) }
+        gen.map (::continuation)
 
 
     fun <A> continuation(): Gen<Fun<A, App<Continuation.ContinuationK, A>>> =
-        identity<Unit>().map { _ -> { a -> Continuation.continuation(a) } }
+        identity<Unit>().map { _ -> { a -> continuation(a) } }
 
     fun <A> constant(a: A): Gen<A> = Gen { a }
 

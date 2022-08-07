@@ -199,7 +199,7 @@ private fun <F> program(monad: Monad.API<F>): Effects<Console<F>, App<F, Unit>> 
 
 ## Defining my own console
 
-Of course, an implementation can be provided. In this example the effect used is `Continuation`. bb
+Of course, an implementation can be provided. In this example the effect used is `Continuation`.
 
 ```kotlin
 fun console(traces : MutableList<String>) =
@@ -220,6 +220,8 @@ fun console(traces : MutableList<String>) =
         }
     )
 ```
+
+**Note**: we cannot use functional interface for continuation construction i.e. problem with existential type.
 
 ## Executing the program with a dedicated console
 

@@ -18,11 +18,6 @@ interface Continuation<I> : App<Continuation.ContinuationK, I> {
     }
 
     companion object {
-        fun <I> continuation(a:I) : Continuation<I> =
-            object : Continuation<I> {
-                override suspend fun <O> invoke(k: Fun<I, O>): O = k(a)
-            }
-
         val functor = Functor.functor()
         val applicative = Applicative.applicative()
         val selective = Selective.selective()
