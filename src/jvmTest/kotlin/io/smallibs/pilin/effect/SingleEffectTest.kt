@@ -35,14 +35,14 @@ class SingleEffectTest {
             printString = { text ->
                 object : Continuation<Unit> {
                     override suspend fun <O> invoke(k: Fun<Unit, O>): O {
-                        traces += listOf("printString($text)")
+                        traces.add("printString($text)")
                         return k(Unit)
                     }
                 }
             },
             readString = object : Continuation<String> {
                 override suspend fun <O> invoke(k: Fun<String, O>): O {
-                    traces += listOf("readStream(World)")
+                    traces.add("readStream(World)")
                     return k("World")
                 }
             }
