@@ -16,7 +16,7 @@ object Monad {
 
         override suspend fun <A> join(mma: App<ContinuationK, App<ContinuationK, A>>): App<ContinuationK, A> =
             object : Continuation<A> {
-                override suspend fun <O> invoke(k: Fun<A, O>): O = mma { it(k) }
+                override suspend fun <O> invoke(k: Fun<A, O>): O = mma { ma -> ma(k) }
             }
 
     }
