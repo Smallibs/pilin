@@ -68,7 +68,7 @@ object Generators {
         }
 
     fun <A> continuation(gen: Gen<A>): Gen<App<Continuation.ContinuationK, A>> =
-        gen.map (::continuation)
+        gen.map(::continuation)
 
 
     fun <A> continuation(): Gen<Fun<A, App<Continuation.ContinuationK, A>>> =

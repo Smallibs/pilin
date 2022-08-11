@@ -33,9 +33,11 @@ internal class MonadTest : WithQuickTheories {
 
     @Test
     fun `(a bind f) bind g = a bind {x in f x bind g}`() {
-        qt().forAll(either<Unit, Int>(constant(Unit))(integers().all()),
+        qt().forAll(
+            either<Unit, Int>(constant(Unit))(integers().all()),
             either<Unit, String>(Unit),
-            either<Unit, Int>(Unit))
+            either<Unit, Int>(Unit)
+        )
             .check { a, rf, rg ->
                 runBlocking {
                     Either.monad<Unit>().`(a bind f) bind g = a bind {x in f x bind g}`(retStr(rf), retInt(rg), a)

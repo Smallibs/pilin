@@ -5,7 +5,6 @@ import io.smallibs.pilin.laws.Functor.`map id = id`
 import io.smallibs.pilin.standard.support.Functions.int
 import io.smallibs.pilin.standard.support.Functions.str
 import io.smallibs.pilin.standard.support.Generators.identity
-import io.smallibs.pilin.type.Fun
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.quicktheories.WithQuickTheories

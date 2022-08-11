@@ -6,12 +6,6 @@ import io.smallibs.pilin.type.App
 
 object Category {
 
-    /**
-     * Laws:
-     * - compose(f,id) = f
-     * - compose(id,f) = f
-     */
-
     interface Core<T> : Semigroupoid.Core<T> {
         suspend fun <A> id(): App<App<T, A>, A>
     }

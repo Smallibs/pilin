@@ -49,7 +49,8 @@ internal class ApplicativeTest : WithQuickTheories {
         qt().forAll(
             either<Unit, Int>(constant(Unit))(integers().all()),
             either<Unit, Fun<String, Int>>(constant(Unit))(constant(int)),
-            either<Unit, Fun<Int, String>>(constant(Unit))(constant(str)))
+            either<Unit, Fun<Int, String>>(constant(Unit))(constant(str))
+        )
             .check { a, f, g ->
                 runBlocking {
                     Either.applicative<Unit>()

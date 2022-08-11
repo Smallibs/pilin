@@ -6,11 +6,6 @@ import io.smallibs.pilin.type.Fun
 
 object Semigroupoid {
 
-    /**
-     * Law:
-     * - compose(f,compose(g,h)) = compose(compose(f,g),h)
-     */
-
     interface Core<T> {
         suspend fun <A, B, C> compose(f: App<App<T, B>, C>, g: App<App<T, A>, B>): App<App<T, A>, C>
     }
