@@ -8,8 +8,6 @@ typealias Compose<A, B, C> = Fun<Fun<B, C>, Fun<Fun<A, B>, Fun<A, C>>>
 
 object Standard {
 
-    suspend fun <A> mkId(): suspend (A) -> A = { it }
-
     suspend fun <A> id(a: A): A = a
 
     suspend fun <A, B> apply(f: Fun<A, B>, a: A): B = f(a)

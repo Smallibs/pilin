@@ -9,6 +9,8 @@ import io.smallibs.pilin.type.Fun
 
 object Applicative {
 
+    fun <A> mkId(): suspend (A) -> A = { it }
+
     suspend fun <F, A, B> Applicative.API<F>.`map f x = apply (pure f) x`(
         f: Fun<A, B>,
         x: App<F, A>,
@@ -26,7 +28,7 @@ object Applicative {
     ): Boolean =
         with(this.infix) {
             with(equatable) {
-                pure(Standard.mkId<A>()) apply (x) isEqualTo x
+                pure(mkId<A>()) apply (x) isEqualTo x
             }
         }
 

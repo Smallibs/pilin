@@ -18,15 +18,10 @@ kotlin {
             useJUnit()
         }
     }
-    js(BOTH) {
-        browser {
-            testTask {
-                useKarma {
-                    useChromeHeadless()
-                    webpackConfig.cssSupport.enabled = true
-                }
-            }
-        }
+    js(IR) {
+        browser()
+        nodejs()
+        binaries.executable()
     }
 
     val hostOs = System.getProperty("os.name")
