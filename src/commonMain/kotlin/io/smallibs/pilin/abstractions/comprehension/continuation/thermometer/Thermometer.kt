@@ -23,6 +23,7 @@ internal class Thermometer<A> private constructor(private var context: Context<A
                 context = context.addToPast(frame)
                 return Universal<B>().fromU(frame.value!!)
             }
+
             is Enter -> {
                 val newFuture = context.state.past
                 val block = context.state.block

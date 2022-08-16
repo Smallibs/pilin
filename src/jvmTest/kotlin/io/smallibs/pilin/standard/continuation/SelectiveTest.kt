@@ -2,6 +2,7 @@ package io.smallibs.pilin.standard.continuation
 
 import io.smallibs.pilin.laws.Selective.`pure(x) select (y discardLeft z) = (pure(x) select y) discardLeft ((pure(x) select z)`
 import io.smallibs.pilin.laws.Selective.`x select (pure id) = fold(id)(id) map x`
+import io.smallibs.pilin.standard.continuation.Continuation.Companion.selective
 import io.smallibs.pilin.standard.support.Equatable
 import io.smallibs.pilin.standard.support.Functions.str
 import io.smallibs.pilin.standard.support.Generators.either
@@ -15,9 +16,8 @@ internal class SelectiveTest : WithQuickTheories {
     fun `x select (pure id) = fold(id)(id) map x`() {
         qt().forAll(either<Int, Int>(integers().allPositive())(integers().allPositive())).check { a ->
             runBlocking {
-                Continuation.selective.`x select (pure id) = fold(id)(id) map x`(
-                    a,
-                    Equatable.continuation()
+                selective.`x select (pure id) = fold(id)(id) map x`(
+                    a, Equatable.continuation()
                 )
             }
         }
@@ -27,13 +27,9 @@ internal class SelectiveTest : WithQuickTheories {
     fun `pure(x) select (y discardLeft z) = (pure(x) select y) discardLeft ((pure(x) select z)`() {
         qt().forAll(either<Int, String>(integers().allPositive())(strings().numeric())).check { a ->
             runBlocking {
-                Continuation.selective
-                    .`pure(x) select (y discardLeft z) = (pure(x) select y) discardLeft ((pure(x) select z)`(
-                        str,
-                        str,
-                        a,
-                        Equatable.continuation()
-                    )
+                selective.`pure(x) select (y discardLeft z) = (pure(x) select y) discardLeft ((pure(x) select z)`(
+                    str, str, a, Equatable.continuation()
+                )
             }
         }
     }

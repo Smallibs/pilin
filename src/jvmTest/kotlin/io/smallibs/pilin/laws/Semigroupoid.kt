@@ -1,6 +1,7 @@
 package io.smallibs.pilin.laws
 
 import io.smallibs.pilin.abstractions.Semigroupoid
+import io.smallibs.pilin.core.Standard.With
 import io.smallibs.pilin.standard.support.Equatable
 import io.smallibs.pilin.type.App
 
@@ -11,10 +12,9 @@ object Semigroupoid {
         g: App<App<F, B>, C>,
         h: App<App<F, A>, B>,
         equatable: Equatable<App<App<F, A>, D>>,
-    ): Boolean =
-        with(this.infix) {
-            with(equatable) {
-                f composeRightToLeft (g composeRightToLeft h) isEqualTo ((f composeRightToLeft g) composeRightToLeft h)
-            }
+    ): Boolean = With(this.infix, equatable) {
+        {
+            f composeRightToLeft (g composeRightToLeft h) isEqualTo ((f composeRightToLeft g) composeRightToLeft h)
         }
+    }
 }

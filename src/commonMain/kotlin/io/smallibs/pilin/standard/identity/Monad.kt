@@ -8,11 +8,8 @@ import io.smallibs.pilin.type.App
 
 object Monad {
     private class MonadImpl(applicative: io.smallibs.pilin.abstractions.Applicative.API<IdentityK>) :
-        Monad.API<IdentityK>,
-        Monad.WithReturnsMapAndJoin<IdentityK>,
-        Monad.ViaApplicative<IdentityK>(applicative) {
-        override suspend fun <A> join(mma: App<IdentityK, App<IdentityK, A>>): App<IdentityK, A> =
-            mma.fold(::id)
+        Monad.API<IdentityK>, Monad.WithReturnsMapAndJoin<IdentityK>, Monad.ViaApplicative<IdentityK>(applicative) {
+        override suspend fun <A> join(mma: App<IdentityK, App<IdentityK, A>>): App<IdentityK, A> = mma.fold(::id)
     }
 
     val monad: Monad.API<IdentityK> = MonadImpl(Applicative.applicative)

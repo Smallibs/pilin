@@ -14,11 +14,10 @@ sealed class Either<out L, out R> : App<EitherK<L>, R> {
         companion object {
             private val <L, R> App<EitherK<L>, R>.fix: Either<L, R> get() = this as Either<L, R>
 
-            suspend fun <L, R, B> App<EitherK<L>, R>.fold(l: Fun<L, B>, r: Fun<R, B>): B =
-                when (val self = this.fix) {
-                    is Left -> l(self.value)
-                    is Right -> r(self.value)
-                }
+            suspend fun <L, R, B> App<EitherK<L>, R>.fold(l: Fun<L, B>, r: Fun<R, B>): B = when (val self = this.fix) {
+                is Left -> l(self.value)
+                is Right -> r(self.value)
+            }
 
             suspend fun <L, R, A> fold(l: Fun<L, A>): Fun<Fun<R, A>, Fun<App<EitherK<L>, R>, A>> =
                 curry { r, e -> e.fold(l, r) }

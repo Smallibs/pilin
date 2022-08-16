@@ -3,6 +3,7 @@ package io.smallibs.pilin.standard.either
 import io.smallibs.pilin.laws.Monad.`(a bind f) bind g = a bind {x in f x bind g}`
 import io.smallibs.pilin.laws.Monad.`a bind returns = a`
 import io.smallibs.pilin.laws.Monad.`returns a bind h = h a`
+import io.smallibs.pilin.standard.either.Either.Companion.monad
 import io.smallibs.pilin.standard.support.Functions.retInt
 import io.smallibs.pilin.standard.support.Functions.retStr
 import io.smallibs.pilin.standard.support.Generators.constant
@@ -17,7 +18,7 @@ internal class MonadTest : WithQuickTheories {
     fun `returns a bind h = h a`() {
         qt().forAll(integers().all(), either<Unit, String>(Unit)).check { a, r ->
             runBlocking {
-                Either.monad<Unit>().`returns a bind h = h a`(retStr(r), a)
+                monad<Unit>().`returns a bind h = h a`(retStr(r), a)
             }
         }
     }
@@ -26,7 +27,7 @@ internal class MonadTest : WithQuickTheories {
     fun `a bind returns = a`() {
         qt().forAll(either<Unit, Int>(constant(Unit))(integers().all())).check { a ->
             runBlocking {
-                Either.monad<Unit>().`a bind returns = a`(a)
+                monad<Unit>().`a bind returns = a`(a)
             }
         }
     }
@@ -34,13 +35,10 @@ internal class MonadTest : WithQuickTheories {
     @Test
     fun `(a bind f) bind g = a bind {x in f x bind g}`() {
         qt().forAll(
-            either<Unit, Int>(constant(Unit))(integers().all()),
-            either<Unit, String>(Unit),
-            either<Unit, Int>(Unit)
-        )
-            .check { a, rf, rg ->
+            either<Unit, Int>(constant(Unit))(integers().all()), either<Unit, String>(Unit), either<Unit, Int>(Unit)
+        ).check { a, rf, rg ->
                 runBlocking {
-                    Either.monad<Unit>().`(a bind f) bind g = a bind {x in f x bind g}`(retStr(rf), retInt(rg), a)
+                    monad<Unit>().`(a bind f) bind g = a bind {x in f x bind g}`(retStr(rf), retInt(rg), a)
                 }
             }
     }

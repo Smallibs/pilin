@@ -10,12 +10,9 @@ import io.smallibs.pilin.standard.option.Option.OptionK.Companion.fold
 import io.smallibs.pilin.type.App
 
 object Monad {
-    private class MonadImpl(applicative: Applicative.API<OptionK>) :
-        Monad.API<OptionK>,
-        Monad.WithReturnsMapAndJoin<OptionK>,
-        Monad.ViaApplicative<OptionK>(applicative) {
-        override suspend fun <A> join(mma: App<OptionK, App<OptionK, A>>): App<OptionK, A> =
-            mma.fold(::none, ::id)
+    private class MonadImpl(applicative: Applicative.API<OptionK>) : Monad.API<OptionK>,
+        Monad.WithReturnsMapAndJoin<OptionK>, Monad.ViaApplicative<OptionK>(applicative) {
+        override suspend fun <A> join(mma: App<OptionK, App<OptionK, A>>): App<OptionK, A> = mma.fold(::none, ::id)
     }
 
     val monad: Monad.API<OptionK> = MonadImpl(applicative)

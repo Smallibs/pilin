@@ -17,19 +17,16 @@ object Monad {
     }
 
     interface WithReturnsAndBind<F> : Core<F> {
-        override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<F, A>, App<F, B>> =
-            bind(f then ::returns)
+        override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<F, A>, App<F, B>> = bind(f then ::returns)
 
-        override suspend fun <A> join(mma: App<F, App<F, A>>): App<F, A> =
-            bind<App<F, A>, A>(Standard::id)(mma)
+        override suspend fun <A> join(mma: App<F, App<F, A>>): App<F, A> = bind<App<F, A>, A>(Standard::id)(mma)
 
         override suspend fun <A, B, C> leftToRight(f: Fun<A, App<F, B>>): Fun<Fun<B, App<F, C>>, Fun<A, App<F, C>>> =
             { g -> f then bind(g) }
     }
 
     interface WithReturnsMapAndJoin<F> : Core<F> {
-        override suspend fun <A, B> bind(f: Fun<A, App<F, B>>): Fun<App<F, A>, App<F, B>> =
-            map(f) then ::join
+        override suspend fun <A, B> bind(f: Fun<A, App<F, B>>): Fun<App<F, A>, App<F, B>> = map(f) then ::join
 
         override suspend fun <A, B, C> leftToRight(f: Fun<A, App<F, B>>): Fun<Fun<B, App<F, C>>, Fun<A, App<F, C>>> =
             { g -> f then bind(g) }
@@ -39,11 +36,9 @@ object Monad {
         override suspend fun <A, B> bind(f: Fun<A, App<F, B>>): Fun<App<F, A>, App<F, B>> =
             { m -> leftToRight<Unit, A, B> { m }(f)(Unit) }
 
-        override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<F, A>, App<F, B>> =
-            bind(f then ::returns)
+        override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<F, A>, App<F, B>> = bind(f then ::returns)
 
-        override suspend fun <A> join(mma: App<F, App<F, A>>): App<F, A> =
-            bind<App<F, A>, A>(Standard::id)(mma)
+        override suspend fun <A> join(mma: App<F, App<F, A>>): App<F, A> = bind<App<F, A>, A>(Standard::id)(mma)
     }
 
     abstract class ViaApplicative<F>(private val applicative: Applicative.Core<F>) : Core<F>,
@@ -53,8 +48,7 @@ object Monad {
     }
 
     class Operation<F>(private val c: Core<F>) : Core<F> by c {
-        suspend fun <A, B> lift(f: Fun<A, B>): Fun<App<F, A>, App<F, B>> =
-            map(f)
+        suspend fun <A, B> lift(f: Fun<A, B>): Fun<App<F, A>, App<F, B>> = map(f)
 
         suspend fun <A, B, C> lift2(f: Fun<A, Fun<B, C>>): Fun<App<F, A>, Fun<App<F, B>, App<F, C>>> =
             curry { ma, mb -> bind<A, C> { a -> bind(f(a) then ::returns)(mb) }(ma) }
@@ -71,8 +65,7 @@ object Monad {
     }
 
     class Do<F>(private val c: API<F>) {
-        suspend infix operator fun <A> invoke(f: suspend Comprehension<F>.() -> A): App<F, A> =
-            Comprehension.run(c, f)
+        suspend infix operator fun <A> invoke(f: suspend Comprehension<F>.() -> A): App<F, A> = Comprehension.run(c, f)
     }
 
     interface API<F> : Core<F> {

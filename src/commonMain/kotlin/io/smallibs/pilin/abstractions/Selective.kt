@@ -33,9 +33,7 @@ object Selective {
         }
     }
 
-    open class ViaMonad<F>(private val monad: Monad.API<F>) : API<F>,
-        WithSelect<F>,
-        Monad.Core<F> by monad {
+    open class ViaMonad<F>(private val monad: Monad.API<F>) : API<F>, WithSelect<F>, Monad.Core<F> by monad {
         override suspend fun <A, B> select(e: App<F, App<EitherK<A>, B>>): Fun<App<F, Fun<A, B>>, App<F, B>> =
             with(monad.infix) {
                 { f -> e bind { it.fold({ a -> map { f: Fun<A, B> -> f(a) }(f) }, ::pure) } }
@@ -65,27 +63,21 @@ object Selective {
         suspend fun and(left: App<F, Boolean>): Fun<App<F, Boolean>, App<F, Boolean>> =
             { ifS<Boolean>(pure(false))(left)(it) }
 
-        suspend fun <A> exists(predicate: Fun<A, App<F, Boolean>>): Fun<List<A>, App<F, Boolean>> =
-            { list ->
-                suspend fun exists(index: Int): App<F, Boolean> =
-                    if (index < list.size)
-                        ifS<Boolean>(predicate(list[index]))(pure(true))(exists(index + 1))
-                    else
-                        pure(false)
+        suspend fun <A> exists(predicate: Fun<A, App<F, Boolean>>): Fun<List<A>, App<F, Boolean>> = { list ->
+            suspend fun exists(index: Int): App<F, Boolean> =
+                if (index < list.size) ifS<Boolean>(predicate(list[index]))(pure(true))(exists(index + 1))
+                else pure(false)
 
-                exists(0)
-            }
+            exists(0)
+        }
 
-        suspend fun <A> forall(predicate: Fun<A, App<F, Boolean>>): Fun<List<A>, App<F, Boolean>> =
-            { list ->
-                suspend fun forall(index: Int): App<F, Boolean> =
-                    if (index < list.size)
-                        ifS<Boolean>(predicate(list[index]))(forall(index + 1))(pure(false))
-                    else
-                        pure(true)
+        suspend fun <A> forall(predicate: Fun<A, App<F, Boolean>>): Fun<List<A>, App<F, Boolean>> = { list ->
+            suspend fun forall(index: Int): App<F, Boolean> =
+                if (index < list.size) ifS<Boolean>(predicate(list[index]))(forall(index + 1))(pure(false))
+                else pure(true)
 
-                forall(0)
-            }
+            forall(0)
+        }
     }
 
     @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
@@ -95,20 +87,15 @@ object Selective {
         suspend infix fun <A, B, C> App<F, App<EitherK<A>, B>>.branch(l: App<F, Fun<A, C>>): Fun<App<F, Fun<B, C>>, App<F, C>> =
             c.branch<A, B, C>(this)(l)
 
-        suspend infix fun <A, B> App<F, App<EitherK<A>, B>>.select(r: App<F, Fun<A, B>>): App<F, B> =
-            c.select(this)(r)
+        suspend infix fun <A, B> App<F, App<EitherK<A>, B>>.select(r: App<F, Fun<A, B>>): App<F, B> = c.select(this)(r)
 
-        suspend infix fun App<F, Boolean>.or(right: App<F, Boolean>): App<F, Boolean> =
-            o.or(this)(right)
+        suspend infix fun App<F, Boolean>.or(right: App<F, Boolean>): App<F, Boolean> = o.or(this)(right)
 
-        suspend infix fun App<F, Boolean>.and(right: App<F, Boolean>): App<F, Boolean> =
-            o.and(this)(right)
+        suspend infix fun App<F, Boolean>.and(right: App<F, Boolean>): App<F, Boolean> = o.and(this)(right)
 
-        suspend infix fun <A> Fun<A, App<F, Boolean>>.exists(list: List<A>): App<F, Boolean> =
-            o.exists(this)(list)
+        suspend infix fun <A> Fun<A, App<F, Boolean>>.exists(list: List<A>): App<F, Boolean> = o.exists(this)(list)
 
-        suspend infix fun <A> Fun<A, App<F, Boolean>>.forall(list: List<A>): App<F, Boolean> =
-            o.forall(this)(list)
+        suspend infix fun <A> Fun<A, App<F, Boolean>>.forall(list: List<A>): App<F, Boolean> = o.forall(this)(list)
     }
 
     interface API<F> : Core<F> {

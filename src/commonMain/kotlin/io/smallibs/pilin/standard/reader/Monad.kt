@@ -10,10 +10,8 @@ import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
 object Monad {
-    private class MonadImpl<F, E>(val inner: Monad.Core<F>) :
-        Monad.API<ReaderK<F, E>>,
-        Monad.WithReturnsAndBind<ReaderK<F, E>>,
-        Monad.ViaApplicative<ReaderK<F, E>>(applicative(inner)) {
+    private class MonadImpl<F, E>(val inner: Monad.Core<F>) : Monad.API<ReaderK<F, E>>,
+        Monad.WithReturnsAndBind<ReaderK<F, E>>, Monad.ViaApplicative<ReaderK<F, E>>(applicative(inner)) {
 
         val functor: Functor.Core<ReaderK<F, E>> = functor(inner)
 

@@ -10,11 +10,8 @@ import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
 object Applicative {
-    private class ApplicativeImpl<L> :
-        Applicative.API<EitherK<L>>,
-        Applicative.WithPureAndApply<EitherK<L>> {
-        override suspend fun <R> pure(a: R): App<EitherK<L>, R> =
-            right(a)
+    private class ApplicativeImpl<L> : Applicative.API<EitherK<L>>, Applicative.WithPureAndApply<EitherK<L>> {
+        override suspend fun <R> pure(a: R): App<EitherK<L>, R> = right(a)
 
         override suspend fun <A, B> apply(mf: App<EitherK<L>, Fun<A, B>>): Fun<App<EitherK<L>, A>, App<EitherK<L>, B>> =
             { ma -> mf.fold(::left) { f -> ma.fold(::left, f then ::right) } }

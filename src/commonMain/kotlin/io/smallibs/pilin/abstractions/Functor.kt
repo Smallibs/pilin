@@ -10,11 +10,9 @@ object Functor {
     }
 
     class Operation<F>(private val c: Core<F>) : Core<F> by c {
-        suspend fun <A, B> replace(a: A): Fun<App<F, B>, App<F, A>> =
-            map { a }
+        suspend fun <A, B> replace(a: A): Fun<App<F, B>, App<F, A>> = map { a }
 
-        suspend fun <A> void(ma: App<F, A>): App<F, Unit> =
-            replace<Unit, A>(Unit)(ma)
+        suspend fun <A> void(ma: App<F, A>): App<F, Unit> = replace<Unit, A>(Unit)(ma)
     }
 
     open class Infix<F>(private val c: Core<F>) : Core<F> by c {

@@ -6,8 +6,7 @@ import io.smallibs.pilin.standard.either.Either.EitherK
 import io.smallibs.pilin.standard.either.Monad.monad
 
 object Selective {
-    private class SelectiveImpl<O>(monad: Monad.API<EitherK<O>>) :
-        Selective.ViaMonad<EitherK<O>>(monad)
+    private class SelectiveImpl<O>(monad: Monad.API<EitherK<O>>) : Selective.ViaMonad<EitherK<O>>(monad)
 
     fun <O> selective(): Selective.API<EitherK<O>> = SelectiveImpl(monad())
 }

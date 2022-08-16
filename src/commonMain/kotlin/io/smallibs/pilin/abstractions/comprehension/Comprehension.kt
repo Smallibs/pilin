@@ -8,8 +8,7 @@ class Comprehension<F>(private val monad: Monad.API<F>) : Monad.API<F> by monad 
 
     private var reflection = Reflection.represents(monad)
 
-    suspend fun <B> App<F, B>.bind(): B =
-        reflection.reflect(this)
+    suspend fun <B> App<F, B>.bind(): B = reflection.reflect(this)
 
     companion object {
         suspend fun <F, A> run(monad: Monad.API<F>, f: suspend Comprehension<F>.() -> A): App<F, A> =

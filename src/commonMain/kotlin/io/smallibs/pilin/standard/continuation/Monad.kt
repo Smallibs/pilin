@@ -9,10 +9,8 @@ import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
 object Monad {
-    private class MonadImpl(applicative: API<ContinuationK>) :
-        Monad.API<ContinuationK>,
-        Monad.WithReturnsMapAndJoin<ContinuationK>,
-        Monad.ViaApplicative<ContinuationK>(applicative) {
+    private class MonadImpl(applicative: API<ContinuationK>) : Monad.API<ContinuationK>,
+        Monad.WithReturnsMapAndJoin<ContinuationK>, Monad.ViaApplicative<ContinuationK>(applicative) {
 
         override suspend fun <A> join(mma: App<ContinuationK, App<ContinuationK, A>>): App<ContinuationK, A> =
             object : Continuation<A> {

@@ -17,26 +17,20 @@ class Reader<F, E, A>(val run: Fun<E, App<F, A>>) : App<ReaderK<F, E>, A> {
             private val <F, E, A> App<ReaderK<F, E>, A>.fix: Reader<F, E, A>
                 get() = this as Reader<F, E, A>
 
-            operator fun <F, E, A> App<ReaderK<F, E>, A>.invoke(e: E): App<F, A> =
-                this.fix(e)
+            operator fun <F, E, A> App<ReaderK<F, E>, A>.invoke(e: E): App<F, A> = this.fix(e)
         }
     }
 
     class OverMonad<F, E>(val monad: Monad_Core<F>) : Transformer<F, ReaderK<F, E>> {
-        fun <A> run(reader: App<ReaderK<F, E>, A>): Fun<E, App<F, A>> =
-            { reader(it) }
+        fun <A> run(reader: App<ReaderK<F, E>, A>): Fun<E, App<F, A>> = { reader(it) }
 
-        val ask: Reader<F, E, E> =
-            Reader(monad::returns)
+        val ask: Reader<F, E, E> = Reader(monad::returns)
 
-        fun <A> local(f: Fun<E, E>): Fun<Reader<F, E, A>, Reader<F, E, A>> =
-            { r -> Reader { r.run(f(it)) } }
+        fun <A> local(f: Fun<E, E>): Fun<Reader<F, E, A>, Reader<F, E, A>> = { r -> Reader { r.run(f(it)) } }
 
-        fun <A> reader(f: Fun<E, App<F, A>>): Reader<F, E, A> =
-            Reader(f)
+        fun <A> reader(f: Fun<E, App<F, A>>): Reader<F, E, A> = Reader(f)
 
-        override suspend fun <A> upper(c: App<F, A>): App<ReaderK<F, E>, A> =
-            Reader { c }
+        override suspend fun <A> upper(c: App<F, A>): App<ReaderK<F, E>, A> = Reader { c }
     }
 
     companion object {

@@ -14,61 +14,53 @@ import org.quicktheories.generators.SourceDSL.integers
 
 object Generators {
 
-    fun <A> identity(gen: Gen<A>): Gen<App<IdentityK, A>> =
+    fun <A> identity(gen: Gen<A>): Gen<App<IdentityK, A>> = gen.map { a ->
+        Identity.id(a)
+    }
+
+    fun <A> identity(): Gen<Fun<A, App<IdentityK, A>>> = constant { a -> Identity.id(a) }
+
+    fun <A> option(gen: Gen<A>): Gen<App<OptionK, A>> = integers().allPositive().flatMap { i ->
         gen.map { a ->
-            Identity.id(a)
+            if (i % 2 == 0) {
+                Option.none()
+            } else {
+                Option.some(a)
+            }
         }
+    }
 
-    fun <A> identity(): Gen<Fun<A, App<IdentityK, A>>> =
-        constant { a -> Identity.id(a) }
+    fun <A> option(): Gen<Fun<A, App<OptionK, A>>> = integers().allPositive().map { i ->
+        if (i % 2 == 0) {
+            { Option.none() }
+        } else {
+            { a -> Option.some(a) }
+        }
+    }
 
-    fun <A> option(gen: Gen<A>): Gen<App<OptionK, A>> =
+    fun <A, B> either(lgen: Gen<A>): (Gen<B>) -> Gen<App<EitherK<A>, B>> = { rgen ->
         integers().allPositive().flatMap { i ->
-            gen.map { a ->
-                if (i % 2 == 0) {
-                    Option.none()
-                } else {
-                    Option.some(a)
-                }
-            }
-        }
-
-    fun <A> option(): Gen<Fun<A, App<OptionK, A>>> =
-        integers().allPositive().map { i ->
             if (i % 2 == 0) {
-                { Option.none() }
+                rgen.map { a -> Either.right(a) }
             } else {
-                { a -> Option.some(a) }
+                lgen.map { a -> Either.left(a) }
             }
         }
+    }
 
-    fun <A, B> either(lgen: Gen<A>): (Gen<B>) -> Gen<App<EitherK<A>, B>> =
-        { rgen ->
-            integers().allPositive().flatMap { i ->
-                if (i % 2 == 0) {
-                    rgen.map { a -> Either.right(a) }
-                } else {
-                    lgen.map { a -> Either.left(a) }
-                }
-            }
+    fun <A, B> either(l: A): Gen<Fun<B, App<EitherK<A>, B>>> = integers().allPositive().map { i ->
+        if (i % 2 == 0) {
+            { r -> Either.right(r) }
+        } else {
+            { Either.left(l) }
         }
+    }
 
-    fun <A, B> either(l: A): Gen<Fun<B, App<EitherK<A>, B>>> =
-        integers().allPositive().map { i ->
-            if (i % 2 == 0) {
-                { r -> Either.right(r) }
-            } else {
-                { Either.left(l) }
-            }
-        }
+    private fun <I> continuation(a: I): Continuation<I> = object : Continuation<I> {
+        override suspend fun <O> invoke(k: Fun<I, O>): O = k(a)
+    }
 
-    private fun <I> continuation(a: I): Continuation<I> =
-        object : Continuation<I> {
-            override suspend fun <O> invoke(k: Fun<I, O>): O = k(a)
-        }
-
-    fun <A> continuation(gen: Gen<A>): Gen<App<Continuation.ContinuationK, A>> =
-        gen.map(::continuation)
+    fun <A> continuation(gen: Gen<A>): Gen<App<Continuation.ContinuationK, A>> = gen.map(::continuation)
 
 
     fun <A> continuation(): Gen<Fun<A, App<Continuation.ContinuationK, A>>> =

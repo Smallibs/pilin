@@ -12,18 +12,15 @@ internal data class Stack<A>(private val value: List<A>) {
 
     suspend fun push(a: A): Stack<A> = Stack(listOf(a)) + this
 
-    suspend fun pop(): App<OptionK, Pair<A, Stack<A>>> =
-        if (this.value.isEmpty()) {
-            Option.none()
-        } else {
-            Option.some(this.value[0] to Stack(this.value.subList(1, this.value.size)))
-        }
+    suspend fun pop(): App<OptionK, Pair<A, Stack<A>>> = if (this.value.isEmpty()) {
+        Option.none()
+    } else {
+        Option.some(this.value[0] to Stack(this.value.subList(1, this.value.size)))
+    }
 
-    internal suspend fun pop(d: A): Pair<A, Stack<A>> =
-        pop().fold({ d to this }, ::id)
+    internal suspend fun pop(d: A): Pair<A, Stack<A>> = pop().fold({ d to this }, ::id)
 
-    suspend fun reversed(): Stack<A> =
-        Stack(this.value.reversed())
+    suspend fun reversed(): Stack<A> = Stack(this.value.reversed())
 
     // Monoid should be specified here
     operator fun plus(s: Stack<A>): Stack<A> = Stack(this.value + s.value)

@@ -3,6 +3,7 @@ package io.smallibs.pilin.core
 import io.smallibs.pilin.type.Fun
 import io.smallibs.pilin.type.Fun2
 import io.smallibs.pilin.type.Fun3
+import io.smallibs.pilin.type.SupplierCall
 
 object Standard {
 
@@ -30,6 +31,16 @@ object Standard {
 
         suspend infix fun <A, B, C> (Fun<A, B>).then(g: Fun<B, C>): Fun<A, C> =
             g.compose(this)
+    }
+
+    object With {
+
+        suspend operator fun <A, B> invoke(a: A, f: SupplierCall<A, B>): B =
+            a.f()
+
+        suspend operator fun <A, B, C> invoke(a: A, b: B, f: SupplierCall<A, SupplierCall<B, C>>): C =
+            b.(a.f())()
+
     }
 
 }
