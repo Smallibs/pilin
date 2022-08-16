@@ -6,9 +6,9 @@ import io.smallibs.pilin.standard.reader.Reader.ReaderK
 import io.smallibs.pilin.standard.reader.Reader.ReaderK.Companion.invoke
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
-import io.smallibs.pilin.abstractions.Applicative.API as Applicative_API
-import io.smallibs.pilin.abstractions.Functor.API as Functor_API
-import io.smallibs.pilin.abstractions.Monad.API as Monad_API
+import io.smallibs.pilin.abstractions.Applicative.Core as Applicative_Core
+import io.smallibs.pilin.abstractions.Functor.Core as Functor_Core
+import io.smallibs.pilin.abstractions.Monad.Core as Monad_Core
 
 class Reader<F, E, A>(val run: Fun<E, App<F, A>>) : App<ReaderK<F, E>, A> {
 
@@ -41,9 +41,9 @@ class Reader<F, E, A>(val run: Fun<E, App<F, A>>) : App<ReaderK<F, E>, A> {
     }
 
     companion object {
-        fun <F, E> functor(f: Functor_API<F>) = Functor.functor<F, E>(f)
-        fun <F, E> applicative(a: Applicative_API<F>) = Applicative.applicative<F, E>(a)
-        fun <F, E> monad(m: Monad_API<F>) = Monad.monad<F, E>(m)
-        fun <F, E> selective(m: Monad_API<F>) = Selective.selective<F, E>(m)
+        fun <F, E> functor(f: Functor_Core<F>) = Functor.functor<F, E>(f)
+        fun <F, E> applicative(a: Applicative_Core<F>) = Applicative.applicative<F, E>(a)
+        fun <F, E> monad(m: Monad_Core<F>) = Monad.monad<F, E>(m)
+        fun <F, E> selective(m: Monad_Core<F>) = Selective.selective<F, E>(m)
     }
 }
