@@ -4,8 +4,6 @@ import io.smallibs.pilin.type.Fun
 import io.smallibs.pilin.type.Fun2
 import io.smallibs.pilin.type.Fun3
 
-typealias Compose<A, B, C> = Fun<Fun<B, C>, Fun<Fun<A, B>, Fun<A, C>>>
-
 object Standard {
 
     suspend fun <A> id(a: A): A = a

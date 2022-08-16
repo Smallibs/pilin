@@ -1,15 +1,16 @@
 package io.smallibs.pilin.laws
 
 import io.smallibs.pilin.abstractions.Applicative
-import io.smallibs.pilin.core.Compose
 import io.smallibs.pilin.core.Standard
 import io.smallibs.pilin.standard.support.Equatable
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
+typealias Compose<A, B, C> = Fun<Fun<B, C>, Fun<Fun<A, B>, Fun<A, C>>>
+
 object Applicative {
 
-    fun <A> mkId(): suspend (A) -> A = { it }
+    private fun <A> mkId(): suspend (A) -> A = { it }
 
     suspend fun <F, A, B> Applicative.API<F>.`map f x = apply (pure f) x`(
         f: Fun<A, B>,
