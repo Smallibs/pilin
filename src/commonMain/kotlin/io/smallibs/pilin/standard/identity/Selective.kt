@@ -7,5 +7,5 @@ object Selective {
     private class SelectiveImpl(monad: io.smallibs.pilin.abstractions.Monad.API<IdentityK>) :
         Selective.ViaMonad<IdentityK>(monad)
 
-    val selective: Selective.ViaMonad<IdentityK> = SelectiveImpl(Monad.monad)
+    val selective: Selective.API<IdentityK> = SelectiveImpl(Monad.monad)
 }

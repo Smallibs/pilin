@@ -3,7 +3,7 @@ package io.smallibs.pilin.standard.continuation
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
-interface Continuation<I> : App<Continuation.ContinuationK, I> {
+interface Continuation<out I> : App<Continuation.ContinuationK, I> {
     suspend operator fun <O> invoke(k: Fun<I, O>): O
 
     class ContinuationK private constructor() {

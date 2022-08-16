@@ -1,14 +1,16 @@
 package io.smallibs.pilin.standard.either
 
+import io.smallibs.pilin.abstractions.Applicative
 import io.smallibs.pilin.abstractions.Monad
 import io.smallibs.pilin.core.Standard.id
+import io.smallibs.pilin.standard.either.Applicative.applicative
 import io.smallibs.pilin.standard.either.Either.Companion.left
 import io.smallibs.pilin.standard.either.Either.EitherK
 import io.smallibs.pilin.standard.either.Either.EitherK.Companion.fold
 import io.smallibs.pilin.type.App
 
 object Monad {
-    private class MonadImpl<L>(applicative: io.smallibs.pilin.abstractions.Applicative.API<EitherK<L>>) :
+    private class MonadImpl<L>(applicative: Applicative.API<EitherK<L>>) :
         Monad.API<EitherK<L>>,
         Monad.WithReturnsMapAndJoin<EitherK<L>>,
         Monad.ViaApplicative<EitherK<L>>(applicative) {
@@ -16,5 +18,5 @@ object Monad {
             mma.fold(::left, ::id)
     }
 
-    fun <L> monad(): Monad.API<EitherK<L>> = MonadImpl(Applicative.applicative())
+    fun <L> monad(): Monad.API<EitherK<L>> = MonadImpl(applicative())
 }
