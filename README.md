@@ -13,7 +13,7 @@ programming constructions like:
 - Selective,
 - Monad.
 
-Some incarnations are available like Identity, Option, Either and Continuation.
+Some incarnations are available like Identity, Option, Either, Continuation and Reader.
 
 Since Kotlin has colored functions, the design has been done with only suspended functions. In this approach `suspend`
 does not mean functions interacting with the subsystem i.e. no relationship with IO for instance.

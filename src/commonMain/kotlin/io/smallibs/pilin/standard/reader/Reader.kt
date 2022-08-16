@@ -1,6 +1,5 @@
 package io.smallibs.pilin.standard.reader
 
-import io.smallibs.pilin.abstractions.Monad.API
 import io.smallibs.pilin.abstractions.Transformer
 import io.smallibs.pilin.standard.reader.Reader.ReaderK
 import io.smallibs.pilin.standard.reader.Reader.ReaderK.Companion.invoke
@@ -23,7 +22,7 @@ class Reader<F, E, A>(val run: Fun<E, App<F, A>>) : App<ReaderK<F, E>, A> {
         }
     }
 
-    class OverMonad<F, E>(val monad: API<F>) : Transformer<F, ReaderK<F, E>> {
+    class OverMonad<F, E>(val monad: Monad_Core<F>) : Transformer<F, ReaderK<F, E>> {
         fun <A> run(reader: App<ReaderK<F, E>, A>): Fun<E, App<F, A>> =
             { reader(it) }
 
