@@ -1,10 +1,10 @@
 package io.smallibs.pilin.abstractions
 
-import io.smallibs.pilin.abstractions.Semigroupoid.FromMonad.FunK
+import io.smallibs.pilin.abstractions.PreCategory.FromMonad.FunK
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
-object Semigroupoid {
+object PreCategory {
 
     interface Core<T> {
         suspend fun <A, B, C> compose(f: App<App<T, B>, C>, g: App<App<T, A>, B>): App<App<T, A>, C>
