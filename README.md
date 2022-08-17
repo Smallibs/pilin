@@ -8,10 +8,15 @@
 Pilin is a library for [Kotlin multiplatform](https://kotlinlang.org/docs/multiplatform.html) providing some functional
 programming constructions like:
 
+- Semigroup,
+- Monoid,
+- PreCategory,
+- Category,
+- ProFunctor,
 - Functor,
 - Applicative,
 - Selective,
-- Monad.
+- Monad
 
 Some incarnations are available like Identity, Option, Either, Continuation and Reader.
 
