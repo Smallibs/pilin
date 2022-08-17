@@ -11,7 +11,7 @@ interface Reflection<F> {
 
     suspend fun <A> reify(f: Supplier<A>): App<F, A>
 
-    private class ReflectionMonad<F>(private val m: Monad.Core<F>) : Reflection<F> {
+    private class FromMonad<F>(private val m: Monad.Core<F>) : Reflection<F> {
 
         private val cont: Control<App<F, Any>> = Control.new()
 
@@ -23,6 +23,6 @@ interface Reflection<F> {
     }
 
     companion object {
-        fun <F> represents(m: Monad.Core<F>): Reflection<F> = ReflectionMonad(m)
+        fun <F> represents(m: Monad.Core<F>): Reflection<F> = FromMonad(m)
     }
 }
