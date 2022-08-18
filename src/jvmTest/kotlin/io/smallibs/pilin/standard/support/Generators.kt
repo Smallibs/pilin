@@ -7,6 +7,7 @@ import io.smallibs.pilin.standard.identity.Identity
 import io.smallibs.pilin.standard.identity.Identity.IdentityK
 import io.smallibs.pilin.standard.option.Option
 import io.smallibs.pilin.standard.option.Option.OptionK
+import io.smallibs.pilin.standard.reader.Reader
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 import org.quicktheories.core.Gen

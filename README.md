@@ -19,12 +19,14 @@ programming constructions like:
 - Monad
 
 Some incarnations are available like:
-- Identity, 
-- Option, 
-- Either, 
+
+- Identity,
+- Option,
+- Either,
+- List,
 - Continuation,
 - Reader and
-- Writer
+- Writer.
 
 Since Kotlin has colored functions, the design has been done with only suspended functions. In this approach `suspend`
 does not mean functions interacting with the subsystem i.e. no relationship with IO for instance.
@@ -213,7 +215,7 @@ private fun <F> program(monad: Monad.API<F>): Effects<Console<F>, App<F, Unit>> 
 Of course, an implementation can be provided. In this example the effect used is `Continuation`.
 
 ```kotlin
-fun console(traces : MutableList<String>) =
+fun console(traces: MutableList<String>) =
     Console(
         printString = { text ->
             object : Continuation<Unit> {
