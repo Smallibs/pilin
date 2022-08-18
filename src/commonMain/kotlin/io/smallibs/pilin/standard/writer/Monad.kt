@@ -15,15 +15,15 @@ object Monad {
 
         override suspend fun <A, B> bind(f: Fun<A, App<WriterK<F, T>, B>>): Fun<App<WriterK<F, T>, A>, App<WriterK<F, T>, B>> =
             { ma ->
-                Writer(inner.bind<Pair<A, T>, Pair<B, T>> { (x, t) ->
-                    inner.map<Pair<B, T>, Pair<B, T>> { (y, u) ->
+                Writer(inner.bind { (x, t): Pair<A, T> ->
+                    inner.map { (y, u): Pair<B, T> ->
                         y to tape.combine(t, u)
                     }(f(x).run)
                 }(ma.run))
             }
 
         override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<WriterK<F, T>, A>, App<WriterK<F, T>, B>> =
-            { ma -> Writer(inner.map<Pair<A, T>, Pair<B, T>> { f(it.first) to it.second }(ma.run)) }
+            { ma -> Writer(inner.map { (a, t): Pair<A, T> -> f(a) to t }(ma.run)) }
     }
 
     fun <F, T> monad(inner: Monad.Core<F>, tape: Monoid.Core<T>): Monad.API<WriterK<F, T>> = MonadImpl(inner, tape)
