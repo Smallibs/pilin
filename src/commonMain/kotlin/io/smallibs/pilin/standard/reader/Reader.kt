@@ -22,13 +22,13 @@ class Reader<F, E, A>(val run: Fun<E, App<F, A>>) : App<ReaderK<F, E>, A> {
     }
 
     class OverMonad<F, E>(val monad: Monad_Core<F>) : Transformer<F, ReaderK<F, E>> {
+        fun <A> reader(f: Fun<E, App<F, A>>): Reader<F, E, A> = Reader(f)
+
         fun <A> run(reader: App<ReaderK<F, E>, A>): Fun<E, App<F, A>> = { reader(it) }
 
         val ask: Reader<F, E, E> = Reader(monad::returns)
 
         fun <A> local(f: Fun<E, E>): Fun<Reader<F, E, A>, Reader<F, E, A>> = { r -> Reader { r.run(f(it)) } }
-
-        fun <A> reader(f: Fun<E, App<F, A>>): Reader<F, E, A> = Reader(f)
 
         override suspend fun <A> upper(c: App<F, A>): App<ReaderK<F, E>, A> = Reader { c }
     }
