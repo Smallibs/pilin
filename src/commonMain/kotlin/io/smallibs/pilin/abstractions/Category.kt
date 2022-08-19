@@ -2,16 +2,16 @@ package io.smallibs.pilin.abstractions
 
 import io.smallibs.pilin.abstractions.PreCategory.FromMonad.FunK
 import io.smallibs.pilin.abstractions.PreCategory.FromMonad.FunK.Companion.lift
-import io.smallibs.pilin.type.App
+import io.smallibs.pilin.type.App2
 
 object Category {
 
     interface Core<T> : PreCategory.Core<T> {
-        suspend fun <A> id(): App<App<T, A>, A>
+        suspend fun <A> id(): App2<T, A, A>
     }
 
     class FromMonad<F>(override val monad: Monad.Core<F>) : API<FunK<F>>, PreCategory.FromMonad<F>(monad) {
-        override suspend fun <A> id(): App<App<FunK<F>, A>, A> {
+        override suspend fun <A> id(): App2<FunK<F>, A, A> {
             return lift { monad.returns(it) }
         }
     }
