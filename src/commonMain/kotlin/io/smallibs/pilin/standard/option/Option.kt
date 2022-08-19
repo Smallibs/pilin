@@ -1,5 +1,6 @@
 package io.smallibs.pilin.standard.option
 
+import io.smallibs.pilin.abstractions.Semigroup
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 import io.smallibs.pilin.type.Supplier
@@ -24,6 +25,8 @@ sealed class Option<out A> : App<Option.OptionK, A> {
     companion object {
         fun <A> none(): Option<A> = None
         fun <A> some(a: A): Option<A> = Some(a)
+
+        fun <A> monoid(semigroup: Semigroup.API<A>) = Monoid.MonoidImp(semigroup)
 
         val functor = Functor.functor
         val applicative = Applicative.applicative

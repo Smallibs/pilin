@@ -15,6 +15,7 @@ data class List<A>(val l: kotlin.collections.List<A>) : App<List.ListK, A> {
     }
 
     companion object {
+        fun <A> monoid() = Monoid.monoid<A>()
         val functor = Functor.functor
         val applicative = Applicative.applicative
         val selective = Selective.selective
