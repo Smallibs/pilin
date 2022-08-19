@@ -16,9 +16,7 @@ object Monad {
         override suspend fun <A, B> bind(f: Fun<A, App<WriterK<F, T>, B>>): Fun<App<WriterK<F, T>, A>, App<WriterK<F, T>, B>> =
             { ma ->
                 Writer(inner.bind { (x, t): Pair<A, T> ->
-                    inner.map { (y, u): Pair<B, T> ->
-                        y to tape.combine(t, u)
-                    }(f(x).run)
+                    inner.map { (y, u): Pair<B, T> -> y to tape.combine(t, u) }(f(x).run)
                 }(ma.run))
             }
 

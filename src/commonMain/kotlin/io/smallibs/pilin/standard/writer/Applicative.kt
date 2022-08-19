@@ -9,8 +9,7 @@ import io.smallibs.pilin.type.Fun
 
 object Applicative {
     private class ApplicativeImpl<F, T>(val inner: Applicative.Core<F>, val tape: Monoid.Core<T>) :
-        Applicative.API<WriterK<F, T>>,
-        Applicative.WithPureAndApply<WriterK<F, T>> {
+        Applicative.API<WriterK<F, T>>, Applicative.WithPureAndApply<WriterK<F, T>> {
 
         private val innerOperation = Applicative.Operation(inner)
 
@@ -18,9 +17,9 @@ object Applicative {
 
         override suspend fun <A, B> apply(mf: App<WriterK<F, T>, Fun<A, B>>): Fun<App<WriterK<F, T>, A>, App<WriterK<F, T>, B>> =
             { ma ->
-                val g: Fun<Pair<Fun<A, B>, T>, Fun<Pair<A, T>, Pair<B, T>>> =
-                    { (f, t) -> { (g, u) -> f(g) to tape.combine(t, u) } }
-                Writer(innerOperation.lift2(g)(mf.run)(ma.run))
+                Writer(innerOperation.lift2 { (f, t): Pair<Fun<A, B>, T> ->
+                    { (g, u): Pair<A, T> -> f(g) to tape.combine(t, u) }
+                }(mf.run)(ma.run))
             }
     }
 
