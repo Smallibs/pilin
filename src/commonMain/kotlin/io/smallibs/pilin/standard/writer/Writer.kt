@@ -50,8 +50,8 @@ class Writer<F, T, A>(val run: App<F, Pair<A, T>>) : App<WriterK<F, T>, A> {
             Writer(monad.map { (a, t): Pair<A, T> -> a to f(t) }(w.run))
         }
 
-        override suspend fun <A> upper(c: App<F, A>): App<WriterK<F, T>, A> =
-            Writer(monad.bind { a: A -> monad.returns(a to tape.neutral) }(c))
+        override suspend fun <A> upper(ma: App<F, A>): App<WriterK<F, T>, A> =
+            Writer(monad.bind { a: A -> monad.returns(a to tape.neutral) }(ma))
     }
 
     companion object {

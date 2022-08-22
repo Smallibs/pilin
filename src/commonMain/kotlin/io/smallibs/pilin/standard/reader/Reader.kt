@@ -30,7 +30,7 @@ class Reader<F, E, A>(val run: Fun<E, App<F, A>>) : App<ReaderK<F, E>, A> {
 
         fun <A> local(f: Fun<E, E>): Fun<Reader<F, E, A>, Reader<F, E, A>> = { r -> Reader { r.run(f(it)) } }
 
-        override suspend fun <A> upper(c: App<F, A>): App<ReaderK<F, E>, A> = Reader { c }
+        override suspend fun <A> upper(ma: App<F, A>): App<ReaderK<F, E>, A> = Reader { ma }
     }
 
     companion object {
