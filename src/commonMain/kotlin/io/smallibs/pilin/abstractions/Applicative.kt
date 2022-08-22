@@ -16,7 +16,7 @@ object Applicative {
 
     interface WithPureMapAndProduct<F> : Core<F> {
         override suspend fun <A, B> apply(mf: App<F, Fun<A, B>>): Fun<App<F, A>, App<F, B>> =
-            product<Fun<A, B>, A>(mf) then map { p -> p.first(p.second) }
+            product<Fun<A, B>, A>(mf) then map { (f, a) -> f(a) }
     }
 
     interface WithPureAndApply<F> : Core<F> {

@@ -1,7 +1,7 @@
-package io.smallibs.pilin.abstractions
+package io.smallibs.pilin.standard.freer
 
-import io.smallibs.pilin.abstractions.Freer.FreerK
 import io.smallibs.pilin.core.Standard.Infix.then
+import io.smallibs.pilin.standard.freer.Freer.FreerK
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
@@ -27,11 +27,18 @@ sealed interface Freer<F, A> : App<FreerK<F>, A> {
     }
 
     class FreerK<F> private constructor() {
-        val <A> App<FreerK<F>, A>.fix: Freer<F, A> get() = this as Freer<F, A>
+        companion object {
+            val <F, A> App<FreerK<F>, A>.fix: Freer<F, A> get() = this as Freer<F, A>
+        }
     }
 
     companion object {
         suspend fun <F, A> perform(f: App<F, A>): Freer<F, A> = Bind(f) { Return(it) }
+
+        fun <F> functor() = Functor.functor<F>()
+        fun <F> applicative() = Applicative.applicative<F>()
+        fun <F> monad() = Monad.monad<F>()
+        fun <F> selective() = Selective.selective<F>()
     }
 
 }
