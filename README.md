@@ -25,8 +25,10 @@ Some incarnations are available like:
 - Either,
 - List,
 - Continuation,
-- Reader and
-- Writer.
+- Reader,
+- Writer,
+- State,
+- Freer.
 
 Since Kotlin has colored functions, the design has been done with only suspended functions. In this approach `suspend`
 does not mean functions interacting with the subsystem i.e. no relationship with IO for instance.
