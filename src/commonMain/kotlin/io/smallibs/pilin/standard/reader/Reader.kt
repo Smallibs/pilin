@@ -5,8 +5,6 @@ import io.smallibs.pilin.standard.reader.Reader.ReaderK
 import io.smallibs.pilin.standard.reader.Reader.ReaderK.Companion.invoke
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
-import io.smallibs.pilin.abstractions.Applicative.Core as Applicative_Core
-import io.smallibs.pilin.abstractions.Functor.Core as Functor_Core
 import io.smallibs.pilin.abstractions.Monad.Core as Monad_Core
 
 class Reader<F, E, A>(val run: Fun<E, App<F, A>>) : App<ReaderK<F, E>, A> {
@@ -21,22 +19,24 @@ class Reader<F, E, A>(val run: Fun<E, App<F, A>>) : App<ReaderK<F, E>, A> {
         }
     }
 
-    class OverMonad<F, E>(val monad: Monad_Core<F>) : Transformer<F, ReaderK<F, E>> {
-        fun <A> reader(f: Fun<E, App<F, A>>): Reader<F, E, A> = Reader(f)
+    class OverMonad<F>(private val inner: Monad_Core<F>) {
+        fun <E, A> reader(f: Fun<E, App<F, A>>): Reader<F, E, A> = Reader(f)
 
-        fun <A> run(reader: App<ReaderK<F, E>, A>): Fun<E, App<F, A>> = { reader(it) }
+        fun <E, A> run(reader: App<ReaderK<F, E>, A>): Fun<E, App<F, A>> = { reader(it) }
 
-        val ask: Reader<F, E, E> = Reader(monad::returns)
+        fun <E> ask(): Reader<F, E, E> = Reader(inner::returns)
 
-        fun <A> local(f: Fun<E, E>): Fun<Reader<F, E, A>, Reader<F, E, A>> = { r -> Reader { r.run(f(it)) } }
+        fun <E, A> local(f: Fun<E, E>): Fun<Reader<F, E, A>, Reader<F, E, A>> = { r -> Reader { r.run(f(it)) } }
 
-        override suspend fun <A> upper(ma: App<F, A>): App<ReaderK<F, E>, A> = Reader { ma }
-    }
+        fun <E> transformer(): Transformer<F, ReaderK<F, E>> {
+            return object : Transformer<F, ReaderK<F, E>> {
+                override suspend fun <A> upper(ma: App<F, A>): App<ReaderK<F, E>, A> = Reader { ma }
+            }
+        }
 
-    companion object {
-        fun <F, E> functor(f: Functor_Core<F>) = Functor.functor<F, E>(f)
-        fun <F, E> applicative(a: Applicative_Core<F>) = Applicative.applicative<F, E>(a)
-        fun <F, E> monad(m: Monad_Core<F>) = Monad.monad<F, E>(m)
-        fun <F, E> selective(m: Monad_Core<F>) = Selective.selective<F, E>(m)
+        fun <E> functor() = Functor.functor<F, E>(inner)
+        fun <E> applicative() = Applicative.applicative<F, E>(inner)
+        fun <E> monad() = Monad.monad<F, E>(inner)
+        fun <E> selective() = Selective.selective<F, E>(inner)
     }
 }
