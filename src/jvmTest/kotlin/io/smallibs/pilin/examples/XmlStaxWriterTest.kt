@@ -39,13 +39,13 @@ internal class XmlStaxWriterTest {
                 }
 
                 is Xml.Tag -> {
-                    tell(List(listOf(Stax.Open(xml.name)))).bind()
+                    tell(List(Stax.Open(xml.name))).bind()
                     execute(xml.content).bind()
-                    tell(List(listOf(Stax.Close(xml.name)))).bind()
+                    tell(List(Stax.Close(xml.name))).bind()
                 }
 
                 is Xml.Text -> {
-                    tell(List(listOf(Stax.Text(xml.text)))).bind()
+                    tell(List(Stax.Text(xml.text))).bind()
                 }
             }
         }
