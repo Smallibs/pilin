@@ -4,7 +4,7 @@ import io.smallibs.pilin.abstractions.Applicative
 import io.smallibs.pilin.abstractions.Monad
 import io.smallibs.pilin.standard.list.Applicative.applicative
 import io.smallibs.pilin.standard.list.List.ListK
-import io.smallibs.pilin.standard.list.List.ListK.Companion.run
+import io.smallibs.pilin.standard.list.List.ListK.Companion.fix
 import io.smallibs.pilin.type.App
 
 object Monad {
@@ -12,8 +12,8 @@ object Monad {
         Monad.ViaApplicative<ListK>(applicative) {
         override suspend fun <A> join(mma: App<ListK, App<ListK, A>>): App<ListK, A> {
             val r: MutableList<A> = mutableListOf()
-            for (a in mma.run) {
-                r.addAll(a.run)
+            for (a in mma.fix) {
+                r.addAll(a.fix)
             }
             return List(r)
         }

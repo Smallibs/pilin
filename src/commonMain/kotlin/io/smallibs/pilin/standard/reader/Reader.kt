@@ -1,10 +1,13 @@
 package io.smallibs.pilin.standard.reader
 
 import io.smallibs.pilin.abstractions.Transformer
+import io.smallibs.pilin.standard.identity.Identity
+import io.smallibs.pilin.standard.identity.Identity.IdentityK
 import io.smallibs.pilin.standard.reader.Reader.ReaderK
 import io.smallibs.pilin.standard.reader.Reader.ReaderK.Companion.invoke
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
+import io.smallibs.pilin.abstractions.Monad.API as Monad_API
 import io.smallibs.pilin.abstractions.Monad.Core as Monad_Core
 
 class Reader<F, E, A>(val run: Fun<E, App<F, A>>) : App<ReaderK<F, E>, A> {
@@ -19,24 +22,29 @@ class Reader<F, E, A>(val run: Fun<E, App<F, A>>) : App<ReaderK<F, E>, A> {
         }
     }
 
-    class OverMonad<F>(private val inner: Monad_Core<F>) {
-        fun <E, A> reader(f: Fun<E, App<F, A>>): Reader<F, E, A> = Reader(f)
+    open class OverMonad<F, E>(
+        private val inner: Monad_Core<F>,
+        private val api: Monad_API<ReaderK<F, E>> = Monad.monad(inner),
+    ) : Monad_API<ReaderK<F, E>> by api {
+        fun <A> reader(f: Fun<E, App<F, A>>): Reader<F, E, A> = Reader(f)
 
-        fun <E, A> run(reader: App<ReaderK<F, E>, A>): Fun<E, App<F, A>> = { reader(it) }
+        fun <A> run(reader: App<ReaderK<F, E>, A>): Fun<E, App<F, A>> = { reader(it) }
 
-        fun <E> ask(): Reader<F, E, E> = Reader(inner::returns)
+        val ask: Reader<F, E, E> get() = Reader(inner::returns)
 
-        fun <E, A> local(f: Fun<E, E>): Fun<Reader<F, E, A>, Reader<F, E, A>> = { r -> Reader { r.run(f(it)) } }
+        fun <A> local(f: Fun<E, E>): Fun<Reader<F, E, A>, Reader<F, E, A>> = { r -> Reader { r.run(f(it)) } }
 
-        fun <E> transformer(): Transformer<F, ReaderK<F, E>> {
+        fun transformer(): Transformer<F, ReaderK<F, E>> {
             return object : Transformer<F, ReaderK<F, E>> {
                 override suspend fun <A> upper(ma: App<F, A>): App<ReaderK<F, E>, A> = Reader { ma }
             }
         }
 
-        fun <E> functor() = Functor.functor<F, E>(inner)
-        fun <E> applicative() = Applicative.applicative<F, E>(inner)
-        fun <E> monad() = Monad.monad<F, E>(inner)
-        fun <E> selective() = Selective.selective<F, E>(inner)
+        fun functor() = Functor.functor<F, E>(inner)
+        fun applicative() = Applicative.applicative<F, E>(inner)
+        fun monad() = api
+        fun selective() = Selective.selective<F, E>(inner)
     }
+
+    class Over<E> : OverMonad<IdentityK, E>(Identity.monad)
 }
