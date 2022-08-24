@@ -24,8 +24,8 @@ internal class DeBruijnTermStateTest {
         data class Abs(val body: DBTerm) : DBTerm
     }
 
-    private suspend fun <F> State.OverMonad<F, List<String>>.runNow(term: Term): App<F, Pair<DBTerm, List<String>>> {
-        suspend fun execute(term: Term): App<StateK<F, List<String>>, DBTerm> = `do` {
+    private suspend fun <F> State.OverMonad<F, List<String>>.execute(term: Term): App<StateK<F, List<String>>, DBTerm> =
+        `do` {
             when (term) {
                 is Term.Abs -> {
                     modify { it + listOf(term.bind) }.bind()
@@ -49,9 +49,6 @@ internal class DeBruijnTermStateTest {
             }
         }
 
-        return execute(term)(listOf())
-    }
-
     @Test
     fun `should transform a lambda term to a DeBruijn lambda term`() {
         // Given
@@ -59,7 +56,7 @@ internal class DeBruijnTermStateTest {
         val state = State.Over<List<String>>()
 
         // When
-        val result = runBlocking { state.runNow(term).fold { it.first } }
+        val result = runBlocking { state.execute(term)((listOf())).fold { it.first } }
 
         // Then
         val expected = DBTerm.App(DBTerm.Abs(DBTerm.Var(0)), DBTerm.Ident("y"))

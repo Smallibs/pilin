@@ -16,29 +16,22 @@ internal class TemplateReaderTest {
         data class Seq(val lhd: Template, val rhd: Template) : Template
     }
 
-    private suspend fun <F> Reader.OverMonad<F, Map<String, String>>.runNow(
-        env: Map<String, String>,
-        template: Template,
-    ): App<F, String> {
-        suspend fun execute(template: Template): App<Reader.ReaderK<F, Map<String, String>>, String> =
-            `do` {
-                when (template) {
-                    is Template.Const -> {
-                        template.value
-                    }
+    private suspend fun <F> Reader.OverMonad<F, Map<String, String>>.execute(template: Template): App<Reader.ReaderK<F, Map<String, String>>, String> =
+        `do` {
+            when (template) {
+                is Template.Const -> {
+                    template.value
+                }
 
-                    is Template.Var -> {
-                        ask.bind()[template.name] ?: "N/A"
-                    }
+                is Template.Var -> {
+                    ask.bind()[template.name] ?: "N/A"
+                }
 
-                    is Template.Seq -> {
-                        execute(template.lhd).bind() + execute(template.rhd).bind()
-                    }
+                is Template.Seq -> {
+                    execute(template.lhd).bind() + execute(template.rhd).bind()
                 }
             }
-
-        return execute(template)(env)
-    }
+        }
 
     @Test
     fun `should transform template to a string`() {
@@ -47,7 +40,7 @@ internal class TemplateReaderTest {
         val reader = Reader.Over<Map<String, String>>()
 
         // When
-        val result = runBlocking { reader.runNow(mapOf("world" to "World!"), template).fold { it } }
+        val result = runBlocking { reader.execute(template).invoke(mapOf("world" to "World!")).fold { it } }
 
         // Then
         val expected = "Hello, World!"
@@ -62,7 +55,7 @@ internal class TemplateReaderTest {
         val reader = Reader.Over<Map<String, String>>()
 
         // When
-        val result = runBlocking { reader.runNow(mapOf(), template).fold { it } }
+        val result = runBlocking { reader.execute(template)(mapOf()).fold { it } }
 
         // Then
         val expected = "Hello, N/A"

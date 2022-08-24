@@ -25,8 +25,8 @@ internal class XmlStaxWriterTest {
         data class Close(val name: String) : Stax
     }
 
-    private suspend fun <F> Writer.OverMonad<F, List<Stax>>.runNow(xml: Xml): App<F, Pair<Unit, List<Stax>>> {
-        suspend fun execute(xml: Xml): App<WriterK<F, List<Stax>>, Unit> = `do` {
+    private suspend fun <F> Writer.OverMonad<F, List<Stax>>.execute(xml: Xml): App<WriterK<F, List<Stax>>, Unit> =
+        `do` {
             when (xml) {
                 Xml.Empty -> {
                     // Nothing
@@ -49,8 +49,6 @@ internal class XmlStaxWriterTest {
             }
         }
 
-        return execute(xml).run
-    }
 
     @Test
     fun `should emit stax events while traversing an xml term`() {
@@ -59,7 +57,7 @@ internal class XmlStaxWriterTest {
         val monad = Writer.OverMonoid<List<Stax>>(List.monoid())
 
         // When
-        val result = runBlocking { monad.runNow(xml).fold { it.second } }
+        val result = runBlocking { monad.execute(xml).run.fold { it.second } }
 
         // Then
         val expected =
