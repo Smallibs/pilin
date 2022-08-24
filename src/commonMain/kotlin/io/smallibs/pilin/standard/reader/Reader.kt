@@ -18,7 +18,7 @@ class Reader<F, E, A>(val run: Fun<E, App<F, A>>) : App<ReaderK<F, E>, A> {
             private val <F, E, A> App<ReaderK<F, E>, A>.fix: Reader<F, E, A>
                 get() = this as Reader<F, E, A>
 
-            operator fun <F, E, A> App<ReaderK<F, E>, A>.invoke(e: E): App<F, A> = this.fix(e)
+            suspend operator fun <F, E, A> App<ReaderK<F, E>, A>.invoke(e: E): App<F, A> = this.fix.run(e)
         }
     }
 
