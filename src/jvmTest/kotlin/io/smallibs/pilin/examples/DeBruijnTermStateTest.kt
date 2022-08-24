@@ -1,6 +1,5 @@
 package io.smallibs.pilin.examples
 
-import io.smallibs.pilin.standard.identity.Identity.IdentityK
 import io.smallibs.pilin.standard.identity.Identity.IdentityK.Companion.fold
 import io.smallibs.pilin.standard.state.State
 import io.smallibs.pilin.standard.state.State.StateK
@@ -25,8 +24,8 @@ internal class DeBruijnTermStateTest {
         data class Abs(val body: DBTerm) : DBTerm
     }
 
-    private suspend fun State.Over<List<String>>.runNow(term: Term): DBTerm {
-        suspend fun execute(term: Term): App<StateK<IdentityK, List<String>>, DBTerm> = `do` {
+    private suspend fun <F> State.OverMonad<F, List<String>>.runNow(term: Term): App<F, Pair<DBTerm, List<String>>> {
+        suspend fun execute(term: Term): App<StateK<F, List<String>>, DBTerm> = `do` {
             when (term) {
                 is Term.Abs -> {
                     modify { it + listOf(term.bind) }.bind()
@@ -50,7 +49,7 @@ internal class DeBruijnTermStateTest {
             }
         }
 
-        return execute(term)(listOf()).fold { it.first }
+        return execute(term)(listOf())
     }
 
     @Test
@@ -60,7 +59,7 @@ internal class DeBruijnTermStateTest {
         val state = State.Over<List<String>>()
 
         // When
-        val result = runBlocking { state.runNow(term) }
+        val result = runBlocking { state.runNow(term).fold { it.first } }
 
         // Then
         val expected = DBTerm.App(DBTerm.Abs(DBTerm.Var(0)), DBTerm.Ident("y"))

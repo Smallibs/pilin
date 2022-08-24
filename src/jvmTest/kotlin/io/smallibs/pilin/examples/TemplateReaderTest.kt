@@ -1,6 +1,5 @@
 package io.smallibs.pilin.examples
 
-import io.smallibs.pilin.standard.identity.Identity
 import io.smallibs.pilin.standard.identity.Identity.IdentityK.Companion.fold
 import io.smallibs.pilin.standard.reader.Reader
 import io.smallibs.pilin.standard.reader.Reader.ReaderK.Companion.invoke
@@ -17,8 +16,11 @@ internal class TemplateReaderTest {
         data class Seq(val lhd: Template, val rhd: Template) : Template
     }
 
-    private suspend fun Reader.Over<Map<String, String>>.runNow(env: Map<String, String>, template: Template): String {
-        suspend fun execute(template: Template): App<Reader.ReaderK<Identity.IdentityK, Map<String, String>>, String> =
+    private suspend fun <F> Reader.OverMonad<F, Map<String, String>>.runNow(
+        env: Map<String, String>,
+        template: Template,
+    ): App<F, String> {
+        suspend fun execute(template: Template): App<Reader.ReaderK<F, Map<String, String>>, String> =
             `do` {
                 when (template) {
                     is Template.Const -> {
@@ -35,7 +37,7 @@ internal class TemplateReaderTest {
                 }
             }
 
-        return execute(template)(env).fold { it }
+        return execute(template)(env)
     }
 
     @Test
@@ -45,7 +47,7 @@ internal class TemplateReaderTest {
         val reader = Reader.Over<Map<String, String>>()
 
         // When
-        val result = runBlocking { reader.runNow(mapOf("world" to "World!"), template) }
+        val result = runBlocking { reader.runNow(mapOf("world" to "World!"), template).fold { it } }
 
         // Then
         val expected = "Hello, World!"
@@ -60,7 +62,7 @@ internal class TemplateReaderTest {
         val reader = Reader.Over<Map<String, String>>()
 
         // When
-        val result = runBlocking { reader.runNow(mapOf(), template) }
+        val result = runBlocking { reader.runNow(mapOf(), template).fold { it } }
 
         // Then
         val expected = "Hello, N/A"

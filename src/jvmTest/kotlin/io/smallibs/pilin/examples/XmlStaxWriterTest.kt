@@ -1,6 +1,5 @@
 package io.smallibs.pilin.examples
 
-import io.smallibs.pilin.standard.identity.Identity.IdentityK
 import io.smallibs.pilin.standard.identity.Identity.IdentityK.Companion.fold
 import io.smallibs.pilin.standard.list.List
 import io.smallibs.pilin.standard.writer.Writer
@@ -26,8 +25,8 @@ internal class XmlStaxWriterTest {
         data class Close(val name: String) : Stax
     }
 
-    private suspend fun Writer.OverMonoid<List<Stax>>.runNow(xml: Xml): List<Stax> {
-        suspend fun execute(xml: Xml): App<WriterK<IdentityK, List<Stax>>, Unit> = `do` {
+    private suspend fun <F> Writer.OverMonad<F, List<Stax>>.runNow(xml: Xml): App<F, Pair<Unit, List<Stax>>> {
+        suspend fun execute(xml: Xml): App<WriterK<F, List<Stax>>, Unit> = `do` {
             when (xml) {
                 Xml.Empty -> {
                     // Nothing
@@ -50,7 +49,7 @@ internal class XmlStaxWriterTest {
             }
         }
 
-        return execute(xml).run.fold { it.second }
+        return execute(xml).run
     }
 
     @Test
@@ -60,7 +59,7 @@ internal class XmlStaxWriterTest {
         val monad = Writer.OverMonoid<List<Stax>>(List.monoid())
 
         // When
-        val result = runBlocking { monad.runNow(xml) }
+        val result = runBlocking { monad.runNow(xml).fold { it.second } }
 
         // Then
         val expected =
