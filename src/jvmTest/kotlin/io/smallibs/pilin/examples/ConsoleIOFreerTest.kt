@@ -2,9 +2,8 @@ package io.smallibs.pilin.examples
 
 import io.smallibs.pilin.core.Standard
 import io.smallibs.pilin.examples.ConsoleIOFreerTest.ConsoleIO.ConsoleIOK
-import io.smallibs.pilin.examples.ConsoleIOFreerTest.ConsoleIO.ConsoleIOK.fix
-import io.smallibs.pilin.standard.freer.Freer
-import io.smallibs.pilin.standard.freer.Freer.Companion.run
+import io.smallibs.pilin.examples.ConsoleIOFreerTest.ConsoleIO.ConsoleIOK.Companion.fix
+import io.smallibs.pilin.standard.freer.monad.Freer
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 import kotlinx.coroutines.runBlocking
@@ -14,18 +13,22 @@ import kotlin.test.assertEquals
 internal class ConsoleIOFreerTest {
 
     private sealed interface ConsoleIO<A> : App<ConsoleIOK, A> {
-        object ConsoleIOK {
-            val <A> App<ConsoleIOK, A>.fix get() = this as ConsoleIO<A>
+        class ConsoleIOK private constructor() {
+            companion object {
+                val <A> App<ConsoleIOK, A>.fix get() = this as ConsoleIO<A>
+            }
+
         }
 
         data class Tell<A>(val statement: String, val k: Fun<Unit, A>) : ConsoleIO<A>
         data class Ask<A>(val question: String, val k: Fun<String, A>) : ConsoleIO<A>
     }
 
-    private fun tell(statement: String): Freer<ConsoleIOK, Unit> =
-        Freer.perform(ConsoleIO.Tell(statement, Standard::id))
+    private fun Freer.Over<ConsoleIOK>.tell(statement: String): Freer<ConsoleIOK, Unit> =
+        perform(ConsoleIO.Tell(statement, Standard::id))
 
-    private fun ask(request: String): Freer<ConsoleIOK, String> = Freer.perform(ConsoleIO.Ask(request, Standard::id))
+    private fun Freer.Over<ConsoleIOK>.ask(request: String): Freer<ConsoleIOK, String> =
+        perform(ConsoleIO.Ask(request, Standard::id))
 
     private fun <A, B> runConsoleIO(trace: MutableList<String>): Fun<Fun<B, A>, Fun<App<ConsoleIOK, B>, A>> = { f ->
         { fa ->
@@ -52,12 +55,13 @@ internal class ConsoleIOFreerTest {
     fun `should tell Hello and tell World`() {
         // Given
         val output = mutableListOf<String>()
+        val monad = Freer.Over<ConsoleIOK>()
 
         // When
         runBlocking {
-            with(Freer.monad<ConsoleIOK>().infix) {
-                val program = tell("Hello") bind { tell("World") }
-                run(runConsole(output), program)
+            with(monad.infix) {
+                val program = monad.tell("Hello") bind { monad.tell("World") }
+                monad.run(runConsole(output), program)
             }
         }
 
@@ -71,10 +75,11 @@ internal class ConsoleIOFreerTest {
     fun `should Ask Name and tell Alice`() {
         // Given
         val output = mutableListOf<String>()
+        val monad = Freer.Over<ConsoleIOK>()
 
         // When
         runBlocking {
-            with(Freer.monad<ConsoleIOK>()) {
+            with(monad) {
                 val program = `do` {
                     ask("Name").bind()
                     tell("Alice").bind()

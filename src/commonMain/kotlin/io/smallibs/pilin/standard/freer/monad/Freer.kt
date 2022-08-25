@@ -1,8 +1,9 @@
-package io.smallibs.pilin.standard.freer
+package io.smallibs.pilin.standard.freer.monad
 
+import io.smallibs.pilin.abstractions.Monad.API
 import io.smallibs.pilin.core.Standard.Infix.then
-import io.smallibs.pilin.standard.freer.Freer.FreerK
-import io.smallibs.pilin.standard.freer.Freer.FreerK.Companion.fix
+import io.smallibs.pilin.standard.freer.monad.Freer.FreerK
+import io.smallibs.pilin.standard.freer.monad.Freer.FreerK.Companion.fix
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
@@ -36,14 +37,13 @@ sealed interface Freer<F, A> : App<FreerK<F>, A> {
         override suspend fun run(f: Handler<F, A>): A = f.handle { x: I -> continuation(x).fix.run(f) }(intermediate)
     }
 
-    companion object {
+    class Over<F>(val api: API<FreerK<F>> = Monad.monad()) : API<FreerK<F>> by api {
         fun <F, A> perform(f: App<F, A>): Freer<F, A> = Bind(f) { Return(it) }
-
         suspend fun <F, A> run(f: Handler<F, A>, ma: App<FreerK<F>, A>): A = ma.fix.run(f)
 
         fun <F> functor() = Functor.functor<F>()
         fun <F> applicative() = Applicative.applicative<F>()
-        fun <F> monad() = Monad.monad<F>()
+        fun <F> monad() = api
         fun <F> selective() = Selective.selective<F>()
     }
 

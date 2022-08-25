@@ -1,9 +1,9 @@
-package io.smallibs.pilin.standard.freer
+package io.smallibs.pilin.standard.freer.monad
 
 import io.smallibs.pilin.abstractions.Monad
 import io.smallibs.pilin.abstractions.Selective
-import io.smallibs.pilin.standard.freer.Freer.FreerK
-import io.smallibs.pilin.standard.freer.Monad.monad
+import io.smallibs.pilin.standard.freer.monad.Freer.FreerK
+import io.smallibs.pilin.standard.freer.monad.Monad.monad
 
 object Selective {
     private class SelectiveImpl<F>(monad: Monad.API<FreerK<F>>) :

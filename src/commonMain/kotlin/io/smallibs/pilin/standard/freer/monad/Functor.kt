@@ -1,8 +1,8 @@
-package io.smallibs.pilin.standard.freer
+package io.smallibs.pilin.standard.freer.monad
 
 import io.smallibs.pilin.abstractions.Functor
-import io.smallibs.pilin.standard.freer.Freer.FreerK
-import io.smallibs.pilin.standard.freer.Freer.FreerK.Companion.fix
+import io.smallibs.pilin.standard.freer.monad.Freer.FreerK
+import io.smallibs.pilin.standard.freer.monad.Freer.FreerK.Companion.fix
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
