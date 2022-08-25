@@ -1,6 +1,6 @@
 package io.smallibs.pilin.examples
 
-import io.smallibs.pilin.standard.identity.Identity.IdentityK.Companion.fold
+import io.smallibs.pilin.standard.identity.Identity.IdentityK.fold
 import io.smallibs.pilin.standard.state.State
 import io.smallibs.pilin.standard.state.State.StateK
 import io.smallibs.pilin.standard.state.State.StateK.Companion.invoke

@@ -1,6 +1,6 @@
 package io.smallibs.pilin.examples
 
-import io.smallibs.pilin.standard.identity.Identity.IdentityK.Companion.fold
+import io.smallibs.pilin.standard.identity.Identity.IdentityK.fold
 import io.smallibs.pilin.standard.list.List
 import io.smallibs.pilin.standard.writer.Writer
 import io.smallibs.pilin.standard.writer.Writer.WriterK

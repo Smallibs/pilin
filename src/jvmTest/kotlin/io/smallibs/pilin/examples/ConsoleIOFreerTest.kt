@@ -2,7 +2,7 @@ package io.smallibs.pilin.examples
 
 import io.smallibs.pilin.core.Standard
 import io.smallibs.pilin.examples.ConsoleIOFreerTest.ConsoleIO.ConsoleIOK
-import io.smallibs.pilin.examples.ConsoleIOFreerTest.ConsoleIO.ConsoleIOK.Companion.fix
+import io.smallibs.pilin.examples.ConsoleIOFreerTest.ConsoleIO.ConsoleIOK.fix
 import io.smallibs.pilin.standard.freer.monad.Freer
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
@@ -13,11 +13,8 @@ import kotlin.test.assertEquals
 internal class ConsoleIOFreerTest {
 
     private sealed interface ConsoleIO<A> : App<ConsoleIOK, A> {
-        class ConsoleIOK private constructor() {
-            companion object {
-                val <A> App<ConsoleIOK, A>.fix get() = this as ConsoleIO<A>
-            }
-
+        object ConsoleIOK {
+            val <A> App<ConsoleIOK, A>.fix get() = this as ConsoleIO<A>
         }
 
         data class Tell<A>(val statement: String, val k: Fun<Unit, A>) : ConsoleIO<A>
@@ -31,8 +28,8 @@ internal class ConsoleIOFreerTest {
         perform(ConsoleIO.Ask(request, Standard::id))
 
     private fun <A, B> runConsoleIO(trace: MutableList<String>): Fun<Fun<B, A>, Fun<App<ConsoleIOK, B>, A>> = { f ->
-        { fa ->
-            when (val fa = fa.fix) {
+        {
+            when (val fa = it.fix) {
                 is ConsoleIO.Ask -> {
                     trace += listOf("Ask ${fa.question}?")
                     f(fa.k("Hello"))

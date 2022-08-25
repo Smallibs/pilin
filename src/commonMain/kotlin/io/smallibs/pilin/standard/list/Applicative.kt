@@ -2,7 +2,7 @@ package io.smallibs.pilin.standard.list
 
 import io.smallibs.pilin.abstractions.Applicative
 import io.smallibs.pilin.standard.list.List.ListK
-import io.smallibs.pilin.standard.list.List.ListK.Companion.fix
+import io.smallibs.pilin.standard.list.List.ListK.fix
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 

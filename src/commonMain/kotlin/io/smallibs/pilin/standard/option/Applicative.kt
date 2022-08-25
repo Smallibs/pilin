@@ -5,7 +5,7 @@ import io.smallibs.pilin.core.Standard.Infix.then
 import io.smallibs.pilin.standard.option.Option.Companion.none
 import io.smallibs.pilin.standard.option.Option.Companion.some
 import io.smallibs.pilin.standard.option.Option.OptionK
-import io.smallibs.pilin.standard.option.Option.OptionK.Companion.fold
+import io.smallibs.pilin.standard.option.Option.OptionK.fold
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 

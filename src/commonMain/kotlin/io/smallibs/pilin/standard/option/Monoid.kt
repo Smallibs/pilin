@@ -3,7 +3,7 @@ package io.smallibs.pilin.standard.option
 import io.smallibs.pilin.abstractions.Monoid
 import io.smallibs.pilin.abstractions.Semigroup
 import io.smallibs.pilin.standard.option.Option.Companion.some
-import io.smallibs.pilin.standard.option.Option.OptionK.Companion.fold
+import io.smallibs.pilin.standard.option.Option.OptionK.fold
 
 object Monoid {
     class MonoidImp<A>(private val semigroup: Semigroup.API<A>) : Monoid.API<Option<A>> {

@@ -2,7 +2,7 @@ package io.smallibs.pilin.standard.support
 
 import io.smallibs.pilin.core.Standard
 import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK
-import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.Companion.invoke
+import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.invoke
 import io.smallibs.pilin.type.App
 
 interface Equatable<A> {

@@ -1,7 +1,7 @@
 package io.smallibs.pilin.standard.list
 
 import io.smallibs.pilin.abstractions.Monoid
-import io.smallibs.pilin.standard.list.List.ListK.Companion.fix
+import io.smallibs.pilin.standard.list.List.ListK.fix
 
 object Monoid {
     class MonoidImp<A> : Monoid.API<List<A>> {

@@ -7,12 +7,10 @@ import io.smallibs.pilin.type.Fun
 data class Identity<A>(val value: A) : App<IdentityK, A> {
 
     // This code can be automatically generated
-    class IdentityK private constructor() {
-        companion object {
-            private val <A> App<IdentityK, A>.fix: Identity<A> get() = this as Identity<A>
+    object IdentityK {
+        private val <A> App<IdentityK, A>.fix: Identity<A> get() = this as Identity<A>
 
-            suspend fun <A, B> App<IdentityK, A>.fold(f: Fun<A, B>): B = f(this.fix.value)
-        }
+        suspend fun <A, B> App<IdentityK, A>.fold(f: Fun<A, B>): B = f(this.fix.value)
     }
 
     companion object {

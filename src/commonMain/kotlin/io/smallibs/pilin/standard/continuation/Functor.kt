@@ -3,7 +3,7 @@ package io.smallibs.pilin.standard.continuation
 import io.smallibs.pilin.abstractions.Functor
 import io.smallibs.pilin.core.Standard.Infix.then
 import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK
-import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.Companion.invoke
+import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.invoke
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 

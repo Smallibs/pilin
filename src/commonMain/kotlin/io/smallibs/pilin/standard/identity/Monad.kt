@@ -5,7 +5,7 @@ import io.smallibs.pilin.abstractions.Monad
 import io.smallibs.pilin.core.Standard.id
 import io.smallibs.pilin.standard.identity.Applicative.applicative
 import io.smallibs.pilin.standard.identity.Identity.IdentityK
-import io.smallibs.pilin.standard.identity.Identity.IdentityK.Companion.fold
+import io.smallibs.pilin.standard.identity.Identity.IdentityK.fold
 import io.smallibs.pilin.type.App
 
 object Monad {

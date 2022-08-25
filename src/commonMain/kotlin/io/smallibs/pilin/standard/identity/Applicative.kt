@@ -3,7 +3,7 @@ package io.smallibs.pilin.standard.identity
 import io.smallibs.pilin.abstractions.Applicative
 import io.smallibs.pilin.core.Standard.Infix.then
 import io.smallibs.pilin.standard.identity.Identity.IdentityK
-import io.smallibs.pilin.standard.identity.Identity.IdentityK.Companion.fold
+import io.smallibs.pilin.standard.identity.Identity.IdentityK.fold
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 

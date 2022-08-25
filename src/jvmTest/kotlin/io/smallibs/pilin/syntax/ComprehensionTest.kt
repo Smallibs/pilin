@@ -1,7 +1,7 @@
 package io.smallibs.pilin.syntax
 
 import io.smallibs.pilin.standard.continuation.Continuation
-import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.Companion.invoke
+import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.invoke
 import io.smallibs.pilin.standard.either.Either
 import io.smallibs.pilin.standard.either.Either.Companion.left
 import io.smallibs.pilin.standard.either.Either.Companion.right

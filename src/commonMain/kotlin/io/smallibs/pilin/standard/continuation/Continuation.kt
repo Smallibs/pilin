@@ -6,13 +6,11 @@ import io.smallibs.pilin.type.Fun
 interface Continuation<out I> : App<Continuation.ContinuationK, I> {
     suspend operator fun <O> invoke(k: Fun<I, O>): O
 
-    class ContinuationK private constructor() {
-        companion object {
-            val <I> App<ContinuationK, I>.fix: Continuation<I>
-                get() = this as Continuation<I>
+    object ContinuationK {
+        val <I> App<ContinuationK, I>.fix: Continuation<I>
+            get() = this as Continuation<I>
 
-            suspend operator fun <I, O> App<ContinuationK, I>.invoke(k: Fun<I, O>): O = this.fix(k)
-        }
+        suspend operator fun <I, O> App<ContinuationK, I>.invoke(k: Fun<I, O>): O = this.fix(k)
     }
 
     companion object {

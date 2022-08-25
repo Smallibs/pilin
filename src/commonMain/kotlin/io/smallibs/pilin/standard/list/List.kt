@@ -8,14 +8,12 @@ data class List<A> internal constructor(
 
     constructor(vararg a: A) : this(a.toList())
 
-    class ListK private constructor() {
-        companion object {
-            val <A> App<ListK, A>.fix: List<A>
-                get() = this as List<A>
+    object ListK {
+        val <A> App<ListK, A>.fix: List<A>
+            get() = this as List<A>
 
-            val <A> App<ListK, A>.inner: kotlin.collections.List<A>
-                get() = this.fix.list
-        }
+        val <A> App<ListK, A>.inner: kotlin.collections.List<A>
+            get() = this.fix.list
     }
 
     companion object {

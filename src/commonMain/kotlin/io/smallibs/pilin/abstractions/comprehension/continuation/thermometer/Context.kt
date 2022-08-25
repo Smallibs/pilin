@@ -1,7 +1,7 @@
 package io.smallibs.pilin.abstractions.comprehension.continuation.thermometer
 
 import io.smallibs.pilin.core.Standard.id
-import io.smallibs.pilin.standard.option.Option.OptionK.Companion.fold
+import io.smallibs.pilin.standard.option.Option.OptionK.fold
 import io.smallibs.pilin.type.Supplier
 
 internal class Context<A> private constructor(val state: State<A>, private val nested: Stack<State<A>>) {

@@ -3,7 +3,7 @@ package io.smallibs.pilin.abstractions.comprehension.continuation.thermometer
 import io.smallibs.pilin.core.Standard.id
 import io.smallibs.pilin.standard.option.Option
 import io.smallibs.pilin.standard.option.Option.OptionK
-import io.smallibs.pilin.standard.option.Option.OptionK.Companion.fold
+import io.smallibs.pilin.standard.option.Option.OptionK.fold
 import io.smallibs.pilin.type.App
 
 internal data class Stack<A>(private val value: List<A>) {

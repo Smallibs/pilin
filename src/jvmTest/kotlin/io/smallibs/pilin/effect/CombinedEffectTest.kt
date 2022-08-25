@@ -6,7 +6,7 @@ import io.smallibs.pilin.effect.Effects.Companion.handle
 import io.smallibs.pilin.standard.continuation.Continuation
 import io.smallibs.pilin.standard.continuation.Continuation.Companion.monad
 import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK
-import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.Companion.invoke
+import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.invoke
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 import kotlinx.coroutines.runBlocking
