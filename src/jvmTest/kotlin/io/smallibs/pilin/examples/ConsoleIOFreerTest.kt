@@ -59,10 +59,13 @@ internal class ConsoleIOFreerTest {
 
         // When
         runBlocking {
-            with(monad.infix) {
-                val program = monad.tell("Hello") bind { monad.tell("World") }
-                monad.run(runConsole(output), program)
+            val program = with(monad.infix) {
+                monad.tell("Hello") bind {
+                    monad.tell("World")
+                }
             }
+
+            monad.run(runConsole(output), program)
         }
 
         // Then
@@ -79,13 +82,14 @@ internal class ConsoleIOFreerTest {
 
         // When
         runBlocking {
-            with(monad) {
-                val program = `do` {
+            val program = with(monad) {
+                `do` {
                     ask("Name").bind()
                     tell("Alice").bind()
                 }
-                run(runConsole(output), program)
             }
+
+            monad.run(runConsole(output), program)
         }
 
         // Then
