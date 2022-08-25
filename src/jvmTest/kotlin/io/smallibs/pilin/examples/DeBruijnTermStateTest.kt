@@ -56,7 +56,7 @@ internal class DeBruijnTermStateTest {
         val state = State.Over<List<String>>()
 
         // When
-        val result = runBlocking { state.execute(term)((listOf())).fold { it.first } }
+        val result = runBlocking { state.execute(term)(listOf()).fold { it.first } }
 
         // Then
         val expected = DBTerm.App(DBTerm.Abs(DBTerm.Var(0)), DBTerm.Ident("y"))
