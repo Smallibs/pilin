@@ -49,7 +49,7 @@ data class State<F, S, A>(val run: suspend (S) -> App<F, Pair<A, S>>) : App<Stat
 
         fun transformer(): Transformer<F, StateK<F, S>> {
             return object : Transformer<F, StateK<F, S>> {
-                override suspend fun <A> upper(ma: App<F, A>): App<StateK<F, S>, A> {
+                override suspend fun <A> transform(ma: App<F, A>): App<StateK<F, S>, A> {
                     return State { s -> inner.bind { a: A -> inner.returns(a to s) }(ma) }
                 }
             }

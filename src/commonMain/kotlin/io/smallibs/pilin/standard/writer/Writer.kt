@@ -55,7 +55,7 @@ class Writer<F, T, A>(val run: App<F, Pair<A, T>>) : App<WriterK<F, T>, A> {
 
         suspend fun transformer(tape: Monoid.Core<T>): Transformer<F, WriterK<F, T>> {
             return object : Transformer<F, WriterK<F, T>> {
-                override suspend fun <A> upper(ma: App<F, A>): App<WriterK<F, T>, A> =
+                override suspend fun <A> transform(ma: App<F, A>): App<WriterK<F, T>, A> =
                     Writer(inner.bind { a: A -> inner.returns(a to tape.neutral) }(ma))
             }
         }

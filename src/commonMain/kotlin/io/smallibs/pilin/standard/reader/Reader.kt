@@ -36,7 +36,7 @@ class Reader<F, E, A>(val run: Fun<E, App<F, A>>) : App<ReaderK<F, E>, A> {
 
         fun transformer(): Transformer<F, ReaderK<F, E>> {
             return object : Transformer<F, ReaderK<F, E>> {
-                override suspend fun <A> upper(ma: App<F, A>): App<ReaderK<F, E>, A> = Reader { ma }
+                override suspend fun <A> transform(ma: App<F, A>): App<ReaderK<F, E>, A> = Reader { ma }
             }
         }
 
