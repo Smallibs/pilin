@@ -257,17 +257,17 @@ Finally, after the execution `traces` has the following value: `listOf("readStri
 ## Reader 
 
 ```
-TemplateReader.direct           avgt   15     323.554 ±    15.174  ns/op
-TemplateReader.withReader       avgt   15    7719.329 ±   225.154  ns/op
-TemplateReader.withReaderAndDo  avgt   15   25261.471 ±  1451.130  ns/op
+TemplateReader.direct           avgt   15     322.898 ±     6.692  ns/op
+TemplateReader.withReader       avgt   15     974.904 ±    54.416  ns/op
+TemplateReader.withReaderAndDo  avgt   15   24421.818 ±   755.463  ns/op
 ```
 
 ## Writer
 
 ```
-XmlStax.direct                  avgt   15     515.771 ±    76.126  ns/op
-XmlStax.withWriter              avgt   15  117506.669 ±  6006.826  ns/op
-XmlStax.withWriterAndDo         avgt   15  444601.076 ± 25648.686  ns/op
+XmlStax.direct                  avgt   15     453.769 ±    50.109  ns/op
+XmlStax.withWriter              avgt   15    3581.531 ±   666.286  ns/op
+XmlStax.withWriterAndDo         avgt   15  438827.914 ± 23172.177  ns/op
 ```
 
 ## State

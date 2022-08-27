@@ -56,8 +56,8 @@ class TemplateReader {
                 }
 
                 is Template.Seq -> {
-                    withReaderAndDo(template.lhd).bind { lhd ->
-                        withReaderAndDo(template.rhd).map {
+                    withReader(template.lhd).bind { lhd ->
+                        withReader(template.rhd).map {
                             lhd + it
                         }
                     }

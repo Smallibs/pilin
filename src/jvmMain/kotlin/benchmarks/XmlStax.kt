@@ -38,19 +38,19 @@ class XmlStax {
         data class Close(val name: String) : Stax
     }
 
-    private suspend fun MutableList<Stax>.execute(xml: Xml): Unit =
+    private suspend fun MutableList<Stax>.direct(xml: Xml): Unit =
         with(this) {
             when (xml) {
                 Xml.Empty -> {}
 
                 is Xml.Seq -> {
-                    execute(xml.lhd)
-                    execute(xml.rhd)
+                    direct(xml.lhd)
+                    direct(xml.rhd)
                 }
 
                 is Xml.Tag -> {
                     this += listOf(Stax.Open(xml.name))
-                    execute(xml.content)
+                    direct(xml.content)
                     this += Stax.Close(xml.name)
                 }
 
@@ -68,14 +68,14 @@ class XmlStax {
                 }
 
                 is Xml.Seq -> {
-                    executeWithWriterAndDo(xml.lhd).bind {
-                        executeWithWriterAndDo(xml.rhd)
+                    executeWithWriter(xml.lhd).bind {
+                        executeWithWriter(xml.rhd)
                     }
                 }
 
                 is Xml.Tag -> {
                     tell(List(Stax.Open(xml.name))).bind {
-                        executeWithWriterAndDo(xml.content).bind {
+                        executeWithWriter(xml.content).bind {
                             tell(List(Stax.Close(xml.name)))
                         }
                     }
@@ -115,7 +115,7 @@ class XmlStax {
     fun direct() {
         val xml = Xml.Tag("A", Xml.Seq(Xml.Text("B"), Xml.Tag("C", Xml.Empty)))
 
-        runBlocking { mutableListOf<Stax>().execute(xml) }
+        runBlocking { mutableListOf<Stax>().direct(xml) }
     }
 
     @Benchmark
