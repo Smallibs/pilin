@@ -252,6 +252,32 @@ runTest { handled().invoke { } }
 
 Finally, after the execution `traces` has the following value: `listOf("readString(World)", "printString(Hello World)")`
 
+# Benchmarks
+
+## Reader 
+
+```
+TemplateReader.direct           avgt   15     323.554 ±    15.174  ns/op
+TemplateReader.withReader       avgt   15    7719.329 ±   225.154  ns/op
+TemplateReader.withReaderAndDo  avgt   15   25261.471 ±  1451.130  ns/op
+```
+
+## Writer
+
+```
+XmlStax.direct                  avgt   15     515.771 ±    76.126  ns/op
+XmlStax.withWriter              avgt   15  117506.669 ±  6006.826  ns/op
+XmlStax.withWriterAndDo         avgt   15  444601.076 ± 25648.686  ns/op
+```
+
+## State
+
+```
+TypeChecker.direct              avgt   15     251.009 ±     6.700  ns/op
+TypeChecker.withState           avgt   15    1679.065 ±    36.026  ns/op
+TypeChecker.withStateAndDo      avgt   15   22786.035 ± 14601.441  ns/op
+```
+
 # License
 
 MIT License

@@ -49,45 +49,43 @@ class TypeChecker {
         }
     }
 
-    private suspend fun Map<String, Type>.typeCheck(expr: Expr): Type? =
-        when (expr) {
-            is Expr.EApply -> {
-                val abstraction = typeCheck(expr.abstraction)
-                when (abstraction) {
-                    is Type.TArrow -> {
-                        val parameter = typeCheck(expr.parameter)
-                        if (abstraction.lhd == parameter) abstraction.rhd else null
+    private suspend fun Map<String, Type>.direct(expr: Expr): Type? = when (expr) {
+        is Expr.EApply -> {
+            when (val abstraction = direct(expr.abstraction)) {
+                is Type.TArrow -> {
+                    val parameter = direct(expr.parameter)
+                    if (abstraction.lhd == parameter) abstraction.rhd else null
 
-                    }
-
-                    else -> null
                 }
-            }
 
-
-            is Expr.ELambda -> {
-                (this + (expr.binding to expr.type)).typeCheck(expr.body)
-            }
-
-            is Expr.ELiteral -> when (expr.value) {
-                is Literal.LInt -> integer
-                is Literal.LString -> string
-            }
-
-            is Expr.EVar -> {
-                this[expr.name]
+                else -> null
             }
         }
 
 
-    private suspend fun <F> State.OverMonad<F, Map<String, Type>>.typeCheckWithState(expr: Expr): App<StateK<F, Map<String, Type>>, Type?> =
+        is Expr.ELambda -> {
+            (this + (expr.binding to expr.type)).direct(expr.body)
+        }
+
+        is Expr.ELiteral -> when (expr.value) {
+            is Literal.LInt -> integer
+            is Literal.LString -> string
+        }
+
+        is Expr.EVar -> {
+            this[expr.name]
+        }
+    }
+
+
+    private suspend fun <F> State.OverMonad<F, Map<String, Type>>.withState(expr: Expr): App<StateK<F, Map<String, Type>>, Type?> =
         with(this.infix) {
             when (expr) {
                 is Expr.EApply -> {
-                    typeCheckWithState(expr.abstraction) bind { abstraction ->
+                    withState(expr.abstraction) bind { abstraction ->
                         when (abstraction) {
                             is Type.TArrow -> {
-                                typeCheckWithState(expr.parameter).map { parameter ->
+                                withState(expr.parameter).map { parameter ->
                                     if (abstraction.lhd == parameter) abstraction.rhd else null
                                 }
                             }
@@ -99,7 +97,7 @@ class TypeChecker {
 
                 is Expr.ELambda -> {
                     modify { it + (expr.binding to expr.type) }.bind {
-                        typeCheckWithState(expr.body)
+                        withState(expr.body)
                     }
                 }
 
@@ -118,10 +116,9 @@ class TypeChecker {
         `do` {
             when (expr) {
                 is Expr.EApply -> {
-                    when (val abstraction = typeCheckWithState(expr.abstraction)
-                        .bind()) {
+                    when (val abstraction = withState(expr.abstraction).bind()) {
                         is Type.TArrow -> {
-                            val parameter = typeCheckWithState(expr.parameter).bind()
+                            val parameter = withState(expr.parameter).bind()
                             if (abstraction.lhd == parameter) abstraction.rhd else null
                         }
 
@@ -131,7 +128,7 @@ class TypeChecker {
 
                 is Expr.ELambda -> {
                     modify { it + (expr.binding to expr.type) }.bind()
-                    typeCheckWithState(expr.body).bind()
+                    withState(expr.body).bind()
                 }
 
                 is Expr.ELiteral -> when (expr.value) {
@@ -151,19 +148,19 @@ class TypeChecker {
     }
 
     @Benchmark
-    fun typeCheck() {
-        runBlocking { mapOf<String,Type>().typeCheck(expr) }
+    fun direct() {
+        runBlocking { mapOf<String, Type>().direct(expr) }
     }
 
     @Benchmark
-    fun typeCheckWithState() {
+    fun withState() {
         val state = State.Over<Map<String, Type>>()
 
-        runBlocking { state.typeCheckWithState(expr)(gamma).fold { it.first } }
+        runBlocking { state.withState(expr)(gamma).fold { it.first } }
     }
 
     @Benchmark
-    fun typeCheckWithStateAndDo() {
+    fun withStateAndDo() {
         val state = State.Over<Map<String, Type>>()
 
         runBlocking { state.typeCheckWithStateAndComprehension(expr)(gamma).fold { it.first } }
