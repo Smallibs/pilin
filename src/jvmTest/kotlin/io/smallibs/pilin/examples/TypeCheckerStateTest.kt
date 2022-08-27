@@ -36,10 +36,11 @@ internal class TypeCheckerStateTest {
         `do` {
             when (expr) {
                 is EApply -> {
-                    val abstraction = typeCheck(expr.abstraction).bind()
-                    val parameter = typeCheck(expr.parameter).bind()
-                    when (abstraction) {
-                        is TArrow -> if (abstraction.lhd == parameter) abstraction.rhd else null
+                    when (val abstraction = typeCheck(expr.abstraction).bind()) {
+                        is TArrow -> {
+                            val parameter = typeCheck(expr.parameter).bind()
+                            if (abstraction.lhd == parameter) abstraction.rhd else null
+                        }
 
                         else -> null
                     }
