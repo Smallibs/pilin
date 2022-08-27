@@ -1,5 +1,9 @@
 package io.smallibs.pilin.examples
 
+import io.smallibs.pilin.examples.TypeCheckerStateTest.Expr.EApply
+import io.smallibs.pilin.examples.TypeCheckerStateTest.Expr.EVar
+import io.smallibs.pilin.examples.TypeCheckerStateTest.Type.TArrow
+import io.smallibs.pilin.examples.TypeCheckerStateTest.Type.TLiteral
 import io.smallibs.pilin.standard.identity.Identity
 import io.smallibs.pilin.standard.identity.Identity.IdentityK.fold
 import io.smallibs.pilin.standard.state.State
@@ -31,11 +35,11 @@ internal class TypeCheckerStateTest {
     private suspend fun State.Over<Map<String, Type>>.typeCheck(expr: Expr): App<State.StateK<Identity.IdentityK, Map<String, Type>>, Type?> =
         `do` {
             when (expr) {
-                is Expr.EApply -> {
+                is EApply -> {
                     val abstraction = typeCheck(expr.abstraction).bind()
                     val parameter = typeCheck(expr.parameter).bind()
                     when (abstraction) {
-                        is Type.TArrow -> if (abstraction.lhd == parameter) abstraction.rhd else null
+                        is TArrow -> if (abstraction.lhd == parameter) abstraction.rhd else null
 
                         else -> null
                     }
@@ -47,11 +51,11 @@ internal class TypeCheckerStateTest {
                 }
 
                 is Expr.ELiteral -> when (expr.value) {
-                    is Literal.LInt -> Type.TLiteral("string")
-                    is Literal.LString -> Type.TLiteral("int")
+                    is Literal.LInt -> TLiteral("string")
+                    is Literal.LString -> TLiteral("int")
                 }
 
-                is Expr.EVar -> {
+                is EVar -> {
                     get().bind()[expr.name]
                 }
             }
@@ -60,18 +64,15 @@ internal class TypeCheckerStateTest {
     @Test
     fun `should type check the expression`() {
         // Given
-        val expr = Expr.ELambda("x", Type.TLiteral("int"), Expr.EApply(Expr.EVar("add"), Expr.EVar("x")))
+        val expr = Expr.ELambda("x", TLiteral("int"), EApply(EVar("add"), EVar("x")))
+        val gamma = mapOf("add" to TArrow(TLiteral("int"), TArrow(TLiteral("int"), TLiteral("int"))))
         val state = State.Over<Map<String, Type>>()
-        val gamma =
-            mapOf("add" to Type.TArrow(Type.TLiteral("int"), Type.TArrow(Type.TLiteral("int"), Type.TLiteral("int"))))
 
         // When
-        val type = runBlocking {
-            state.typeCheck(expr)(gamma).fold { it.first }
-        }
+        val type = runBlocking { state.typeCheck(expr)(gamma).fold { it.first } }
 
         // Then
-        val expected = Type.TArrow(Type.TLiteral("int"), Type.TLiteral("int"))
+        val expected = TArrow(TLiteral("int"), TLiteral("int"))
 
         assertEquals(expected, type)
     }
@@ -79,11 +80,11 @@ internal class TypeCheckerStateTest {
     @Test
     fun `should not type check the expression`() {
         // Given
-        val expr = Expr.ELambda("x", Type.TLiteral("int"), Expr.EApply(Expr.EVar("add"), Expr.EVar("x")))
+        val expr = Expr.ELambda("x", TLiteral("int"), EApply(EVar("add"), EVar("x")))
         val state = State.Over<Map<String, Type>>()
         val gamma = mapOf(
-            "add" to Type.TArrow(
-                Type.TLiteral("string"), Type.TArrow(Type.TLiteral("int"), Type.TLiteral("int"))
+            "add" to TArrow(
+                TLiteral("string"), TArrow(TLiteral("int"), TLiteral("int"))
             )
         )
 
