@@ -4,9 +4,9 @@ import io.smallibs.pilin.examples.TypeCheckerStateTest.Expr.EApply
 import io.smallibs.pilin.examples.TypeCheckerStateTest.Expr.EVar
 import io.smallibs.pilin.examples.TypeCheckerStateTest.Type.TArrow
 import io.smallibs.pilin.examples.TypeCheckerStateTest.Type.TLiteral
-import io.smallibs.pilin.standard.identity.Identity
 import io.smallibs.pilin.standard.identity.Identity.IdentityK.fold
 import io.smallibs.pilin.standard.state.State
+import io.smallibs.pilin.standard.state.State.StateK
 import io.smallibs.pilin.standard.state.State.StateK.Companion.invoke
 import io.smallibs.pilin.type.App
 import kotlinx.coroutines.runBlocking
@@ -32,7 +32,7 @@ internal class TypeCheckerStateTest {
         data class TArrow(val lhd: Type, val rhd: Type) : Type
     }
 
-    private suspend fun State.Over<Map<String, Type>>.typeCheck(expr: Expr): App<State.StateK<Identity.IdentityK, Map<String, Type>>, Type?> =
+    private suspend fun <F> State.OverMonad<F, Map<String, Type>>.typeCheck(expr: Expr): App<StateK<F, Map<String, Type>>, Type?> =
         `do` {
             when (expr) {
                 is EApply -> {
