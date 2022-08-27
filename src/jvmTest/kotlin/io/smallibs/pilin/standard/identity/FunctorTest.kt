@@ -6,7 +6,8 @@ import io.smallibs.pilin.standard.identity.Identity.Companion.functor
 import io.smallibs.pilin.standard.support.Functions.int
 import io.smallibs.pilin.standard.support.Functions.str
 import io.smallibs.pilin.standard.support.Generators.identity
-import kotlinx.coroutines.runBlocking
+import io.smallibs.runTest
+
 import org.junit.Test
 import org.quicktheories.WithQuickTheories
 
@@ -15,14 +16,14 @@ internal class FunctorTest : WithQuickTheories {
     @Test
     fun `map id = id `() {
         qt().forAll(identity(integers().all())).check { a ->
-            runBlocking { functor.`map id = id`(a) }
+            runTest { functor.`map id = id`(a) }
         }
     }
 
     @Test
     fun `map (incr compose toString) = (map incr) compose (map toString) `() {
         qt().forAll(identity(integers().all())).check { a ->
-            runBlocking { functor.`map (f compose g) = map f compose map g`(int, str, a) }
+            runTest { functor.`map (f compose g) = map f compose map g`(int, str, a) }
         }
     }
 

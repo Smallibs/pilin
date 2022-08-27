@@ -4,7 +4,8 @@ import io.smallibs.pilin.standard.identity.Identity.IdentityK.fold
 import io.smallibs.pilin.standard.reader.Reader
 import io.smallibs.pilin.standard.reader.Reader.ReaderK.Companion.invoke
 import io.smallibs.pilin.type.App
-import kotlinx.coroutines.runBlocking
+import io.smallibs.runTest
+
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -40,7 +41,7 @@ internal class TemplateReaderTest {
         val reader = Reader.Over<Map<String, String>>()
 
         // When
-        val result = runBlocking { reader.execute(template).invoke(mapOf("world" to "World!")).fold { it } }
+        val result = runTest { reader.execute(template).invoke(mapOf("world" to "World!")).fold { it } }
 
         // Then
         val expected = "Hello, World!"
@@ -55,7 +56,7 @@ internal class TemplateReaderTest {
         val reader = Reader.Over<Map<String, String>>()
 
         // When
-        val result = runBlocking { reader.execute(template)(mapOf()).fold { it } }
+        val result = runTest { reader.execute(template)(mapOf()).fold { it } }
 
         // Then
         val expected = "Hello, N/A"

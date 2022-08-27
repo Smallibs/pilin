@@ -9,8 +9,9 @@ import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK
 import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.invoke
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
-import kotlinx.coroutines.runBlocking
+import io.smallibs.runTest
 import org.junit.Test
+
 import kotlin.test.assertEquals
 
 class CombinedEffectTest {
@@ -83,7 +84,7 @@ class CombinedEffectTest {
         val handler = state(traces) and console(traces)
         val handled = effects(monad) with handler
 
-        runBlocking { (handled()).invoke { } }
+        runTest { (handled()).invoke { } }
 
         assertEquals(listOf("readStream(World)", "set(World)", "get()", "printString(Hello World)"), traces)
     }

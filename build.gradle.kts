@@ -1,5 +1,7 @@
 plugins {
     kotlin("multiplatform") version "1.7.10"
+    kotlin("plugin.allopen") version "1.7.0"
+    id("org.jetbrains.kotlinx.benchmark") version "0.4.4"
 }
 
 group = "io.smallibs"
@@ -36,6 +38,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:0.4.4")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
             }
         }
@@ -72,5 +75,24 @@ kotlin {
             }
         }
         val nativeTest by getting
+    }
+}
+
+allOpen {
+    annotation("org.openjdk.jmh.annotations.State")
+}
+
+benchmark {
+    configurations {
+        named("main") {
+            iterations = 5 // number of iterations
+            iterationTime = 300
+            iterationTimeUnit = "ms"
+            advanced("jvmForks", 3)
+            advanced("jsUseBridge", true)
+        }
+    }
+    targets {
+        register("jvm")
     }
 }

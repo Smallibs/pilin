@@ -241,13 +241,13 @@ fun console(traces: MutableList<String>) =
 ## Executing the program with a dedicated console
 
 Then the previous program can be executed with the user defined effect implemented by `console`. Since all constructions
-return suspended functions this execution should be performed thanks to the standard `runBlocking` function.
+return suspended functions this execution should be performed thanks to the standard `runTest` function.
 
 ```kotlin
 val traces = mutableListOf<String>()
 val handled = program(Continuation.monad) with console(traces)
 
-runBlocking { handled().invoke { } }
+runTest { handled().invoke { } }
 ```
 
 Finally, after the execution `traces` has the following value: `listOf("readString(World)", "printString(Hello World)")`
