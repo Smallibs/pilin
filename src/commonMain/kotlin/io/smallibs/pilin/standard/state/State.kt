@@ -9,7 +9,7 @@ import io.smallibs.pilin.type.Fun
 import io.smallibs.pilin.abstractions.Monad.API as Monad_API
 import io.smallibs.pilin.abstractions.Monad.Core as Monad_Core
 
-data class State<F, S, A>(val run: suspend (S) -> App<F, Pair<A, S>>) : App<StateK<F, S>, A> {
+data class State<F, S, A>(val run: Fun<S, App<F, Pair<A, S>>>) : App<StateK<F, S>, A> {
 
     // This code can be automatically generated
     class StateK<F, S> private constructor() {
@@ -36,15 +36,12 @@ data class State<F, S, A>(val run: suspend (S) -> App<F, Pair<A, S>>) : App<Stat
 
         suspend fun <A> state(f: Fun<S, Pair<A, S>>): State<F, S, A> = State { s -> inner.returns(f(s)) }
 
-        @Suppress("NAME_SHADOWING")
         suspend fun get(): State<F, S, S> = state { s -> s to s }
 
-        suspend fun set(): State<F, S, Unit> = State { s -> (state { _ -> Unit to s }).run(s) }
+        suspend fun set(): State<F, S, Unit> = State { s -> (state { Unit to s }).run(s) }
 
-        @Suppress("NAME_SHADOWING")
         suspend fun modify(f: Fun<S, S>): State<F, S, Unit> = state { s -> Unit to f(s) }
 
-        @Suppress("NAME_SHADOWING")
         suspend fun <A> gets(f: Fun<S, A>): State<F, S, A> = state { s -> f(s) to s }
 
         fun transformer(): Transformer<F, StateK<F, S>> {
