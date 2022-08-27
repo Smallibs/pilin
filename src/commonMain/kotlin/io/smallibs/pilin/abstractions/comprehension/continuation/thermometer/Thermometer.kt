@@ -21,14 +21,14 @@ internal class Thermometer<A> private constructor(private var context: Context<A
         when (frame) {
             is Frame.Return<*> -> {
                 context = context.addToPast(frame)
-                return Universal<B>().fromU(frame.value!!)
+                return Universal<B>().fromU(frame.value)
             }
 
             is Enter -> {
                 val newFuture = context.state.past
                 val block = context.state.block
                 val k: Fun<B, A> = { v: B ->
-                    runWithFuture(block!!, newFuture.push(Frame.Return(v)).reversed())
+                    runWithFuture(block, newFuture.push(Frame.Return(v)).reversed())
                 }
                 context = context.addToPast(Enter)
                 throw Done(f(k) as Any)

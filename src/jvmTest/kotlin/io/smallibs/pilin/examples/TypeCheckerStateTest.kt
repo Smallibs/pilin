@@ -7,7 +7,6 @@ import io.smallibs.pilin.standard.state.State.StateK.Companion.invoke
 import io.smallibs.pilin.type.App
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
-import java.util.*
 import kotlin.test.assertEquals
 
 internal class TypeCheckerStateTest {
@@ -29,18 +28,16 @@ internal class TypeCheckerStateTest {
         data class TArrow(val lhd: Type, val rhd: Type) : Type
     }
 
-    private suspend fun State.Over<Map<String, Type>>.typeCheck(expr: Expr): App<State.StateK<Identity.IdentityK, Map<String, Type>>, Optional<Type>> =
+    private suspend fun State.Over<Map<String, Type>>.typeCheck(expr: Expr): App<State.StateK<Identity.IdentityK, Map<String, Type>>, Type?> =
         `do` {
             when (expr) {
                 is Expr.EApply -> {
                     val abstraction = typeCheck(expr.abstraction).bind()
                     val parameter = typeCheck(expr.parameter).bind()
-                    abstraction.flatMap {
-                        when (it) {
-                            is Type.TArrow -> if (Optional.of(it.lhd) == parameter) Optional.of(it.rhd) else Optional.empty()
+                    when (abstraction) {
+                        is Type.TArrow -> if (abstraction.lhd == parameter) abstraction.rhd else null
 
-                            else -> Optional.empty()
-                        }
+                        else -> null
                     }
                 }
 
@@ -50,12 +47,12 @@ internal class TypeCheckerStateTest {
                 }
 
                 is Expr.ELiteral -> when (expr.value) {
-                    is Literal.LInt -> Optional.of(Type.TLiteral("string"))
-                    is Literal.LString -> Optional.of(Type.TLiteral("int"))
+                    is Literal.LInt -> Type.TLiteral("string")
+                    is Literal.LString -> Type.TLiteral("int")
                 }
 
                 is Expr.EVar -> {
-                    Optional.ofNullable(get().bind()[expr.name])
+                    get().bind()[expr.name]
                 }
             }
         }
@@ -74,7 +71,7 @@ internal class TypeCheckerStateTest {
         }
 
         // Then
-        val expected: Optional<Type> = Optional.of(Type.TArrow(Type.TLiteral("int"), Type.TLiteral("int")))
+        val expected = Type.TArrow(Type.TLiteral("int"), Type.TLiteral("int"))
 
         assertEquals(expected, type)
     }
@@ -96,7 +93,7 @@ internal class TypeCheckerStateTest {
         }
 
         // Then
-        val expected: Optional<Type> = Optional.empty()
+        val expected = null
 
         assertEquals(expected, type)
     }

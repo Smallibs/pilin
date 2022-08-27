@@ -6,7 +6,7 @@ import io.smallibs.pilin.type.Supplier
 
 internal class Context<A> private constructor(val state: State<A>, private val nested: Stack<State<A>>) {
 
-    constructor() : this(State(null, Stack(), Stack()), Stack())
+    constructor() : this(State({ throw IllegalArgumentException() }, Stack(), Stack()), Stack())
 
     suspend fun setFuture(future: Stack<Frame>) = Context(State(this.state.block, this.state.past, future), this.nested)
 
