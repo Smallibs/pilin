@@ -38,24 +38,21 @@ class XmlStax {
         data class Close(val name: String) : Stax
     }
 
-    private suspend fun MutableList<Stax>.direct(xml: Xml): Unit =
+    private suspend fun direct(xml: Xml): kotlin.collections.List<Stax> =
         with(this) {
             when (xml) {
-                Xml.Empty -> {}
+                Xml.Empty -> listOf()
 
                 is Xml.Seq -> {
-                    direct(xml.lhd)
-                    direct(xml.rhd)
+                    direct(xml.lhd) + direct(xml.rhd)
                 }
 
                 is Xml.Tag -> {
-                    this += listOf(Stax.Open(xml.name))
-                    direct(xml.content)
-                    this += Stax.Close(xml.name)
+                    listOf(Stax.Open(xml.name)) + direct(xml.content) + Stax.Close(xml.name)
                 }
 
                 is Xml.Text -> {
-                    this += listOf(Stax.Text(xml.text))
+                    listOf(Stax.Text(xml.text))
                 }
             }
         }
@@ -115,7 +112,7 @@ class XmlStax {
     fun direct() {
         val xml = Xml.Tag("A", Xml.Seq(Xml.Text("B"), Xml.Tag("C", Xml.Empty)))
 
-        runBlocking { mutableListOf<Stax>().direct(xml) }
+        return runBlocking { direct(xml) }
     }
 
     @Benchmark
@@ -123,7 +120,7 @@ class XmlStax {
         val xml = Xml.Tag("A", Xml.Seq(Xml.Text("B"), Xml.Tag("C", Xml.Empty)))
         val monad = Writer.OverMonoid<List<Stax>>(List.monoid())
 
-        runBlocking { monad.executeWithWriter(xml).run.fold { it.second } }
+        return runBlocking { monad.executeWithWriter(xml).run.fold { it.second } }
     }
 
     @Benchmark
@@ -131,6 +128,6 @@ class XmlStax {
         val xml = Xml.Tag("A", Xml.Seq(Xml.Text("B"), Xml.Tag("C", Xml.Empty)))
         val monad = Writer.OverMonoid<List<Stax>>(List.monoid())
 
-        runBlocking { monad.executeWithWriterAndDo(xml).run.fold { it.second } }
+        return runBlocking { monad.executeWithWriterAndDo(xml).run.fold { it.second } }
     }
 }

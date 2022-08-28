@@ -86,7 +86,7 @@ class TemplateReader {
     fun direct() {
         val template = Template.Seq(Template.Const("Hello, "), Template.Var("world"))
 
-        runBlocking { mapOf("world" to "World!").direct(template) }
+        return runBlocking { mapOf("world" to "World!").direct(template) }
     }
 
     @Benchmark
@@ -94,7 +94,7 @@ class TemplateReader {
         val template = Template.Seq(Template.Const("Hello, "), Template.Var("world"))
         val reader = Reader.Over<Map<String, String>>()
 
-        runBlocking { reader.withReader(template).invoke(mapOf("world" to "World!")).fold { it } }
+        return runBlocking { reader.withReader(template).invoke(mapOf("world" to "World!")) }
     }
 
     @Benchmark
@@ -102,6 +102,6 @@ class TemplateReader {
         val template = Template.Seq(Template.Const("Hello, "), Template.Var("world"))
         val reader = Reader.Over<Map<String, String>>()
 
-        runBlocking { reader.withReaderAndDo(template).invoke(mapOf("world" to "World!")).fold { it } }
+        return runBlocking { reader.withReaderAndDo(template).invoke(mapOf("world" to "World!")) }
     }
 }

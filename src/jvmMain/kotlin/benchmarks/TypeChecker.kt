@@ -149,20 +149,20 @@ class TypeChecker {
 
     @Benchmark
     fun direct() {
-        runBlocking { mapOf<String, Type>().direct(expr) }
+        return runBlocking { mapOf<String, Type>().direct(expr) }
     }
 
     @Benchmark
     fun withState() {
         val state = State.Over<Map<String, Type>>()
 
-        runBlocking { state.withState(expr)(gamma).fold { it.first } }
+        return runBlocking { state.withState(expr)(gamma).fold { it.first } }
     }
 
     @Benchmark
     fun withStateAndDo() {
         val state = State.Over<Map<String, Type>>()
 
-        runBlocking { state.typeCheckWithStateAndComprehension(expr)(gamma).fold { it.first } }
+        return runBlocking { state.typeCheckWithStateAndComprehension(expr)(gamma).fold { it.first } }
     }
 }

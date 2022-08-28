@@ -257,25 +257,25 @@ Finally, after the execution `traces` has the following value: `listOf("readStri
 ## Reader 
 
 ```
-TemplateReader.direct           avgt   15     322.898 ±     6.692  ns/op
-TemplateReader.withReader       avgt   15     974.904 ±    54.416  ns/op
-TemplateReader.withReaderAndDo  avgt   15   24421.818 ±   755.463  ns/op
+TemplateReader.direct           avgt   15     308.042 ±    10.056  ns/op
+TemplateReader.withReader       avgt   15     909.945 ±    22.709  ns/op
+TemplateReader.withReaderAndDo  avgt   15   24550.097 ±   666.435  ns/op
 ```
 
 ## Writer
 
 ```
-XmlStax.direct                  avgt   15     453.769 ±    50.109  ns/op
-XmlStax.withWriter              avgt   15    3581.531 ±   666.286  ns/op
-XmlStax.withWriterAndDo         avgt   15  438827.914 ± 23172.177  ns/op
+XmlStax.direct                  avgt   15     641.673 ±    13.577  ns/op
+XmlStax.withWriter              avgt   15    2758.147 ±    52.250  ns/op
+XmlStax.withWriterAndDo         avgt   15  423158.168 ± 11917.676  ns/op
 ```
 
 ## State
 
 ```
-TypeChecker.direct              avgt   15     251.009 ±     6.700  ns/op
-TypeChecker.withState           avgt   15    1679.065 ±    36.026  ns/op
-TypeChecker.withStateAndDo      avgt   15   22786.035 ± 14601.441  ns/op
+TypeChecker.direct              avgt   15     283.805 ±     8.185  ns/op
+TypeChecker.withState           avgt   15    1844.595 ±   270.471  ns/op
+TypeChecker.withStateAndDo      avgt   15   13109.024 ±   312.790  ns/op
 ```
 
 # License
