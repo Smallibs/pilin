@@ -1,6 +1,3 @@
-import jdk.vm.ci.sparc.SPARC.d8
-import kotlinx.benchmark.gradle.benchmarkBuildDir
-
 plugins {
     kotlin("multiplatform") version "1.7.10"
     kotlin("plugin.allopen") version "1.7.10"

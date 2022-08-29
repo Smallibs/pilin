@@ -6,4 +6,4 @@ import kotlinx.coroutines.asDeferred
 import kotlinx.coroutines.promise
 
 @OptIn(DelicateCoroutinesApi::class)
-actual fun <A> runTest(r: suspend () -> A): dynamic = GlobalScope.promise { r() }
+actual fun <A> runTest(r: suspend () -> A): A = GlobalScope.promise { r() } as A
