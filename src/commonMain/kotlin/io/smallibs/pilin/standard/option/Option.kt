@@ -5,9 +5,9 @@ import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 import io.smallibs.pilin.type.Supplier
 
-sealed class Option<out A> : App<Option.OptionK, A> {
-    object None : Option<Nothing>()
-    data class Some<out A>(val value: A) : Option<A>()
+sealed interface Option<out A> : App<Option.OptionK, A> {
+    data class Some<out A>(val value: A) : Option<A>
+    object None : Option<Nothing>
 
     // This code can be automatically generated
     object OptionK {

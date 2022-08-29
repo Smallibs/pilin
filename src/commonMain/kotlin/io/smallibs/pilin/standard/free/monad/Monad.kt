@@ -18,7 +18,7 @@ object Monad {
         override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<FreeK<F>, A>, App<FreeK<F>, B>> = functor.map(f)
 
         override suspend fun <A, B> bind(f: Fun<A, App<FreeK<F>, B>>): Fun<App<FreeK<F>, A>, App<FreeK<F>, B>> = { ma ->
-            ma.fold({ f(it) },{ Free.Bind(inner.map(bind(f))(it)) })
+            ma.fold(f) { Free.Bind(inner.map(bind(f))(it)) }
         }
     }
 

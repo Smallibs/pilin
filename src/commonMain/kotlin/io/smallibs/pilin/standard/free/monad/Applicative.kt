@@ -17,7 +17,7 @@ object Applicative {
         override suspend fun <A, B> apply(mf: App<FreeK<F>, Fun<A, B>>): Fun<App<FreeK<F>, A>, App<FreeK<F>, B>> =
             { ma ->
                 mf.fold({ f -> map(f)(ma) }, {
-                    Bind(inner.map() { f: App<FreeK<F>, Fun<A, B>> -> apply(f)(ma) }(it))
+                    Bind(inner.map { f: App<FreeK<F>, Fun<A, B>> -> apply(f)(ma) }(it))
                 })
             }
 
