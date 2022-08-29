@@ -1,8 +1,9 @@
+import jdk.vm.ci.sparc.SPARC.d8
 import kotlinx.benchmark.gradle.benchmarkBuildDir
 
 plugins {
     kotlin("multiplatform") version "1.7.10"
-    kotlin("plugin.allopen") version "1.7.0"
+    kotlin("plugin.allopen") version "1.7.10"
     id("org.jetbrains.kotlinx.benchmark") version "0.4.4"
 }
 
@@ -97,7 +98,7 @@ benchmark {
     }
     targets {
         register("js")
-        // register("jvm")
-        // register("native")
+        register("jvm")
+        register("native")
     }
 }
