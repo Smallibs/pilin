@@ -272,7 +272,6 @@ XmlStax.withWriterAndDo         thrpt    5  114.743 ± 42.170  ops/ms
 ## JVM
 
 ```
-jvm summary:
 TemplateReader.direct           thrpt   15  16111.012 ± 5830.206  ops/s
 TemplateReader.withReader       thrpt   15   7008.419 ± 1213.150  ops/s
 TemplateReader.withReaderAndDo  thrpt   15   2356.006 ±  325.577  ops/s
