@@ -15,7 +15,7 @@ programming constructions like:
 - ProFunctor,
 - Functor,
 - Applicative,
-- Selective,
+- Selective and
 - Monad
 
 Some incarnations are available like:
@@ -28,6 +28,7 @@ Some incarnations are available like:
 - Reader,
 - Writer,
 - State,
+- Free and
 - Freer.
 
 Since Kotlin has colored functions, the design has been done with only suspended functions. In this approach `suspend`

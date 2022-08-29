@@ -22,15 +22,17 @@ sealed interface Free<F, A> : App<Free.FreeK<F>, A> {
         }
     }
 
-    class OverFunctor<F>(val inner: Functor_Core<F>, val api: Monad_API<FreeK<F>> = Monad.monad(inner)) :
+    open class OverFunctor<F>(val inner: Functor_Core<F>, val api: Monad_API<FreeK<F>> = Monad.monad(inner)) :
         Monad_API<FreeK<F>> by api {
+
+        suspend fun <A> perform(f: App<F, A>): App<FreeK<F>, A> =
+            Bind(inner.map<A, App<FreeK<F>, A>> { Return(it) }(f))
 
         suspend fun <A> run(f: Fun<App<F, A>, A>): Fun<App<FreeK<F>, A>, A> =
             { ma -> ma.fold({ it }, { f(inner.map(run(f))(it)) }) }
 
-        suspend fun <A, G> Monad_API<G>.run(transformer: Transformer<F, G>): Fun<App<FreeK<F>, A>, App<G, A>> = { ma ->
-            ma.fold({ this.returns(it) }) { this.bind(this.run<A, G>(transformer))(transformer.transform(it)) }
-        }
+        suspend fun <A, G> Monad_API<G>.run(transformer: Transformer<F, G>): Fun<App<FreeK<F>, A>, App<G, A>> =
+            { ma -> ma.fold({ this.returns(it) }) { bind(run<A, G>(transformer))(transformer.transform(it)) } }
 
         fun functor() = Functor.functor(inner)
         fun applicative() = Applicative.applicative<F>(inner)
