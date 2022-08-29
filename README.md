@@ -272,16 +272,16 @@ XmlStax.withWriterAndDo         thrpt    5  114.743 ± 42.170  ops/ms
 ## JVM
 
 ```
-Benchmark                        Mode  Cnt    Score    Error   Units
-TemplateReader.direct           thrpt   15  16111.012 ± 5830.206  ops/s
-TemplateReader.withReader       thrpt   15   7008.419 ± 1213.150  ops/s
-TemplateReader.withReaderAndDo  thrpt   15   2356.006 ±  325.577  ops/s
-TypeChecker.direct              thrpt   15  16719.615 ± 4216.153  ops/s
-TypeChecker.withState           thrpt   15   7041.402 ± 1049.850  ops/s
-TypeChecker.withStateAndDo      thrpt   15   3267.792 ±  440.336  ops/s
-XmlStax.direct                  thrpt   15  10781.815 ± 3212.633  ops/s
-XmlStax.withWriter              thrpt   15   4707.673 ±  820.713  ops/s
-XmlStax.withWriterAndDo         thrpt   15    685.249 ±   79.194  ops/s
+Benchmark                        Mode  Cnt      Score      Error  Units
+TemplateReader.direct           thrpt   15  13248.580 ± 4356.346  ops/s
+TemplateReader.withReader       thrpt   15   6376.542 ± 1985.164  ops/s
+TemplateReader.withReaderAndDo  thrpt   15   1838.698 ±  498.043  ops/s
+TypeChecker.direct              thrpt   15  11593.397 ± 4859.256  ops/s
+TypeChecker.withState           thrpt   15   5787.376 ± 1239.772  ops/s
+TypeChecker.withStateAndDo      thrpt   15   3211.399 ±  431.180  ops/s
+XmlStax.direct                  thrpt   15  13095.336 ± 4204.017  ops/s
+XmlStax.withWriter              thrpt   15   4665.053 ±  906.710  ops/s
+XmlStax.withWriterAndDo         thrpt   15    596.576 ±   89.863  ops/s
 ```
 
 ## Native
