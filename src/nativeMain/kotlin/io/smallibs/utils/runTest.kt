@@ -1,4 +1,4 @@
-package io.smallibs
+package io.smallibs.utils
 
 import kotlinx.coroutines.runBlocking
 

@@ -254,28 +254,49 @@ Finally, after the execution `traces` has the following value: `listOf("readStri
 
 # Benchmarks
 
-## Reader 
+## JS 
 
 ```
-TemplateReader.direct           avgt   15     308.042 ±    10.056  ns/op
-TemplateReader.withReader       avgt   15     909.945 ±    22.709  ns/op
-TemplateReader.withReaderAndDo  avgt   15   24550.097 ±   666.435  ns/op
+Benchmark                        Mode  Cnt    Score    Error   Units
+TemplateReader.direct           thrpt    5  122.393 ± 61.673  ops/ms
+TemplateReader.withReader       thrpt    5   83.729 ± 27.619  ops/ms
+TemplateReader.withReaderAndDo  thrpt    5  103.398 ± 29.322  ops/ms
+TypeChecker.direct              thrpt    5  162.215 ± 12.731  ops/ms
+TypeChecker.withState           thrpt    5  107.348 ± 51.764  ops/ms
+TypeChecker.withStateAndDo      thrpt    5  118.577 ± 42.568  ops/ms
+XmlStax.direct                  thrpt    5  122.891 ± 39.926  ops/ms
+XmlStax.withWriter              thrpt    5  121.800 ± 43.687  ops/ms
+XmlStax.withWriterAndDo         thrpt    5  114.743 ± 42.170  ops/ms
 ```
 
-## Writer
+## JVM
 
 ```
-XmlStax.direct                  avgt   15     641.673 ±    13.577  ns/op
-XmlStax.withWriter              avgt   15    2758.147 ±    52.250  ns/op
-XmlStax.withWriterAndDo         avgt   15  423158.168 ± 11917.676  ns/op
+jvm summary:
+TemplateReader.direct           thrpt   15  16111.012 ± 5830.206  ops/s
+TemplateReader.withReader       thrpt   15   7008.419 ± 1213.150  ops/s
+TemplateReader.withReaderAndDo  thrpt   15   2356.006 ±  325.577  ops/s
+TypeChecker.direct              thrpt   15  16719.615 ± 4216.153  ops/s
+TypeChecker.withState           thrpt   15   7041.402 ± 1049.850  ops/s
+TypeChecker.withStateAndDo      thrpt   15   3267.792 ±  440.336  ops/s
+XmlStax.direct                  thrpt   15  10781.815 ± 3212.633  ops/s
+XmlStax.withWriter              thrpt   15   4707.673 ±  820.713  ops/s
+XmlStax.withWriterAndDo         thrpt   15    685.249 ±   79.194  ops/s
 ```
 
-## State
+## Native
 
 ```
-TypeChecker.direct              avgt   15     283.805 ±     8.185  ns/op
-TypeChecker.withState           avgt   15    1844.595 ±   270.471  ns/op
-TypeChecker.withStateAndDo      avgt   15   13109.024 ±   312.790  ns/op
+Benchmark                        Mode  Cnt    Score     Error   Units
+TemplateReader.direct           thrpt    5  133.738 ±  26.185  ops/ms
+TemplateReader.withReader       thrpt    5   44.066 ±   2.131  ops/ms
+TemplateReader.withReaderAndDo  thrpt    5    5.541 ±   0.070  ops/ms
+TypeChecker.direct              thrpt    5  167.752 ± 251.000  ops/ms
+TypeChecker.withState           thrpt    5   25.841 ±   5.542  ops/ms
+TypeChecker.withStateAndDo      thrpt    5    7.608 ±   3.433  ops/ms
+XmlStax.direct                  thrpt    5   97.560 ±  13.206  ops/ms
+XmlStax.withWriter              thrpt    5  271.000 ±   5.375  ops/ms
+XmlStax.withWriterAndDo         thrpt    5    0.582 ±   0.238  ops/ms
 ```
 
 # License

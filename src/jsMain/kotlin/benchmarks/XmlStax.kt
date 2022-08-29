@@ -6,19 +6,12 @@ import io.smallibs.pilin.standard.writer.Writer
 import io.smallibs.pilin.standard.writer.Writer.WriterK
 import io.smallibs.pilin.standard.writer.Writer.WriterK.Companion.run
 import io.smallibs.pilin.type.App
+import io.smallibs.utils.runTest
 import kotlinx.benchmark.Benchmark
-import kotlinx.coroutines.runBlocking
-import org.openjdk.jmh.annotations.Fork
-import org.openjdk.jmh.annotations.Measurement
-import org.openjdk.jmh.annotations.Scope
-import org.openjdk.jmh.annotations.State
-import org.openjdk.jmh.annotations.Warmup
-import java.util.concurrent.TimeUnit
+import kotlinx.benchmark.Scope
+import kotlinx.benchmark.State
 
 @State(Scope.Benchmark)
-@Fork(1)
-@Warmup(iterations = 20, time = 1, timeUnit = TimeUnit.SECONDS)
-@Measurement(iterations = 1, time = 1, timeUnit = TimeUnit.SECONDS)
 class XmlStax {
 
     private sealed interface Xml {
@@ -107,7 +100,7 @@ class XmlStax {
     fun direct() {
         val xml = Xml.Tag("A", Xml.Seq(Xml.Text("B"), Xml.Tag("C", Xml.Empty)))
 
-        return runBlocking { direct(xml) }
+        return runTest { direct(xml) }
     }
 
     @Benchmark
@@ -115,7 +108,7 @@ class XmlStax {
         val xml = Xml.Tag("A", Xml.Seq(Xml.Text("B"), Xml.Tag("C", Xml.Empty)))
         val monad = Writer.OverMonoid<List<Stax>>(List.monoid())
 
-        return runBlocking { monad.executeWithWriter(xml).run.fold { it.second } }
+        return runTest { monad.executeWithWriter(xml).run.fold { it.second } }
     }
 
     @Benchmark
@@ -123,6 +116,6 @@ class XmlStax {
         val xml = Xml.Tag("A", Xml.Seq(Xml.Text("B"), Xml.Tag("C", Xml.Empty)))
         val monad = Writer.OverMonoid<List<Stax>>(List.monoid())
 
-        return runBlocking { monad.executeWithWriterAndDo(xml).run.fold { it.second } }
+        return runTest { monad.executeWithWriterAndDo(xml).run.fold { it.second } }
     }
 }

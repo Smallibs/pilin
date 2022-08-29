@@ -7,18 +7,13 @@ import io.smallibs.pilin.standard.state.State
 import io.smallibs.pilin.standard.state.State.StateK
 import io.smallibs.pilin.standard.state.State.StateK.Companion.invoke
 import io.smallibs.pilin.type.App
+import io.smallibs.utils.runTest
 import kotlinx.benchmark.Benchmark
-import kotlinx.coroutines.runBlocking
-import org.openjdk.jmh.annotations.Fork
-import org.openjdk.jmh.annotations.Measurement
-import org.openjdk.jmh.annotations.Scope
-import org.openjdk.jmh.annotations.Warmup
-import java.util.concurrent.TimeUnit
+import kotlinx.benchmark.BenchmarkMode
+import kotlinx.benchmark.Mode
+import kotlinx.benchmark.Scope
 
-@org.openjdk.jmh.annotations.State(Scope.Benchmark)
-@Fork(1)
-@Warmup(iterations = 20, time = 1, timeUnit = TimeUnit.SECONDS)
-@Measurement(iterations = 1, time = 1, timeUnit = TimeUnit.SECONDS)
+@kotlinx.benchmark.State(Scope.Benchmark)
 class TypeChecker {
 
     sealed interface Literal {
@@ -144,20 +139,20 @@ class TypeChecker {
 
     @Benchmark
     fun direct() {
-        return runBlocking { mapOf<String, Type>().direct(expr) }
+        return runTest { mapOf<String, Type>().direct(expr) }
     }
 
     @Benchmark
     fun withState() {
         val state = State.Over<Map<String, Type>>()
 
-        return runBlocking { state.withState(expr)(gamma).fold { it.first } }
+        return runTest { state.withState(expr)(gamma).fold { it.first } }
     }
 
     @Benchmark
     fun withStateAndDo() {
         val state = State.Over<Map<String, Type>>()
 
-        return runBlocking { state.typeCheckWithStateAndComprehension(expr)(gamma).fold { it.first } }
+        return runTest { state.typeCheckWithStateAndComprehension(expr)(gamma).fold { it.first } }
     }
 }

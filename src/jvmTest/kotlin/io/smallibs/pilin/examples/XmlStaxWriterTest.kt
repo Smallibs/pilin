@@ -6,7 +6,7 @@ import io.smallibs.pilin.standard.writer.Writer
 import io.smallibs.pilin.standard.writer.Writer.WriterK
 import io.smallibs.pilin.standard.writer.Writer.WriterK.Companion.run
 import io.smallibs.pilin.type.App
-import io.smallibs.runTest
+import io.smallibs.utils.runTest
 
 import org.junit.Test
 import kotlin.test.assertEquals

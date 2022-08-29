@@ -10,7 +10,7 @@ import io.smallibs.pilin.standard.identity.Identity.Companion.id
 import io.smallibs.pilin.standard.option.Option
 import io.smallibs.pilin.standard.option.Option.Companion.none
 import io.smallibs.pilin.standard.option.Option.Companion.some
-import io.smallibs.runTest
+import io.smallibs.utils.runTest
 import kotlinx.coroutines.delay
 
 import org.junit.Test

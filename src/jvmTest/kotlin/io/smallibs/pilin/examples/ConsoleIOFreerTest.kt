@@ -6,7 +6,7 @@ import io.smallibs.pilin.examples.ConsoleIOFreerTest.ConsoleIO.ConsoleIOK.fix
 import io.smallibs.pilin.standard.freer.monad.Freer
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
-import io.smallibs.runTest
+import io.smallibs.utils.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

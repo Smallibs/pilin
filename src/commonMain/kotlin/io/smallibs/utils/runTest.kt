@@ -1,3 +1,3 @@
-package io.smallibs
+package io.smallibs.utils
 
 expect fun <A> runTest(r:suspend () -> A) : A

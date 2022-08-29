@@ -10,7 +10,7 @@ import io.smallibs.pilin.standard.support.Functions.str
 import io.smallibs.pilin.standard.support.Generators.identity
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
-import io.smallibs.runTest
+import io.smallibs.utils.runTest
 
 import org.junit.Test
 import org.quicktheories.WithQuickTheories

@@ -4,7 +4,7 @@ import io.smallibs.pilin.standard.identity.Identity.IdentityK.fold
 import io.smallibs.pilin.standard.reader.Reader
 import io.smallibs.pilin.standard.reader.Reader.ReaderK.Companion.invoke
 import io.smallibs.pilin.type.App
-import io.smallibs.runTest
+import io.smallibs.utils.runTest
 
 import org.junit.Test
 import kotlin.test.assertEquals

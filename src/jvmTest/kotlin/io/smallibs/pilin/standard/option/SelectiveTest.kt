@@ -5,7 +5,7 @@ import io.smallibs.pilin.laws.Selective.`x select (pure id) = fold(id)(id) map x
 import io.smallibs.pilin.standard.option.Option.Companion.selective
 import io.smallibs.pilin.standard.support.Functions.str
 import io.smallibs.pilin.standard.support.Generators.either
-import io.smallibs.runTest
+import io.smallibs.utils.runTest
 
 import org.junit.Test
 import org.quicktheories.WithQuickTheories

@@ -3,19 +3,14 @@ package benchmarks
 import io.smallibs.pilin.standard.reader.Reader
 import io.smallibs.pilin.standard.reader.Reader.ReaderK.Companion.invoke
 import io.smallibs.pilin.type.App
+import io.smallibs.utils.runTest
 import kotlinx.benchmark.Benchmark
-import kotlinx.coroutines.runBlocking
-import org.openjdk.jmh.annotations.Fork
-import org.openjdk.jmh.annotations.Measurement
-import org.openjdk.jmh.annotations.Scope
-import org.openjdk.jmh.annotations.State
-import org.openjdk.jmh.annotations.Warmup
-import java.util.concurrent.TimeUnit
+import kotlinx.benchmark.BenchmarkMode
+import kotlinx.benchmark.Mode
+import kotlinx.benchmark.Scope
+import kotlinx.benchmark.State
 
 @State(Scope.Benchmark)
-@Fork(1)
-@Warmup(iterations = 20, time = 1, timeUnit = TimeUnit.SECONDS)
-@Measurement(iterations = 1, time = 1, timeUnit = TimeUnit.SECONDS)
 class TemplateReader {
 
     private sealed interface Template {
@@ -80,7 +75,7 @@ class TemplateReader {
     fun direct() {
         val template = Template.Seq(Template.Const("Hello, "), Template.Var("world"))
 
-        return runBlocking { mapOf("world" to "World!").direct(template) }
+        return runTest { mapOf("world" to "World!").direct(template) }
     }
 
     @Benchmark
@@ -88,7 +83,7 @@ class TemplateReader {
         val template = Template.Seq(Template.Const("Hello, "), Template.Var("world"))
         val reader = Reader.Over<Map<String, String>>()
 
-        return runBlocking { reader.withReader(template).invoke(mapOf("world" to "World!")) }
+        return runTest { reader.withReader(template).invoke(mapOf("world" to "World!")) }
     }
 
     @Benchmark
@@ -96,6 +91,6 @@ class TemplateReader {
         val template = Template.Seq(Template.Const("Hello, "), Template.Var("world"))
         val reader = Reader.Over<Map<String, String>>()
 
-        return runBlocking { reader.withReaderAndDo(template).invoke(mapOf("world" to "World!")) }
+        return runTest { reader.withReaderAndDo(template).invoke(mapOf("world" to "World!")) }
     }
 }

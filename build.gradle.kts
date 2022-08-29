@@ -1,3 +1,5 @@
+import kotlinx.benchmark.gradle.benchmarkBuildDir
+
 plugins {
     kotlin("multiplatform") version "1.7.10"
     kotlin("plugin.allopen") version "1.7.0"
@@ -87,12 +89,15 @@ benchmark {
         named("main") {
             iterations = 5 // number of iterations
             iterationTime = 300
-            iterationTimeUnit = "ms"
+            iterationTimeUnit = "ns"
+            warmups = 20
             advanced("jvmForks", 3)
             advanced("jsUseBridge", true)
         }
     }
     targets {
-        register("jvm")
+        register("js")
+        // register("jvm")
+        // register("native")
     }
 }
