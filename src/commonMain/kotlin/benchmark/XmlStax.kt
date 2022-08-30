@@ -1,4 +1,4 @@
-package benchmarks
+package benchmark
 
 import io.smallibs.pilin.standard.identity.Identity.IdentityK.fold
 import io.smallibs.pilin.standard.list.List
@@ -6,35 +6,28 @@ import io.smallibs.pilin.standard.writer.Writer
 import io.smallibs.pilin.standard.writer.Writer.WriterK
 import io.smallibs.pilin.standard.writer.Writer.WriterK.Companion.run
 import io.smallibs.pilin.type.App
+import io.smallibs.utils.unsafeSyncRun
 import kotlinx.benchmark.Benchmark
-import kotlinx.coroutines.runBlocking
-import org.openjdk.jmh.annotations.Fork
-import org.openjdk.jmh.annotations.Measurement
-import org.openjdk.jmh.annotations.Scope
-import org.openjdk.jmh.annotations.State
-import org.openjdk.jmh.annotations.Warmup
-import java.util.concurrent.TimeUnit
+import kotlinx.benchmark.Scope
+import kotlinx.benchmark.State
 
 @State(Scope.Benchmark)
-@Fork(1)
-@Warmup(iterations = 20, time = 1, timeUnit = TimeUnit.SECONDS)
-@Measurement(iterations = 1, time = 1, timeUnit = TimeUnit.SECONDS)
 class XmlStax {
 
-    private sealed interface Xml {
+    sealed interface Xml {
         data class Tag(val name: String, val content: Xml) : Xml
         data class Text(val text: String) : Xml
         data class Seq(val lhd: Xml, val rhd: Xml) : Xml
         object Empty : Xml
     }
 
-    private sealed interface Stax {
+    sealed interface Stax {
         data class Open(val name: String) : Stax
         data class Text(val text: String) : Stax
         data class Close(val name: String) : Stax
     }
 
-    private suspend fun direct(xml: Xml): kotlin.collections.List<Stax> = with(this) {
+    suspend fun direct(xml: Xml): kotlin.collections.List<Stax> = with(this) {
         when (xml) {
             Xml.Empty -> listOf()
 
@@ -52,7 +45,7 @@ class XmlStax {
         }
     }
 
-    private suspend fun <F> Writer.OverMonad<F, List<Stax>>.executeWithWriter(xml: Xml): App<WriterK<F, List<Stax>>, Unit> =
+    suspend fun <F> Writer.OverMonad<F, List<Stax>>.executeWithWriter(xml: Xml): App<WriterK<F, List<Stax>>, Unit> =
         with(this.infix) {
             when (xml) {
                 Xml.Empty -> {
@@ -79,7 +72,7 @@ class XmlStax {
             }
         }
 
-    private suspend fun <F> Writer.OverMonad<F, List<Stax>>.executeWithWriterAndDo(xml: Xml): App<WriterK<F, List<Stax>>, Unit> =
+    suspend fun <F> Writer.OverMonad<F, List<Stax>>.executeWithWriterAndDo(xml: Xml): App<WriterK<F, List<Stax>>, Unit> =
         `do` {
             when (xml) {
                 Xml.Empty -> {
@@ -103,26 +96,27 @@ class XmlStax {
             }
         }
 
+    companion object {
+        val xml = Xml.Tag("A", Xml.Seq(Xml.Text("B"), Xml.Tag("C", Xml.Empty)))
+    }
+
     @Benchmark
     fun direct() {
-        val xml = Xml.Tag("A", Xml.Seq(Xml.Text("B"), Xml.Tag("C", Xml.Empty)))
-
-        return runBlocking { direct(xml) }
+        return unsafeSyncRun { direct(xml) }
     }
 
     @Benchmark
     fun withWriter() {
-        val xml = Xml.Tag("A", Xml.Seq(Xml.Text("B"), Xml.Tag("C", Xml.Empty)))
         val monad = Writer.OverMonoid<List<Stax>>(List.monoid())
 
-        return runBlocking { monad.executeWithWriter(xml).run.fold { it.second } }
+        return unsafeSyncRun { monad.executeWithWriter(xml).run.fold { it.second } }
     }
 
     @Benchmark
     fun withWriterAndDo() {
-        val xml = Xml.Tag("A", Xml.Seq(Xml.Text("B"), Xml.Tag("C", Xml.Empty)))
         val monad = Writer.OverMonoid<List<Stax>>(List.monoid())
 
-        return runBlocking { monad.executeWithWriterAndDo(xml).run.fold { it.second } }
+        return unsafeSyncRun { monad.executeWithWriterAndDo(xml).run.fold { it.second } }
     }
+
 }

@@ -6,7 +6,7 @@ import io.smallibs.pilin.standard.writer.Writer
 import io.smallibs.pilin.standard.writer.Writer.WriterK
 import io.smallibs.pilin.standard.writer.Writer.WriterK.Companion.run
 import io.smallibs.pilin.type.App
-import io.smallibs.utils.runTest
+import io.smallibs.utils.unsafeSyncRun
 
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -58,7 +58,7 @@ internal class XmlStaxWriterTest {
         val monad = Writer.OverMonoid<List<Stax>>(List.monoid())
 
         // When
-        val result = runTest { monad.execute(xml).run.fold { it.second } }
+        val result = unsafeSyncRun { monad.execute(xml).run.fold { it.second } }
 
         // Then
         val expected =

@@ -11,7 +11,7 @@ import io.smallibs.pilin.examples.ConsoleIOFreeTest.IO.tell
 import io.smallibs.pilin.standard.free.monad.Free
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
-import io.smallibs.utils.runTest
+import io.smallibs.utils.unsafeSyncRun
 import org.junit.Test
 import kotlin.test.assertEquals
 import io.smallibs.pilin.abstractions.Functor.API as Functor_API
@@ -61,7 +61,7 @@ internal class ConsoleIOFreeTest {
         // Given
         val output = mutableListOf<String>()
         // When
-        runTest {
+        unsafeSyncRun {
             val program = IO `do` {
                 val name = ask("Name").bind()
                 tell("$name Alice").bind()

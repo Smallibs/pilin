@@ -9,7 +9,7 @@ import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK
 import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.invoke
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
-import io.smallibs.utils.runTest
+import io.smallibs.utils.unsafeSyncRun
 import org.junit.Test
 
 import kotlin.test.assertEquals
@@ -84,7 +84,7 @@ class CombinedEffectTest {
         val handler = state(traces) and console(traces)
         val handled = effects(monad) with handler
 
-        runTest { (handled()).invoke { } }
+        unsafeSyncRun { (handled()).invoke { } }
 
         assertEquals(listOf("readStream(World)", "set(World)", "get()", "printString(Hello World)"), traces)
     }

@@ -10,7 +10,7 @@ import io.smallibs.pilin.standard.support.Functions.int
 import io.smallibs.pilin.standard.support.Functions.str
 import io.smallibs.pilin.standard.support.Generators.constant
 import io.smallibs.pilin.standard.support.Generators.option
-import io.smallibs.utils.runTest
+import io.smallibs.utils.unsafeSyncRun
 
 import org.junit.Test
 import org.quicktheories.WithQuickTheories
@@ -20,35 +20,35 @@ internal class ApplicativeTest : WithQuickTheories {
     @Test
     fun `map f x = apply (pure f) x`() {
         qt().forAll(/* values = */ option(integers().all())).check { a ->
-            runTest { applicative.`map f x = apply (pure f) x`(str, a) }
+            unsafeSyncRun { applicative.`map f x = apply (pure f) x`(str, a) }
         }
     }
 
     @Test
     fun `(pure id) apply v = v`() {
         qt().forAll(option(integers().all())).check { a ->
-            runTest { applicative.`(pure id) apply v = v`(a) }
+            unsafeSyncRun { applicative.`(pure id) apply v = v`(a) }
         }
     }
 
     @Test
     fun `apply (pure f) (pure x) = pure (f x)`() {
         qt().forAll(integers().all()).check { a ->
-            runTest { applicative.`apply (pure f) (pure x) = pure (f x)`(str, a) }
+            unsafeSyncRun { applicative.`apply (pure f) (pure x) = pure (f x)`(str, a) }
         }
     }
 
     @Test
     fun `apply f (pure x) = apply (pure ($ y)) f`() {
         qt().forAll(integers().all(), option(constant(str))).check { a, f ->
-            runTest { applicative.`apply f (pure x) = apply (pure ($ y)) f`(f, a) }
+            unsafeSyncRun { applicative.`apply f (pure x) = apply (pure ($ y)) f`(f, a) }
         }
     }
 
     @Test
     fun `apply f (apply g x) == apply (apply (apply (pure compose) f) g) x`() {
         qt().forAll(option(integers().all()), option(constant(int)), option(constant(str))).check { a, f, g ->
-            runTest {
+            unsafeSyncRun {
                 applicative.`apply f (apply g x) == apply (apply (apply (pure compose) f) g) x`(f, g, a)
             }
         }

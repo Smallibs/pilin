@@ -12,7 +12,7 @@ import io.smallibs.pilin.standard.state.State
 import io.smallibs.pilin.standard.state.State.StateK
 import io.smallibs.pilin.standard.state.State.StateK.Companion.invoke
 import io.smallibs.pilin.type.App
-import io.smallibs.utils.runTest
+import io.smallibs.utils.unsafeSyncRun
 
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -80,7 +80,7 @@ internal class TypeCheckerStateTest {
         val state = State.Over<Map<String, Type>>()
 
         // When
-        val type = runTest { state.typeCheck(expr)(gamma).fold { it.first } }
+        val type = unsafeSyncRun { state.typeCheck(expr)(gamma).fold { it.first } }
 
         // Then
         val expected = TArrow(integer, integer)
@@ -96,7 +96,7 @@ internal class TypeCheckerStateTest {
         val state = State.Over<Map<String, Type>>()
 
         // When
-        val type = runTest {
+        val type = unsafeSyncRun {
             state.typeCheck(expr)(gamma).fold { it.first }
         }
 

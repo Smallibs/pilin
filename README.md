@@ -259,46 +259,56 @@ Finally, after the execution `traces` has the following value: `listOf("readStri
 ## JS 
 
 ```
-Benchmark                        Mode  Cnt    Score    Error   Units
-TemplateReader.direct           thrpt    5  122.393 ± 61.673  ops/ms
-TemplateReader.withReader       thrpt    5   83.729 ± 27.619  ops/ms
-TemplateReader.withReaderAndDo  thrpt    5  103.398 ± 29.322  ops/ms
-TypeChecker.direct              thrpt    5  162.215 ± 12.731  ops/ms
-TypeChecker.withState           thrpt    5  107.348 ± 51.764  ops/ms
-TypeChecker.withStateAndDo      thrpt    5  118.577 ± 42.568  ops/ms
-XmlStax.direct                  thrpt    5  122.891 ± 39.926  ops/ms
-XmlStax.withWriter              thrpt    5  121.800 ± 43.687  ops/ms
-XmlStax.withWriterAndDo         thrpt    5  114.743 ± 42.170  ops/ms
+Benchmark                    Mode  Cnt    Score    Error   Units
+DeBruijn.direct             thrpt    5   93.090 ± 44.330  ops/ms
+DeBruijn.withState          thrpt    5  147.924 ± 10.514  ops/ms
+DeBruijn.withStateAndDo     thrpt    5  138.658 ± 24.825  ops/ms
+Template.direct             thrpt    5  144.709 ± 12.319  ops/ms
+Template.withReader         thrpt    5  134.276 ± 15.965  ops/ms
+Template.withReaderAndDo    thrpt    5  142.755 ±  7.866  ops/ms
+TypeChecker.direct          thrpt    5  123.754 ± 35.951  ops/ms
+TypeChecker.withState       thrpt    5  146.859 ±  6.975  ops/ms
+TypeChecker.withStateAndDo  thrpt    5  143.123 ± 21.215  ops/ms
+XmlStax.direct              thrpt    5  134.758 ± 24.679  ops/ms
+XmlStax.withWriter          thrpt    5  106.239 ± 33.226  ops/ms
+XmlStax.withWriterAndDo     thrpt    5  123.573 ±  7.391  ops/ms
 ```
 
 ## JVM
 
 ```
-Benchmark                        Mode  Cnt      Score      Error  Units
-TemplateReader.direct           thrpt   15  13248.580 ± 4356.346  ops/s
-TemplateReader.withReader       thrpt   15   6376.542 ± 1985.164  ops/s
-TemplateReader.withReaderAndDo  thrpt   15   1838.698 ±  498.043  ops/s
-TypeChecker.direct              thrpt   15  11593.397 ± 4859.256  ops/s
-TypeChecker.withState           thrpt   15   5787.376 ± 1239.772  ops/s
-TypeChecker.withStateAndDo      thrpt   15   3211.399 ±  431.180  ops/s
-XmlStax.direct                  thrpt   15  13095.336 ± 4204.017  ops/s
-XmlStax.withWriter              thrpt   15   4665.053 ±  906.710  ops/s
-XmlStax.withWriterAndDo         thrpt   15    596.576 ±   89.863  ops/s
+Benchmark                    Mode  Cnt      Score      Error  Units
+DeBruijn.direct             thrpt   15  15916.024 ± 4933.713  ops/s
+DeBruijn.withState          thrpt   15   6351.144 ± 1836.790  ops/s
+DeBruijn.withStateAndDo     thrpt   15   1406.086 ±  285.128  ops/s
+Template.direct             thrpt   15  15149.162 ± 5308.774  ops/s
+Template.withReader         thrpt   15   8477.618 ± 3703.451  ops/s
+Template.withReaderAndDo    thrpt   15   2400.356 ±  563.001  ops/s
+TypeChecker.direct          thrpt   15  18493.450 ± 6661.207  ops/s
+TypeChecker.withState       thrpt   15   7061.067 ± 1383.768  ops/s
+TypeChecker.withStateAndDo  thrpt   15   2832.452 ±  824.001  ops/s
+XmlStax.direct              thrpt   15  11840.118 ± 3485.043  ops/s
+XmlStax.withWriter          thrpt   15   4795.361 ± 1101.287  ops/s
+XmlStax.withWriterAndDo     thrpt   15    678.564 ±   91.876  ops/s
+
 ```
 
 ## Native
 
 ```
-Benchmark                        Mode  Cnt    Score     Error   Units
-TemplateReader.direct           thrpt    5  133.738 ±  26.185  ops/ms
-TemplateReader.withReader       thrpt    5   44.066 ±   2.131  ops/ms
-TemplateReader.withReaderAndDo  thrpt    5    5.541 ±   0.070  ops/ms
-TypeChecker.direct              thrpt    5  167.752 ± 251.000  ops/ms
-TypeChecker.withState           thrpt    5   25.841 ±   5.542  ops/ms
-TypeChecker.withStateAndDo      thrpt    5    7.608 ±   3.433  ops/ms
-XmlStax.direct                  thrpt    5   97.560 ±  13.206  ops/ms
-XmlStax.withWriter              thrpt    5  271.000 ±   5.375  ops/ms
-XmlStax.withWriterAndDo         thrpt    5    0.582 ±   0.238  ops/ms
+DeBruijn.direct             thrpt    5  194.036 ± 12.434  ops/ms
+DeBruijn.withState          thrpt    5   36.441 ±  5.962  ops/ms
+DeBruijn.withStateAndDo     thrpt    5    2.841 ±  1.186  ops/ms
+Template.direct             thrpt    5  109.927 ± 57.607  ops/ms
+Template.withReader         thrpt    5   62.429 ±  6.401  ops/ms
+Template.withReaderAndDo    thrpt    5    7.537 ±  0.547  ops/ms
+TypeChecker.direct          thrpt    5  162.467 ± 67.197  ops/ms
+TypeChecker.withState       thrpt    5   33.431 ± 11.202  ops/ms
+TypeChecker.withStateAndDo  thrpt    5    8.940 ±  4.029  ops/ms
+XmlStax.direct              thrpt    5  129.308 ±  8.491  ops/ms
+XmlStax.withWriter          thrpt    5   21.665 ±  8.632  ops/ms
+XmlStax.withWriterAndDo     thrpt    5    0.579 ±  0.205  ops/ms
+
 ```
 
 # License

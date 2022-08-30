@@ -6,7 +6,7 @@ import io.smallibs.pilin.examples.ConsoleIOFreerTest.ConsoleIO.ConsoleIOK.fix
 import io.smallibs.pilin.standard.freer.monad.Freer
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
-import io.smallibs.utils.runTest
+import io.smallibs.utils.unsafeSyncRun
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -55,7 +55,7 @@ internal class ConsoleIOFreerTest {
         val monad = Freer.Over<ConsoleIOK>()
 
         // When
-        runTest {
+        unsafeSyncRun {
             val program = with(monad.infix) {
                 monad.tell("Hello") bind {
                     monad.tell("World")
@@ -78,7 +78,7 @@ internal class ConsoleIOFreerTest {
         val monad = Freer.Over<ConsoleIOK>()
 
         // When
-        runTest {
+        unsafeSyncRun {
             val program = with(monad) {
                 `do` {
                     ask("Name").bind()

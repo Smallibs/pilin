@@ -11,7 +11,7 @@ import io.smallibs.pilin.standard.support.Functions.str
 import io.smallibs.pilin.standard.support.Generators.continuation
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
-import io.smallibs.utils.runTest
+import io.smallibs.utils.unsafeSyncRun
 
 import org.junit.Test
 import org.quicktheories.WithQuickTheories
@@ -26,7 +26,7 @@ internal class MonadTest : WithQuickTheories {
     @Test
     fun `returns a bind h = h a`() {
         qt().forAll(integers().all(), continuation<String>()).check { a, r ->
-            runTest {
+            unsafeSyncRun {
                 monad.`returns a bind h = h a`(retStr(r), a, Equatable.continuation())
             }
         }
@@ -35,7 +35,7 @@ internal class MonadTest : WithQuickTheories {
     @Test
     fun `a bind returns = a`() {
         qt().forAll(continuation(integers().all())).check { a ->
-            runTest {
+            unsafeSyncRun {
                 monad.`a bind returns = a`(a, Equatable.continuation())
             }
         }
@@ -44,7 +44,7 @@ internal class MonadTest : WithQuickTheories {
     @Test
     fun `(a bind f) bind g = a bind {x in f x bind g}`() {
         qt().forAll(continuation(integers().all()), continuation<String>(), continuation<Int>()).check { a, rf, rg ->
-                runTest {
+                unsafeSyncRun {
                     monad.`(a bind f) bind g = a bind {x in f x bind g}`(
                         retStr(rf), retInt(rg), a, Equatable.continuation()
                     )

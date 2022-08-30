@@ -11,7 +11,7 @@ import io.smallibs.pilin.standard.support.Functions.int
 import io.smallibs.pilin.standard.support.Functions.str
 import io.smallibs.pilin.standard.support.Generators.constant
 import io.smallibs.pilin.standard.support.Generators.continuation
-import io.smallibs.utils.runTest
+import io.smallibs.utils.unsafeSyncRun
 
 import org.junit.Test
 import org.quicktheories.WithQuickTheories
@@ -21,7 +21,7 @@ internal class ApplicativeTest : WithQuickTheories {
     @Test
     fun `map f x = apply (pure f) x`() {
         qt().forAll(continuation<Int>(integers().all())).check { a ->
-            runTest {
+            unsafeSyncRun {
                 applicative.`map f x = apply (pure f) x`(str, a, Equatable.continuation())
             }
         }
@@ -30,14 +30,14 @@ internal class ApplicativeTest : WithQuickTheories {
     @Test
     fun `(pure id) apply v = v`() {
         qt().forAll(continuation<Int>(integers().all())).check { a ->
-            runTest { applicative.`(pure id) apply v = v`(a, Equatable.continuation()) }
+            unsafeSyncRun { applicative.`(pure id) apply v = v`(a, Equatable.continuation()) }
         }
     }
 
     @Test
     fun `apply (pure f) (pure x) = pure (f x)`() {
         qt().forAll(integers().all()).check { a ->
-            runTest {
+            unsafeSyncRun {
                 applicative.`apply (pure f) (pure x) = pure (f x)`(str, a, Equatable.continuation())
             }
         }
@@ -46,7 +46,7 @@ internal class ApplicativeTest : WithQuickTheories {
     @Test
     fun `apply f (pure x) = apply (pure ($ y)) f`() {
         qt().forAll(integers().all(), continuation(constant(str))).check { a, f ->
-            runTest {
+            unsafeSyncRun {
                 applicative.`apply f (pure x) = apply (pure ($ y)) f`(f, a, Equatable.continuation())
             }
         }
@@ -57,7 +57,7 @@ internal class ApplicativeTest : WithQuickTheories {
         qt().forAll(
             continuation(integers().all()), continuation(constant(int)), continuation(constant(str))
         ).check { a, f, g ->
-            runTest {
+            unsafeSyncRun {
                 applicative.`apply f (apply g x) == apply (apply (apply (pure compose) f) g) x`(
                     f, g, a, Equatable.continuation()
                 )

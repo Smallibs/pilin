@@ -1,16 +1,14 @@
-package benchmarks
+package benchmark
 
-import benchmarks.TypeChecker.Type.Companion.integer
-import benchmarks.TypeChecker.Type.Companion.string
+import benchmark.TypeChecker.Type.Companion.integer
+import benchmark.TypeChecker.Type.Companion.string
 import io.smallibs.pilin.standard.identity.Identity.IdentityK.fold
 import io.smallibs.pilin.standard.state.State
 import io.smallibs.pilin.standard.state.State.StateK
 import io.smallibs.pilin.standard.state.State.StateK.Companion.invoke
 import io.smallibs.pilin.type.App
-import io.smallibs.utils.runTest
+import io.smallibs.utils.unsafeSyncRun
 import kotlinx.benchmark.Benchmark
-import kotlinx.benchmark.BenchmarkMode
-import kotlinx.benchmark.Mode
 import kotlinx.benchmark.Scope
 
 @kotlinx.benchmark.State(Scope.Benchmark)
@@ -39,7 +37,7 @@ class TypeChecker {
         }
     }
 
-    private suspend fun Map<String, Type>.direct(expr: Expr): Type? = when (expr) {
+    suspend fun Map<String, Type>.direct(expr: Expr): Type? = when (expr) {
         is Expr.EApply -> {
             when (val abstraction = direct(expr.abstraction)) {
                 is Type.TArrow -> {
@@ -68,7 +66,7 @@ class TypeChecker {
     }
 
 
-    private suspend fun <F> State.OverMonad<F, Map<String, Type>>.withState(expr: Expr): App<StateK<F, Map<String, Type>>, Type?> =
+    suspend fun <F> State.OverMonad<F, Map<String, Type>>.withState(expr: Expr): App<StateK<F, Map<String, Type>>, Type?> =
         with(this.infix) {
             when (expr) {
                 is Expr.EApply -> {
@@ -102,7 +100,7 @@ class TypeChecker {
             }
         }
 
-    private suspend fun <F> State.OverMonad<F, Map<String, Type>>.typeCheckWithStateAndComprehension(expr: Expr): App<StateK<F, Map<String, Type>>, Type?> =
+    suspend fun <F> State.OverMonad<F, Map<String, Type>>.typeCheckWithStateAndComprehension(expr: Expr): App<StateK<F, Map<String, Type>>, Type?> =
         `do` {
             when (expr) {
                 is Expr.EApply -> {
@@ -139,20 +137,19 @@ class TypeChecker {
 
     @Benchmark
     fun direct() {
-        return runTest { mapOf<String, Type>().direct(expr) }
+        return unsafeSyncRun { mapOf<String, Type>().direct(expr) }
     }
 
     @Benchmark
     fun withState() {
-        val state = State.Over<Map<String, Type>>()
-
-        return runTest { state.withState(expr)(gamma).fold { it.first } }
+        return unsafeSyncRun { State.Over<Map<String, Type>>().withState(expr)(gamma).fold { it.first } }
     }
 
     @Benchmark
     fun withStateAndDo() {
-        val state = State.Over<Map<String, Type>>()
-
-        return runTest { state.typeCheckWithStateAndComprehension(expr)(gamma).fold { it.first } }
+        return unsafeSyncRun {
+            State.Over<Map<String, Type>>().typeCheckWithStateAndComprehension(expr)(gamma).fold { it.first }
+        }
     }
+
 }

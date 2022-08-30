@@ -5,7 +5,7 @@ import io.smallibs.pilin.standard.state.State
 import io.smallibs.pilin.standard.state.State.StateK
 import io.smallibs.pilin.standard.state.State.StateK.Companion.invoke
 import io.smallibs.pilin.type.App
-import io.smallibs.utils.runTest
+import io.smallibs.utils.unsafeSyncRun
 
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -57,7 +57,7 @@ internal class DeBruijnTermStateTest {
         val state = State.Over<List<String>>()
 
         // When
-        val result = runTest { state.execute(term)(listOf()).fold { it.first } }
+        val result = unsafeSyncRun { state.execute(term)(listOf()).fold { it.first } }
 
         // Then
         val expected = DBTerm.App(DBTerm.Abs(DBTerm.Var(0)), DBTerm.Ident("y"))

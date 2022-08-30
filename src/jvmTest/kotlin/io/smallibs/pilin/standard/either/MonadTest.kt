@@ -8,7 +8,7 @@ import io.smallibs.pilin.standard.support.Functions.retInt
 import io.smallibs.pilin.standard.support.Functions.retStr
 import io.smallibs.pilin.standard.support.Generators.constant
 import io.smallibs.pilin.standard.support.Generators.either
-import io.smallibs.utils.runTest
+import io.smallibs.utils.unsafeSyncRun
 
 import org.junit.Test
 import org.quicktheories.WithQuickTheories
@@ -18,7 +18,7 @@ internal class MonadTest : WithQuickTheories {
     @Test
     fun `returns a bind h = h a`() {
         qt().forAll(integers().all(), either<Unit, String>(Unit)).check { a, r ->
-            runTest {
+            unsafeSyncRun {
                 monad<Unit>().`returns a bind h = h a`(retStr(r), a)
             }
         }
@@ -27,7 +27,7 @@ internal class MonadTest : WithQuickTheories {
     @Test
     fun `a bind returns = a`() {
         qt().forAll(either<Unit, Int>(constant(Unit))(integers().all())).check { a ->
-            runTest {
+            unsafeSyncRun {
                 monad<Unit>().`a bind returns = a`(a)
             }
         }
@@ -38,7 +38,7 @@ internal class MonadTest : WithQuickTheories {
         qt().forAll(
             either<Unit, Int>(constant(Unit))(integers().all()), either<Unit, String>(Unit), either<Unit, Int>(Unit)
         ).check { a, rf, rg ->
-                runTest {
+                unsafeSyncRun {
                     monad<Unit>().`(a bind f) bind g = a bind {x in f x bind g}`(retStr(rf), retInt(rg), a)
                 }
             }

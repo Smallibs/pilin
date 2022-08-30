@@ -8,7 +8,7 @@ import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK
 import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.invoke
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
-import io.smallibs.utils.runTest
+import io.smallibs.utils.unsafeSyncRun
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -48,7 +48,7 @@ class SingleEffectTest {
         val traces = mutableListOf<String>()
         val handled = effects(monad) with console(traces)
 
-        runTest { handled().invoke { } }
+        unsafeSyncRun { handled().invoke { } }
 
         assertEquals(listOf("readStream(World)", "printString(Hello World)"), traces)
     }
