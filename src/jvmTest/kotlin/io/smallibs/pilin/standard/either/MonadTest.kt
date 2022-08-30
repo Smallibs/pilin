@@ -8,7 +8,7 @@ import io.smallibs.pilin.standard.support.Functions.retInt
 import io.smallibs.pilin.standard.support.Functions.retStr
 import io.smallibs.pilin.standard.support.Generators.constant
 import io.smallibs.pilin.standard.support.Generators.either
-import io.smallibs.utils.unsafeSyncRun
+import utils.unsafeSyncRun
 
 import org.junit.Test
 import org.quicktheories.WithQuickTheories

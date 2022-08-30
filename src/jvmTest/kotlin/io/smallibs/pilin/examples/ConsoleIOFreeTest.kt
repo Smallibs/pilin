@@ -11,7 +11,7 @@ import io.smallibs.pilin.examples.ConsoleIOFreeTest.IO.tell
 import io.smallibs.pilin.standard.free.monad.Free
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
-import io.smallibs.utils.unsafeSyncRun
+import utils.unsafeSyncRun
 import org.junit.Test
 import kotlin.test.assertEquals
 import io.smallibs.pilin.abstractions.Functor.API as Functor_API

@@ -5,7 +5,7 @@ import io.smallibs.pilin.standard.state.State
 import io.smallibs.pilin.standard.state.State.StateK
 import io.smallibs.pilin.standard.state.State.StateK.Companion.invoke
 import io.smallibs.pilin.type.App
-import io.smallibs.utils.unsafeSyncRun
+import utils.unsafeSyncRun
 
 import org.junit.Test
 import kotlin.test.assertEquals

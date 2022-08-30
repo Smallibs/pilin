@@ -6,7 +6,7 @@ import io.smallibs.pilin.standard.writer.Writer
 import io.smallibs.pilin.standard.writer.Writer.WriterK
 import io.smallibs.pilin.standard.writer.Writer.WriterK.Companion.run
 import io.smallibs.pilin.type.App
-import io.smallibs.utils.unsafeSyncRun
+import utils.unsafeSyncRun
 import kotlinx.benchmark.Benchmark
 import kotlinx.benchmark.Scope
 import kotlinx.benchmark.State

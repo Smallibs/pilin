@@ -9,7 +9,7 @@ import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK
 import io.smallibs.pilin.standard.continuation.Continuation.ContinuationK.invoke
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
-import io.smallibs.utils.unsafeSyncRun
+import utils.unsafeSyncRun
 import org.junit.Test
 
 import kotlin.test.assertEquals

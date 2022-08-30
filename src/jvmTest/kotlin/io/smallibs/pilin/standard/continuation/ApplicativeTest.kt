@@ -11,7 +11,7 @@ import io.smallibs.pilin.standard.support.Functions.int
 import io.smallibs.pilin.standard.support.Functions.str
 import io.smallibs.pilin.standard.support.Generators.constant
 import io.smallibs.pilin.standard.support.Generators.continuation
-import io.smallibs.utils.unsafeSyncRun
+import utils.unsafeSyncRun
 
 import org.junit.Test
 import org.quicktheories.WithQuickTheories

@@ -1,4 +1,4 @@
-package io.smallibs.utils
+package utils
 
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope

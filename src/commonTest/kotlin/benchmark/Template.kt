@@ -3,7 +3,7 @@ package benchmark
 import io.smallibs.pilin.standard.reader.Reader
 import io.smallibs.pilin.standard.reader.Reader.ReaderK.Companion.invoke
 import io.smallibs.pilin.type.App
-import io.smallibs.utils.unsafeSyncRun
+import utils.unsafeSyncRun
 import kotlinx.benchmark.Benchmark
 import kotlinx.benchmark.Scope
 import kotlinx.benchmark.State

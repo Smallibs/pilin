@@ -6,7 +6,7 @@ import io.smallibs.pilin.standard.continuation.Continuation.Companion.selective
 import io.smallibs.pilin.standard.support.Equatable
 import io.smallibs.pilin.standard.support.Functions.str
 import io.smallibs.pilin.standard.support.Generators.either
-import io.smallibs.utils.unsafeSyncRun
+import utils.unsafeSyncRun
 
 import org.junit.Test
 import org.quicktheories.WithQuickTheories
