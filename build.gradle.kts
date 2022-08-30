@@ -94,8 +94,8 @@ benchmark {
         }
     }
     targets {
-        register("js")
-        register("jvm")
-        register("native")
+        register("jsTest")
+        register("jvmTest")
+        register("nativeTest")
     }
 }
