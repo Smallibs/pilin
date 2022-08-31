@@ -99,27 +99,31 @@ class ConsoleIO {
     }
 
     @Benchmark
-    fun withFreer() = unsafeSyncRun {
-        with(FreerIO) {
-            val program = with(infix) {
-                ask("Name") bind { name ->
-                    tell("$name Alice")
+    fun withFreer() {
+        return unsafeSyncRun {
+            with(FreerIO) {
+                val program = with(infix) {
+                    ask("Name") bind { name ->
+                        tell("$name Alice")
+                    }
                 }
-            }
 
-            run(runConsole(mutableListOf()), program)
+                run(runConsole(mutableListOf()), program)
+            }
         }
     }
 
     @Benchmark
-    fun withFreerAndDo() = unsafeSyncRun {
-        with(FreerIO) {
-            val program = `do` {
-                val name = ask("Name").bind()
-                tell("$name Alice").bind()
-            }
+    fun withFreerAndDo() {
+        return unsafeSyncRun {
+            with(FreerIO) {
+                val program = `do` {
+                    val name = ask("Name").bind()
+                    tell("$name Alice").bind()
+                }
 
-            run(runConsole(mutableListOf()), program)
+                run(runConsole(mutableListOf()), program)
+            }
         }
     }
 }
