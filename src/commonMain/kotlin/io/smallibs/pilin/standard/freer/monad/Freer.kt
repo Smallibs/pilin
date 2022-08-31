@@ -37,7 +37,7 @@ sealed interface Freer<F, A> : App<FreerK<F>, A> {
         override suspend fun run(f: Handler<F, A>): A = f.handle { x: I -> continuation(x).fix.run(f) }(intermediate)
     }
 
-    class Over<F>(val api: API<FreerK<F>> = Monad.monad()) : API<FreerK<F>> by api {
+    open class Over<F>(val api: API<FreerK<F>> = Monad.monad()) : API<FreerK<F>> by api {
         fun <F, A> perform(f: App<F, A>): Freer<F, A> = Bind(f) { Return(it) }
         suspend fun <F, A> run(f: Handler<F, A>, ma: App<FreerK<F>, A>): A = ma.fix.run(f)
 

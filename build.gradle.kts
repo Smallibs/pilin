@@ -2,10 +2,11 @@ plugins {
     kotlin("multiplatform") version "1.7.10"
     kotlin("plugin.allopen") version "1.7.10"
     id("org.jetbrains.kotlinx.benchmark") version "0.4.4"
+    id("maven-publish")
 }
 
 group = "io.smallibs"
-version = "1.0-SNAPSHOT"
+version = "0.1.0"
 
 repositories {
     mavenCentral()
