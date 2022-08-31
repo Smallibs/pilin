@@ -28,18 +28,16 @@ class ConsoleIO {
     }
 
     companion object {
-        private fun <A, B> runConsoleIO(trace: MutableList<String>): Fun<Fun<B, A>, Fun<App<ConsoleIOK, B>, A>> = { f ->
-            {
-                when (val fa = it.fix) {
-                    is Ask -> {
-                        trace += listOf("Ask ${fa.question}?")
-                        f(fa.k("Hello"))
-                    }
+        private fun <A, B> runConsoleIO(trace: MutableList<String>, f: Fun<B, A>): Fun<App<ConsoleIOK, B>, A> = {
+            when (val fa = it.fix) {
+                is Ask -> {
+                    trace += listOf("Ask ${fa.question}?")
+                    f(fa.k("Hello"))
+                }
 
-                    is Tell -> {
-                        trace += listOf("Tell ${fa.statement}")
-                        f(fa.k(Unit))
-                    }
+                is Tell -> {
+                    trace += listOf("Tell ${fa.statement}")
+                    f(fa.k(Unit))
                 }
             }
         }
@@ -53,7 +51,7 @@ class ConsoleIO {
 
         suspend fun <A> runConsole(trace: MutableList<String>): Freer.Handler<ConsoleIOK, A> =
             object : Freer.Handler<ConsoleIOK, A> {
-                override suspend fun <B> handle(f: Fun<B, A>): Fun<App<ConsoleIOK, B>, A> = runConsoleIO<A, B>(trace)(f)
+                override suspend fun <B> handle(f: Fun<B, A>): Fun<App<ConsoleIOK, B>, A> = runConsoleIO(trace, f)
             }
     }
 
@@ -82,7 +80,7 @@ class ConsoleIO {
                 }
             }
 
-            run(runConsoleIO<Unit, Unit>(mutableListOf())(Standard::id))(program)
+            run<Unit>(runConsoleIO(mutableListOf(), Standard::id))(program)
         }
     }
 
@@ -94,7 +92,7 @@ class ConsoleIO {
                 tell("$name Alice").bind()
             }
 
-            run(runConsoleIO<Unit, Unit>(mutableListOf())(Standard::id))(program)
+            run<Unit>(runConsoleIO(mutableListOf(), Standard::id))(program)
         }
     }
 

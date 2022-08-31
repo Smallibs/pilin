@@ -260,10 +260,10 @@ Finally, after the execution `traces` has the following value: `listOf("readStri
 
 ```
 Benchmark                    Mode  Cnt    Score    Error   Units
-ConsoleIO.withFree          thrpt    5   95.384 ± 44.746  ops/ms
-ConsoleIO.withFreeAndDo     thrpt    5  151.992 ± 11.833  ops/ms
-ConsoleIO.withFreer         thrpt    5  142.243 ± 23.737  ops/ms
-ConsoleIO.withFreerAndDo    thrpt    5  154.249 ±  8.874  ops/ms
+ConsoleIO.withFree          thrpt    5  109.507 ± 54.032  ops/ms
+ConsoleIO.withFreeAndDo     thrpt    5  161.926 ± 43.818  ops/ms
+ConsoleIO.withFreer         thrpt    5  169.727 ± 28.968  ops/ms
+ConsoleIO.withFreerAndDo    thrpt    5  165.794 ± 39.267  ops/ms
 DeBruijn.direct             thrpt    5  142.910 ± 19.566  ops/ms
 DeBruijn.withState          thrpt    5  148.815 ±  9.436  ops/ms
 DeBruijn.withStateAndDo     thrpt    5  130.154 ± 37.172  ops/ms
@@ -282,10 +282,10 @@ XmlStax.withWriterAndDo     thrpt    5  133.734 ± 19.931  ops/ms
 
 ```
 Benchmark                    Mode  Cnt      Score      Error  Units
-ConsoleIO.withFree          thrpt   15   7509.796 ± 1075.902  ops/s
-ConsoleIO.withFreeAndDo     thrpt   15   2907.236 ± 1090.426  ops/s
-ConsoleIO.withFreer         thrpt   15   8710.872 ± 2489.127  ops/s
-ConsoleIO.withFreerAndDo    thrpt   15   4345.342 ±  651.784  ops/s
+ConsoleIO.withFree          thrpt   15   6442.289 ± 1258.576  ops/s
+ConsoleIO.withFreeAndDo     thrpt   15   3112.459 ±  794.673  ops/s
+ConsoleIO.withFreer         thrpt   15   9431.532 ± 3353.802  ops/s
+ConsoleIO.withFreerAndDo    thrpt   15   3327.575 ±  683.984  ops/s
 DeBruijn.direct             thrpt   15  14718.807 ± 4622.168  ops/s
 DeBruijn.withState          thrpt   15   6316.542 ± 1116.652  ops/s
 DeBruijn.withStateAndDo     thrpt   15   1433.421 ±  369.249  ops/s
@@ -304,10 +304,10 @@ XmlStax.withWriterAndDo     thrpt   15    630.150 ±   79.681  ops/s
 
 ```
 Benchmark                    Mode  Cnt    Score    Error   Units
-ConsoleIO.withFree          thrpt    5   51.071 ±  5.373  ops/ms
-ConsoleIO.withFreeAndDo     thrpt    5   10.421 ±  0.282  ops/ms
-ConsoleIO.withFreer         thrpt    5   72.596 ±  9.913  ops/ms
-ConsoleIO.withFreerAndDo    thrpt    5   11.026 ±  0.240  ops/ms
+ConsoleIO.withFree          thrpt    5   66.124 ±  5.129  ops/ms
+ConsoleIO.withFreeAndDo     thrpt    5   10.103 ±  4.670  ops/ms
+ConsoleIO.withFreer         thrpt    5   97.557 ±  9.035  ops/ms
+ConsoleIO.withFreerAndDo    thrpt    5   14.148 ±  1.316  ops/ms
 DeBruijn.direct             thrpt    5  120.602 ± 21.918  ops/ms
 DeBruijn.withState          thrpt    5   31.919 ±  1.704  ops/ms
 DeBruijn.withStateAndDo     thrpt    5    2.511 ±  1.039  ops/ms
