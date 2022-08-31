@@ -261,8 +261,8 @@ Finally, after the execution `traces` has the following value: `listOf("readStri
 ```
 Benchmark                    Mode  Cnt    Score    Error   Units
 ConsoleIO.withFree          thrpt    5   95.384 ± 44.746  ops/ms
-ConsoleIO.withFreer         thrpt    5  142.243 ± 23.737  ops/ms
 ConsoleIO.withFreeAndDo     thrpt    5  151.992 ± 11.833  ops/ms
+ConsoleIO.withFreer         thrpt    5  142.243 ± 23.737  ops/ms
 ConsoleIO.withFreerAndDo    thrpt    5  154.249 ±  8.874  ops/ms
 DeBruijn.direct             thrpt    5  142.910 ± 19.566  ops/ms
 DeBruijn.withState          thrpt    5  148.815 ±  9.436  ops/ms
@@ -283,8 +283,8 @@ XmlStax.withWriterAndDo     thrpt    5  133.734 ± 19.931  ops/ms
 ```
 Benchmark                    Mode  Cnt      Score      Error  Units
 ConsoleIO.withFree          thrpt   15   7509.796 ± 1075.902  ops/s
-ConsoleIO.withFreer         thrpt   15   8710.872 ± 2489.127  ops/s
 ConsoleIO.withFreeAndDo     thrpt   15   2907.236 ± 1090.426  ops/s
+ConsoleIO.withFreer         thrpt   15   8710.872 ± 2489.127  ops/s
 ConsoleIO.withFreerAndDo    thrpt   15   4345.342 ±  651.784  ops/s
 DeBruijn.direct             thrpt   15  14718.807 ± 4622.168  ops/s
 DeBruijn.withState          thrpt   15   6316.542 ± 1116.652  ops/s
@@ -300,13 +300,13 @@ XmlStax.withWriter          thrpt   15   4734.501 ±  701.159  ops/s
 XmlStax.withWriterAndDo     thrpt   15    630.150 ±   79.681  ops/s
 ```
 
-## Native
+## Native (MaxOS / Intel)
 
 ```
 Benchmark                    Mode  Cnt    Score    Error   Units
 ConsoleIO.withFree          thrpt    5   51.071 ±  5.373  ops/ms
-ConsoleIO.withFreer         thrpt    5   72.596 ±  9.913  ops/ms
 ConsoleIO.withFreeAndDo     thrpt    5   10.421 ±  0.282  ops/ms
+ConsoleIO.withFreer         thrpt    5   72.596 ±  9.913  ops/ms
 ConsoleIO.withFreerAndDo    thrpt    5   11.026 ±  0.240  ops/ms
 DeBruijn.direct             thrpt    5  120.602 ± 21.918  ops/ms
 DeBruijn.withState          thrpt    5   31.919 ±  1.704  ops/ms
