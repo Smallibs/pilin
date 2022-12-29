@@ -43,14 +43,14 @@ implementation.
 
 ## A taste of Pilin
 
-In this section we show how the `Functor` abstraction is design.
+In this section we show how the `Functor` abstraction can be designed.
 
 ### Functor design
 
-First we use `object` in order to have a simple namespacing. Then, a first interface named `Core` is proposed with the
-minimal set of functions required. In addition, two implementations are proposed for `Operation` and `Infix` expressed
-thanks to the `Core`. The first one contains additional functions when the second proposes an infix version of `Core`
-functions using OOP capabilities.
+First, we use `object` to have a simple namespacing. Then, a first interface named `Core` is proposed with the
+the minimal set of required functions. Furthermore, two implementations are proposed for `Operation` and `Infix`, 
+expressed through `Core`. The second one is expressed through `Core`. The first one contains additional functions, 
+while the second one proposes an infix version of `Core` functions using the OOP capabilities.
 
 ```kotlin
 object Functor {
