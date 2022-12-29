@@ -23,6 +23,7 @@ Some incarnations are available like:
 - Identity,
 - Option,
 - Result,
+- Try,
 - Either,
 - List,
 - Continuation,
