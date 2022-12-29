@@ -106,19 +106,13 @@ class DeBruijn {
     }
 
     @Benchmark
-    fun direct() {
-        return unsafeSyncRun { listOf<String>().execute(term) }
-    }
+    fun direct() = unsafeSyncRun { listOf<String>().execute(term) }
 
     @Benchmark
-    fun withState() {
-        return unsafeSyncRun { State.Over<List<String>>().executeWithState(term)(listOf()).fold { it.first } }
-
-    }
+    fun withState() = unsafeSyncRun { State.Over<List<String>>().executeWithState(term)(listOf()).fold { it.first } }
 
     @Benchmark
-    fun withStateAndDo() {
-        return unsafeSyncRun { State.Over<List<String>>().executeWithStateAndDo(term)(listOf()).fold { it.first } }
-    }
+    fun withStateAndDo() =
+        unsafeSyncRun { State.Over<List<String>>().executeWithStateAndDo(term)(listOf()).fold { it.first } }
 
 }

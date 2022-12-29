@@ -6,10 +6,10 @@ import io.smallibs.pilin.standard.writer.Writer
 import io.smallibs.pilin.standard.writer.Writer.WriterK
 import io.smallibs.pilin.standard.writer.Writer.WriterK.Companion.run
 import io.smallibs.pilin.type.App
-import utils.unsafeSyncRun
 import kotlinx.benchmark.Benchmark
 import kotlinx.benchmark.Scope
 import kotlinx.benchmark.State
+import utils.unsafeSyncRun
 
 @State(Scope.Benchmark)
 class XmlStax {
@@ -101,22 +101,16 @@ class XmlStax {
     }
 
     @Benchmark
-    fun direct() {
-        return unsafeSyncRun { direct(xml) }
+    fun direct() = unsafeSyncRun { direct(xml) }
+
+    @Benchmark
+    fun withWriter() = with(Writer.OverMonoid<List<Stax>>(List.monoid())) {
+        unsafeSyncRun { executeWithWriter(xml).run.fold { it.second } }
     }
 
     @Benchmark
-    fun withWriter() {
-        val monad = Writer.OverMonoid<List<Stax>>(List.monoid())
-
-        return unsafeSyncRun { monad.executeWithWriter(xml).run.fold { it.second } }
-    }
-
-    @Benchmark
-    fun withWriterAndDo() {
-        val monad = Writer.OverMonoid<List<Stax>>(List.monoid())
-
-        return unsafeSyncRun { monad.executeWithWriterAndDo(xml).run.fold { it.second } }
+    fun withWriterAndDo() = with(Writer.OverMonoid<List<Stax>>(List.monoid())) {
+        unsafeSyncRun { executeWithWriterAndDo(xml).run.fold { it.second } }
     }
 
 }

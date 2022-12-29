@@ -8,5 +8,5 @@ import io.smallibs.pilin.standard.result.Result.ResultK
 object Selective {
     private class SelectiveImpl<E>(monad: Monad.API<ResultK<E>>) : Selective.ViaMonad<ResultK<E>>(monad)
 
-    fun <E> selective(): Selective.API<ResultK<E>> = SelectiveImpl<E>(monad())
+    fun <E> selective(): Selective.API<ResultK<E>> = SelectiveImpl(monad())
 }

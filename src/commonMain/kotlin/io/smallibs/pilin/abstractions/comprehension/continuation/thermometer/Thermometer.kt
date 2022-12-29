@@ -2,6 +2,7 @@ package io.smallibs.pilin.abstractions.comprehension.continuation.thermometer
 
 import io.smallibs.pilin.abstractions.comprehension.continuation.Control
 import io.smallibs.pilin.abstractions.comprehension.continuation.thermometer.Frame.Enter
+import io.smallibs.pilin.abstractions.comprehension.continuation.thermometer.Frame.Return
 import io.smallibs.pilin.type.Fun
 import io.smallibs.pilin.type.Supplier
 
@@ -19,7 +20,7 @@ internal class Thermometer<A> private constructor(private var context: Context<A
         context = context.setFuture(future)
 
         when (frame) {
-            is Frame.Return<*> -> {
+            is Return<*> -> {
                 context = context.addToPast(frame)
                 return Universal<B>().fromU(frame.value)
             }
@@ -28,7 +29,7 @@ internal class Thermometer<A> private constructor(private var context: Context<A
                 val newFuture = context.state.past
                 val block = context.state.block
                 val k: Fun<B, A> = { v: B ->
-                    runWithFuture(block, newFuture.push(Frame.Return(v)).reversed())
+                    runWithFuture(block, newFuture.push(Return(v)).reversed())
                 }
                 context = context.addToPast(Enter)
                 throw Done(f(k) as Any)

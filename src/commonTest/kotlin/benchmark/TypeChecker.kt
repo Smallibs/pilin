@@ -136,14 +136,10 @@ class TypeChecker {
     }
 
     @Benchmark
-    fun direct() {
-        return unsafeSyncRun { mapOf<String, Type>().direct(expr) }
-    }
+    fun direct() = unsafeSyncRun { mapOf<String, Type>().direct(expr) }
 
     @Benchmark
-    fun withState() {
-        return unsafeSyncRun { State.Over<Map<String, Type>>().withState(expr)(gamma).fold { it.first } }
-    }
+    fun withState() = unsafeSyncRun { State.Over<Map<String, Type>>().withState(expr)(gamma).fold { it.first } }
 
     @Benchmark
     fun withStateAndDo() {

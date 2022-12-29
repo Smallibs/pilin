@@ -74,22 +74,16 @@ class Template {
     }
 
     @Benchmark
-    fun direct() {
-        return unsafeSyncRun { mapOf("world" to "World!").direct(template) }
+    fun direct() = unsafeSyncRun { mapOf("world" to "World!").direct(template) }
+
+    @Benchmark
+    fun withReader() = unsafeSyncRun {
+        Reader.Over<Map<String, String>>().withReader(template).invoke(mapOf("world" to "World!"))
     }
 
     @Benchmark
-    fun withReader() {
-        return unsafeSyncRun {
-            Reader.Over<Map<String, String>>().withReader(template).invoke(mapOf("world" to "World!"))
-        }
-    }
-
-    @Benchmark
-    fun withReaderAndDo() {
-        return unsafeSyncRun {
-            Reader.Over<Map<String, String>>().withReaderAndDo(template).invoke(mapOf("world" to "World!"))
-        }
+    fun withReaderAndDo() = unsafeSyncRun {
+        Reader.Over<Map<String, String>>().withReaderAndDo(template).invoke(mapOf("world" to "World!"))
     }
 
 }

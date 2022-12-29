@@ -7,7 +7,6 @@ import io.smallibs.pilin.standard.option.Option.OptionK.fold
 import io.smallibs.pilin.type.App
 
 internal data class Stack<A>(private val value: List<A>) {
-    constructor(a: A) : this(listOf(a))
     constructor() : this(listOf())
 
     suspend fun push(a: A): Stack<A> = Stack(listOf(a)) + this

@@ -7,7 +7,10 @@ import io.smallibs.pilin.standard.identity.Identity
 import io.smallibs.pilin.standard.identity.Identity.IdentityK
 import io.smallibs.pilin.standard.option.Option
 import io.smallibs.pilin.standard.option.Option.OptionK
-import io.smallibs.pilin.standard.reader.Reader
+import io.smallibs.pilin.standard.result.Result
+import io.smallibs.pilin.standard.result.Result.ResultK
+import io.smallibs.pilin.standard.`try`.Try
+import io.smallibs.pilin.standard.`try`.Try.TryK
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 import org.quicktheories.core.Gen
@@ -54,6 +57,42 @@ object Generators {
             { r -> Either.right(r) }
         } else {
             { Either.left(l) }
+        }
+    }
+
+    fun <A, B> result(egen: Gen<B>): (Gen<A>) -> Gen<App<ResultK<B>, A>> = { rgen ->
+        integers().allPositive().flatMap { i ->
+            if (i % 2 == 0) {
+                rgen.map { a -> Result.ok(a) }
+            } else {
+                egen.map { a -> Result.error(a) }
+            }
+        }
+    }
+
+    fun <A, B> result(e: B): Gen<Fun<A, App<ResultK<B>, A>>> = integers().allPositive().map { i ->
+        if (i % 2 == 0) {
+            { r -> Result.ok(r) }
+        } else {
+            { Result.error(e) }
+        }
+    }
+
+    fun <A> `try`(egen: Gen<Throwable>): (Gen<A>) -> Gen<App<TryK, A>> = { rgen ->
+        integers().allPositive().flatMap { i ->
+            if (i % 2 == 0) {
+                rgen.map { a -> Try.success(a) }
+            } else {
+                egen.map { a -> Try.failure(a) }
+            }
+        }
+    }
+
+    fun <A> `try`(e: Throwable): Gen<Fun<A, App<TryK, A>>> = integers().allPositive().map { i ->
+        if (i % 2 == 0) {
+            { r -> Try.success(r) }
+        } else {
+            { Try.failure(e) }
         }
     }
 
