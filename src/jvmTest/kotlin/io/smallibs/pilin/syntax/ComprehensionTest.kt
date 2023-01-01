@@ -67,7 +67,7 @@ internal class ComprehensionTest {
         assertEquals(right(42), unsafeSyncRun {
             Either.monad<String>() `do` {
                 val a = returns(2).bind()
-                delay(10)
+                delay(1000)
                 val b = returns("40").bind()
                 delay(10)
                 a + b.toInt()
