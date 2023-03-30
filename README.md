@@ -81,7 +81,7 @@ object Functor {
 }
 ```
 
-Note: `Fun<A,B` stands for `suspend (A) -> B`.
+Note: `Fun<A,B>` stands for `suspend (A) -> B`.
 
 ### Option
 
