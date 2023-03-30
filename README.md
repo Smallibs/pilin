@@ -81,6 +81,8 @@ object Functor {
 }
 ```
 
+Note: `Fun<A,B` stands for `suspend (A) -> B`.
+
 ### Option
 
 In this section we show how `Option` can be designed.
