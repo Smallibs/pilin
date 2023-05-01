@@ -66,7 +66,8 @@ object Monad {
     }
 
     open class Do<F>(val c: API<F>) {
-        open suspend infix operator fun <A> invoke(f: suspend Comprehension<F>.() -> A): App<F, A> = DefaultComprehension.run(c, f)
+        open suspend infix operator fun <A> invoke(f: suspend Comprehension<F>.() -> A): App<F, A> =
+            DefaultComprehension.run(c, f)
     }
 
     interface API<F> : Core<F> {

@@ -23,6 +23,7 @@ class ResultComprehension<E>(private val monad: Monad.API<Result.ResultK<E>>) :
                 try {
                     monad.returns(comprehension.f())
                 } catch (e: CarriedResult) {
+                    @Suppress("UNCHECKED_CAST")
                     Result.error(e.value as E)
                 }
             }

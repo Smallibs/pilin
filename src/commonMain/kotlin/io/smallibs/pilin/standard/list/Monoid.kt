@@ -1,7 +1,6 @@
 package io.smallibs.pilin.standard.list
 
 import io.smallibs.pilin.abstractions.Monoid
-import io.smallibs.pilin.standard.list.List.ListK.fix
 
 object Monoid {
     class MonoidImp<A> : Monoid.API<List<A>> {
@@ -9,7 +8,7 @@ object Monoid {
             get() = List(listOf())
 
         override suspend fun combine(l: List<A>, r: List<A>): List<A> {
-            return List(l.fix + r.fix)
+            return List(l.list + r.list)
         }
     }
 

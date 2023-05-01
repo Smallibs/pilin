@@ -3,6 +3,7 @@ package io.smallibs.pilin.standard.free.monad
 import io.smallibs.pilin.abstractions.Functor
 import io.smallibs.pilin.abstractions.Monad
 import io.smallibs.pilin.standard.free.monad.Applicative.applicative
+import io.smallibs.pilin.standard.free.monad.Free.Bind
 import io.smallibs.pilin.standard.free.monad.Free.FreeK
 import io.smallibs.pilin.standard.free.monad.Free.FreeK.Companion.fold
 import io.smallibs.pilin.standard.free.monad.Functor.functor
@@ -17,9 +18,8 @@ object Monad {
 
         override suspend fun <A, B> map(f: Fun<A, B>): Fun<App<FreeK<F>, A>, App<FreeK<F>, B>> = functor.map(f)
 
-        override suspend fun <A, B> bind(f: Fun<A, App<FreeK<F>, B>>): Fun<App<FreeK<F>, A>, App<FreeK<F>, B>> = { ma ->
-            ma.fold(f) { Free.Bind(inner.map(bind(f))(it)) }
-        }
+        override suspend fun <A, B> bind(f: Fun<A, App<FreeK<F>, B>>): Fun<App<FreeK<F>, A>, App<FreeK<F>, B>> =
+            { ma -> ma.fold(f) { Bind(inner.map(bind(f))(it)) } }
     }
 
     fun <F> monad(inner: Functor.Core<F>): Monad.API<FreeK<F>> = MonadImpl(inner)

@@ -1,6 +1,5 @@
 package io.smallibs.pilin.standard.`try`
 
-import io.smallibs.pilin.abstractions.Semigroup
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 

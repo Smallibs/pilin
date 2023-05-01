@@ -4,8 +4,6 @@ import io.smallibs.pilin.abstractions.Applicative
 import io.smallibs.pilin.abstractions.Monad
 import io.smallibs.pilin.abstractions.comprehension.Comprehension
 import io.smallibs.pilin.core.Standard.id
-import io.smallibs.pilin.standard.option.Option
-import io.smallibs.pilin.standard.option.comprehension.OptionComprehension
 import io.smallibs.pilin.standard.`try`.Applicative.applicative
 import io.smallibs.pilin.standard.`try`.Try.Companion.failure
 import io.smallibs.pilin.standard.`try`.Try.TryK

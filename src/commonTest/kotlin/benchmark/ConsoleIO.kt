@@ -16,7 +16,7 @@ import kotlinx.benchmark.State
 import utils.unsafeSyncRun
 
 @State(Scope.Benchmark)
-class ConsoleIO {
+public class ConsoleIO {
 
     private sealed interface ConsoleIO<A> : App<ConsoleIOK, A> {
         object ConsoleIOK {

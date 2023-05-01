@@ -23,6 +23,7 @@ class EitherComprehension<L>(private val monad: Monad.API<Either.EitherK<L>>) :
                 try {
                     monad.returns(comprehension.f())
                 } catch (e: CarriedResult) {
+                    @Suppress("UNCHECKED_CAST")
                     Either.left(e.value as L)
                 }
             }
