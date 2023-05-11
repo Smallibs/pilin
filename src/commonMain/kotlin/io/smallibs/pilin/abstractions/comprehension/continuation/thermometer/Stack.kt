@@ -9,9 +9,9 @@ import io.smallibs.pilin.type.App
 internal data class Stack<A>(private val value: List<A>) {
     constructor() : this(listOf())
 
-    suspend fun push(a: A): Stack<A> = Stack(listOf(a)) + this
+    fun push(a: A): Stack<A> = Stack(listOf(a)) + this
 
-    suspend fun pop(): App<OptionK, Pair<A, Stack<A>>> = if (this.value.isEmpty()) {
+    fun pop(): App<OptionK, Pair<A, Stack<A>>> = if (this.value.isEmpty()) {
         Option.none()
     } else {
         Option.some(this.value[0] to Stack(this.value.subList(1, this.value.size)))

@@ -6,12 +6,11 @@ import io.smallibs.pilin.core.Standard.With
 import io.smallibs.pilin.standard.support.Equatable
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
+import io.smallibs.pilin.type.Id
 
 typealias Compose<A, B, C> = Fun<Fun<B, C>, Fun<Fun<A, B>, Fun<A, C>>>
 
 object Applicative {
-
-    private fun <A> mkId(): suspend (A) -> A = { it }
 
     suspend fun <F, A, B> Applicative.API<F>.`map f x = apply (pure f) x`(
         f: Fun<A, B>,
@@ -28,7 +27,7 @@ object Applicative {
         equatable: Equatable<App<F, A>> = Equatable.default(),
     ): Boolean = With(this.infix, equatable) {
         {
-            pure(mkId<A>()) apply (x) isEqualTo x
+            pure<Id<A>>(Standard::id) apply (x) isEqualTo x
         }
     }
 

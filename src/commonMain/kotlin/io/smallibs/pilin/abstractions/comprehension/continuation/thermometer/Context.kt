@@ -8,7 +8,7 @@ internal class Context<A> private constructor(val state: State<A>, private val n
 
     constructor() : this(State({ throw IllegalArgumentException() }, Stack(), Stack()), Stack())
 
-    suspend fun setFuture(future: Stack<Frame>) = Context(State(this.state.block, this.state.past, future), this.nested)
+    fun setFuture(future: Stack<Frame>) = Context(State(this.state.block, this.state.past, future), this.nested)
 
     suspend fun addToPast(frame: Frame) =
         Context(State(this.state.block, this.state.past.push(frame), this.state.future), this.nested)

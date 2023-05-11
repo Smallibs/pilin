@@ -19,7 +19,9 @@ interface Reflection<F> {
             cont.shift { k -> m.bind(k)(x) }
 
         override suspend fun <A> reify(f: Supplier<A>): App<F, A> =
-            m.bind<Any, A> { m.returns(Universal<A>().fromU(it)) }(cont.reset { m.returns(Universal<A>().toU(f())) })
+            Universal<A>().let { universal ->
+                m.bind<Any, A> { m.returns(universal.from(it)) }(cont.reset { m.returns(universal.to(f())) })
+            }
     }
 
     companion object {

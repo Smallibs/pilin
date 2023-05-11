@@ -32,10 +32,10 @@ sealed interface Free<F, A> : App<Free.FreeK<F>, A> {
             { ma -> ma.fold({ it }, { f(inner.map(run(f))(it)) }) }
 
         suspend fun <A, G> Monad_API<G>.run(transformer: Transformer<F, G>): Fun<App<FreeK<F>, A>, App<G, A>> =
-            { ma -> ma.fold({ this.returns(it) }) { bind(run<A, G>(transformer))(transformer.transform(it)) } }
+            { ma -> ma.fold({ this.returns(it) }) { bind(run<A, G>(transformer))(transformer(it)) } }
 
         fun functor() = Functor.functor(inner)
-        fun applicative() = Applicative.applicative<F>(inner)
+        fun applicative() = Applicative.applicative(inner)
         fun monad() = api
         fun selective() = Selective.selective(inner)
     }

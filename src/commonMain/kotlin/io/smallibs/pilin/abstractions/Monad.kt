@@ -9,7 +9,6 @@ import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
 object Monad {
-
     interface Core<F> : Applicative.Core<F> {
         suspend fun <A> returns(a: A): App<F, A>
         suspend fun <A> join(mma: App<F, App<F, A>>): App<F, A>

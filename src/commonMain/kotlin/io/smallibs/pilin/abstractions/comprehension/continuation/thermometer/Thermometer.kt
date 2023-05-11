@@ -22,7 +22,7 @@ internal class Thermometer<A> private constructor(private var context: Context<A
         when (frame) {
             is Return<*> -> {
                 context = context.addToPast(frame)
-                return Universal<B>().fromU(frame.value)
+                return Universal<B>().from(frame.value)
             }
 
             is Enter -> {
@@ -41,7 +41,7 @@ internal class Thermometer<A> private constructor(private var context: Context<A
         context = context.switch(f, future)
         f()
     } catch (d: Done) {
-        Universal<A>().fromU(d.value)
+        Universal<A>().from(d.value)
     } finally {
         context = context.returns()
     }

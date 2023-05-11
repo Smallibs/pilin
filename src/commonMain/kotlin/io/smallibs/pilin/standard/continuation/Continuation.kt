@@ -4,6 +4,8 @@ import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
 
 interface Continuation<out I> : App<Continuation.ContinuationK, I> {
+
+    // method with `O` as an existential type
     suspend operator fun <O> invoke(k: Fun<I, O>): O
 
     object ContinuationK {

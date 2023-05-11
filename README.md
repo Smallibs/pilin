@@ -259,6 +259,11 @@ Finally, after the execution `traces` has the following value: `listOf("readStri
 
 # Benchmarks
 
+Target: 
+- Darwin Kernel Version 21.6.0 x86_64
+- 2,3 GHz 8-Core Intel Core i9
+- 64 GB 2667 MHz DDR4
+
 ## JS 
 
 ```
@@ -329,7 +334,7 @@ XmlStax.withWriterAndDo     thrpt    5    0.490 ±  0.213  ops/ms
 
 MIT License
 
-Copyright (c) 2021-2022 Didier Plaindoux
+Copyright (c) 2021-2023 Didier Plaindoux
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
