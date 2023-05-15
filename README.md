@@ -39,7 +39,7 @@ does not mean functions interacting with the subsystem i.e. no relationship with
 The construction is based on a highly modular system inspired by
 the [Preface](https://ocaml-preface.github.io/preface/index.html)
 library and [Thermometer Continuations](https://hal.inria.fr/hal-01929178/document) for the comprehension
-implementation and dedicated implementation in order to have more efficient alghorithms.
+implementation and dedicated implementations in order to have more efficient algorithms.
 
 ## A taste of Pilin
 
