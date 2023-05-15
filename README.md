@@ -43,7 +43,7 @@ implementation and dedicated implementations in order to have more efficient alg
 
 ## A taste of Pilin
 
-In this section we show how the `Functor` abstraction can be designed.
+In this section we show how the `Functor` abstraction has been designed.
 
 ### Functor design
 
