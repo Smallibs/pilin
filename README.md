@@ -48,9 +48,9 @@ In this section we show how the `Functor` abstraction has been designed.
 ### Functor design
 
 First, we use `object` to have a simple namespacing. Then, a first interface named `Core` is proposed with the
-the minimal set of required functions. Furthermore, two implementations are proposed for `Operation` and `Infix`, 
+minimal set of required functions. Furthermore, two implementations are proposed for `Operation` and `Infix`, 
 expressed through `Core`. The second one is expressed through `Core`. The first one contains additional functions, 
-while the second one proposes an infix version of `Core` functions using the OOP capabilities.
+while the second one proposes an infix version of `Core` functions using the OOP method call.
 
 ```kotlin
 object Functor {
