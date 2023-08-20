@@ -5,9 +5,9 @@ import io.smallibs.pilin.laws.Monad.`a bind returns = a`
 import io.smallibs.pilin.laws.Monad.`returns a bind h = h a`
 import io.smallibs.pilin.standard.continuation.Continuation.Companion.monad
 import io.smallibs.pilin.standard.support.Equatable
-import io.smallibs.pilin.standard.support.Functions.int
+import io.smallibs.pilin.standard.support.Functions.stringToInt
 import io.smallibs.pilin.standard.support.Functions.ret
-import io.smallibs.pilin.standard.support.Functions.str
+import io.smallibs.pilin.standard.support.Functions.intToString
 import io.smallibs.pilin.standard.support.Generators.continuation
 import io.smallibs.pilin.type.App
 import io.smallibs.pilin.type.Fun
@@ -19,9 +19,9 @@ import org.quicktheories.WithQuickTheories
 internal class MonadTest : WithQuickTheories {
 
     private suspend fun <F> retStr(r: Fun<String, App<F, String>>): Fun<Int, App<F, String>> =
-        ret<F, Int, String>(str)(r)
+        ret<F, Int, String>(intToString)(r)
 
-    private suspend fun <F> retInt(r: Fun<Int, App<F, Int>>): Fun<String, App<F, Int>> = ret<F, String, Int>(int)(r)
+    private suspend fun <F> retInt(r: Fun<Int, App<F, Int>>): Fun<String, App<F, Int>> = ret<F, String, Int>(stringToInt)(r)
 
     @Test
     fun `returns a bind h = h a`() {

@@ -4,7 +4,7 @@ import io.smallibs.pilin.laws.Selective.`pure(x) select (y discardLeft z) = (pur
 import io.smallibs.pilin.laws.Selective.`x select (pure id) = fold(id)(id) map x`
 import io.smallibs.pilin.standard.continuation.Continuation.Companion.selective
 import io.smallibs.pilin.standard.support.Equatable
-import io.smallibs.pilin.standard.support.Functions.str
+import io.smallibs.pilin.standard.support.Functions.intToString
 import io.smallibs.pilin.standard.support.Generators.either
 import utils.unsafeSyncRun
 
@@ -29,7 +29,7 @@ internal class SelectiveTest : WithQuickTheories {
         qt().forAll(either<Int, String>(integers().allPositive())(strings().numeric())).check { a ->
             unsafeSyncRun {
                 selective.`pure(x) select (y discardLeft z) = (pure(x) select y) discardLeft ((pure(x) select z)`(
-                    str, str, a, Equatable.continuation()
+                    intToString, intToString, a, Equatable.continuation()
                 )
             }
         }

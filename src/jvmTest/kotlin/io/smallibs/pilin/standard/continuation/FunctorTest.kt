@@ -25,7 +25,7 @@ internal class FunctorTest : WithQuickTheories {
         qt().forAll(continuation(integers().all())).check { a ->
             unsafeSyncRun {
                 functor.`map (f compose g) = map f compose map g`(
-                    Functions.int, Functions.str, a, Equatable.continuation()
+                    Functions.stringToInt, Functions.intToString, a, Equatable.continuation()
                 )
             }
         }

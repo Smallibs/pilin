@@ -10,7 +10,7 @@ object Category {
         suspend fun <A> id(): App2<T, A, A>
     }
 
-    class FromMonad<F>(override val monad: Monad.Core<F>) : API<FunK<F>>, PreCategory.FromMonad<F>(monad) {
+    class FromMonad<F>(override val monad: Monad.Core<F>) : Core<FunK<F>>, PreCategory.FromMonad<F>(monad) {
         override suspend fun <A> id(): App2<FunK<F>, A, A> {
             return lift { monad.returns(it) }
         }

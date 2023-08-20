@@ -7,8 +7,8 @@ import io.smallibs.pilin.laws.Applicative.`apply f (pure x) = apply (pure ($ y))
 import io.smallibs.pilin.laws.Applicative.`map f x = apply (pure f) x`
 import io.smallibs.pilin.standard.continuation.Continuation.Companion.applicative
 import io.smallibs.pilin.standard.support.Equatable
-import io.smallibs.pilin.standard.support.Functions.int
-import io.smallibs.pilin.standard.support.Functions.str
+import io.smallibs.pilin.standard.support.Functions.stringToInt
+import io.smallibs.pilin.standard.support.Functions.intToString
 import io.smallibs.pilin.standard.support.Generators.constant
 import io.smallibs.pilin.standard.support.Generators.continuation
 import utils.unsafeSyncRun
@@ -22,7 +22,7 @@ internal class ApplicativeTest : WithQuickTheories {
     fun `map f x = apply (pure f) x`() {
         qt().forAll(continuation<Int>(integers().all())).check { a ->
             unsafeSyncRun {
-                applicative.`map f x = apply (pure f) x`(str, a, Equatable.continuation())
+                applicative.`map f x = apply (pure f) x`(intToString, a, Equatable.continuation())
             }
         }
     }
@@ -38,14 +38,14 @@ internal class ApplicativeTest : WithQuickTheories {
     fun `apply (pure f) (pure x) = pure (f x)`() {
         qt().forAll(integers().all()).check { a ->
             unsafeSyncRun {
-                applicative.`apply (pure f) (pure x) = pure (f x)`(str, a, Equatable.continuation())
+                applicative.`apply (pure f) (pure x) = pure (f x)`(intToString, a, Equatable.continuation())
             }
         }
     }
 
     @Test
     fun `apply f (pure x) = apply (pure ($ y)) f`() {
-        qt().forAll(integers().all(), continuation(constant(str))).check { a, f ->
+        qt().forAll(integers().all(), continuation(constant(intToString))).check { a, f ->
             unsafeSyncRun {
                 applicative.`apply f (pure x) = apply (pure ($ y)) f`(f, a, Equatable.continuation())
             }
@@ -55,7 +55,7 @@ internal class ApplicativeTest : WithQuickTheories {
     @Test
     fun `apply f (apply g x) == apply (apply (apply (pure compose) f) g) x`() {
         qt().forAll(
-            continuation(integers().all()), continuation(constant(int)), continuation(constant(str))
+            continuation(integers().all()), continuation(constant(stringToInt)), continuation(constant(intToString))
         ).check { a, f, g ->
             unsafeSyncRun {
                 applicative.`apply f (apply g x) == apply (apply (apply (pure compose) f) g) x`(

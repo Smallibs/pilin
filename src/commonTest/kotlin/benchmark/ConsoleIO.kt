@@ -74,10 +74,9 @@ public class ConsoleIO {
     @Benchmark
     fun withFree() = unsafeSyncRun {
         with(FreeIO) {
-            val program = with(infix) {
-                ask("Name") bind { name ->
-                    tell("$name Alice")
-                }
+            val program: App<Free.FreeK<ConsoleIOK>, Unit> = this `do` {
+                val name = ask("Name").bind()
+                tell("$name Alice").bind()
             }
 
             run<Unit>(runConsoleIO(mutableListOf(), Standard::id))(program)
