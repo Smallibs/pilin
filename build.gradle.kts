@@ -1,3 +1,8 @@
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
+
 plugins {
     kotlin("multiplatform") version "1.9.0"
     kotlin("plugin.allopen") version "1.9.0"
@@ -7,6 +12,12 @@ plugins {
 
 group = "io.smallibs"
 version = "0.1.0"
+
+rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
+    rootProject.the<YarnRootExtension>().yarnLockMismatchReport = YarnLockMismatchReport.WARNING // NONE | FAIL
+    rootProject.the<YarnRootExtension>().reportNewYarnLock = false // true
+    rootProject.the<YarnRootExtension>().yarnLockAutoReplace = false // true
+}
 
 repositories {
     mavenCentral()
@@ -27,14 +38,10 @@ kotlin {
         binaries.executable()
     }
 
-    val hostOs = System.getProperty("os.name")
-    val isMingwX64 = hostOs.startsWith("Windows")
-    val nativeTarget = when {
-        hostOs == "Mac OS X" -> macosX64("native")
-        hostOs == "Linux" -> linuxX64("native")
-        isMingwX64 -> mingwX64("native")
-        else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
-    }
+    if (HostManager.host == KonanTarget.MACOS_X64) macosX64("native")
+    if (HostManager.host == KonanTarget.MACOS_ARM64) macosArm64("native")
+    if (HostManager.hostIsLinux) linuxX64("native")
+    if (HostManager.hostIsMingw) mingwX64("native")
 
     sourceSets {
         val commonMain by getting {
@@ -72,7 +79,7 @@ kotlin {
         }
         val nativeMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.3.8")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-macosarm64:1.7.3")
             }
         }
         val nativeTest by getting
@@ -95,7 +102,7 @@ benchmark {
         }
     }
     targets {
-        register("jsTest")
+        // register("jsTest")
         register("jvmTest")
         register("nativeTest")
     }
