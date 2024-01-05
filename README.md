@@ -333,7 +333,7 @@ XmlStax.withWriterAndDo     thrpt    5    0.490 ±  0.213  ops/ms
 
 MIT License
 
-Copyright (c) 2021-2023 Didier Plaindoux
+Copyright (c) 2021-2024 Didier Plaindoux
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
